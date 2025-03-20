@@ -1,4 +1,4 @@
-package com.bibliophile
+package com.bibliophile.config
 
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
