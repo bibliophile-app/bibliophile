@@ -16,7 +16,9 @@ services:
       - .env
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
     container_name: ktor_backend
     restart: unless-stopped
     depends_on:
