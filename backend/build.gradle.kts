@@ -30,12 +30,9 @@ dependencies {
     implementation(libs.ktor.server.config.yaml)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
-    // dependência para .env
-    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     // dependências para o banco de dados
     implementation("org.jetbrains.exposed:exposed-core:0.41.1")
     implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.2.0") // Driver MariaDB
-    implementation("com.zaxxer:HikariCP:5.0.1") // Pool de conexões
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.2.0")
 }
