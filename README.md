@@ -1,29 +1,31 @@
 # bibliophile
 
-Projeto MAC0350 -  Introdução ao Desenvolvimento de Sistemas de Software (2025).
+Projeto MAC0350 - Introdução ao Desenvolvimento de Sistemas de Software (2025).
 
 ## Stack do Projeto
 
-O projeto utiliza das seguintes tecnologias:
+O projeto utiliza as seguintes tecnologias:
 
-* API de Livros: Integração com a Open Library API para obter informações detalhadas sobre livros.
-* Backend: Desenvolvido em Kotlin, utilizando o framework Ktor para criar uma RestAPI.
-* Frontend: Construído com React JSX, garantindo uma interface dinâmica e responsiva.
-* Bibliotecas Utilizadas:
-  * Material-UI (MUI) para componentes visuais modernos e acessíveis.
+- **API de Livros**: Integração com a Open Library API para obter informações detalhadas sobre livros.
+- **Backend**: Desenvolvido em Kotlin, utilizando o framework Ktor para criar uma RestAPI.
+- **Banco de Dados**: Utiliza MySQL ou MariaDB para persistência de dados.
+- **Frontend**: Construído com React JSX, garantindo uma interface dinâmica e responsiva.
+- **Containerização**: Utiliza Docker e Docker Compose para facilitar a execução e o gerenciamento do ambiente.
 
-## Como Rodar o Projeto  
+### Bibliotecas Utilizadas:
+- **Material-UI (MUI)** para componentes visuais modernos e acessíveis.
 
-Siga as instruções abaixo para o backend e o frontend estarem em execução e prontos para uso.
+## Como Rodar o Projeto
 
-### Backend
+O projeto está containerizado, sendo possível iniciá-lo facilmente com Docker Compose.
 
-1. Acesse a pasta do backend: `cd backend`
-2. Caso seja a primeira vez rodando o projeto ou tenha alterações nas dependências, execute o build: `./gradlew build`
-3. Inicie o servidor: `./gradlew run`
+### Configuração do Ambiente
 
-### Frontend
+Antes de iniciar o projeto, copie o arquivo .env.example e configure suas variáveis de ambiente:
+Edite o arquivo .env e preencha os valores necessários, como credenciais do banco de dados.
 
-1. Acesse a pasta do frontend: `cd frontend`
-2. Instale as dependências (necessário apenas na primeira vez ou quando houver mudanças no package.json): `npm install`
-3. Inicie o ambiente de desenvolvimento: `npm run dev`
+### Utilizando Docker
+
+1. Certifique-se de que o Docker e o Docker Compose estão instalados em sua máquina.
+2. No diretório raiz do projeto, execute: `docker-compose up --build`
+3. O backend e o frontend estarão acessíveis nos endpoints configurados no `docker-compose.yml`.
