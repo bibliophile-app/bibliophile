@@ -18,9 +18,3 @@ RUN npm run build
 
 # Expõe a porta do React
 EXPOSE 3000
-
-# Comando para rodar o frontend
-CMD ["npm", "run", "dev"]
-
-# Modo de produção
-# CMD ["npx", "serve", "-s", "build"]
