@@ -2,7 +2,7 @@ package com.bibliophile.config
 
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import com.bibliophile.models.Users
+import com.bibliophile.tables.UsersTable
 
 object DatabaseFactory {
     fun init() {

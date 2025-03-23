@@ -1,8 +1,19 @@
 package com.bibliophile.models
 
-import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.ResultRow
 
-object Users : IntIdTable() {
-    val name = varchar("name", 50)
-    val email = varchar("email", 100).uniqueIndex()
+data class User(
+    val id: Int,
+    val username: String,
+    val name: String,
+    val password: String
+) {
+    companion object {
+        fun fromRow(row: ResultRow) = User(
+            id = row[Users.id].value, 
+            username = row[Users.username],
+            name = row[Users.name],
+            password = row[Users.password_hash]
+        )
+    }
 }
