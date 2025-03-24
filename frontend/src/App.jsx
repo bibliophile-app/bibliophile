@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import BooklistManager from "./components/BooklistManager";
 
 function App() {
     const [message, setMessage] = useState("");
@@ -9,7 +10,7 @@ function App() {
             .then(setMessage);
     }, []);
 
-    return <h1>{message}</h1>;
+    return <BooklistManager />;
 }
 
 export default App;
