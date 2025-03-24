@@ -1,7 +1,5 @@
 package com.bibliophile.config
 
-import com.bibliophile.models.Booklist
-import com.bibliophile.repositories.BooklistRepository
 import io.ktor.http.*
 import io.ktor.serialization.*
 import io.ktor.serialization.kotlinx.json.*
@@ -10,6 +8,9 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+
+import com.bibliophile.models.Booklist
+import com.bibliophile.repositories.BooklistRepository
 
 fun Application.configureSerialization(repository: BooklistRepository) {
     install(ContentNegotiation) {
@@ -42,9 +43,9 @@ fun Application.configureSerialization(repository: BooklistRepository) {
                     repository.addBooklist(booklist)
                     call.respond(HttpStatusCode.NoContent)
                 } catch (ex: IllegalStateException) {
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.NoContent)
                 } catch (ex: JsonConvertException) {
-                    call.respond(HttpStatusCode.BadRequest)
+                    call.respond(HttpStatusCode.NoContent)
                 }
             }
 

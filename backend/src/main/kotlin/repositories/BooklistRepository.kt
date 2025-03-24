@@ -1,12 +1,13 @@
 package com.bibliophile.repositories
 
-import com.bibliophile.models.Booklist
-import com.bibliophile.db.BooklistDAO
-import com.bibliophile.db.BooklistTable
-import com.bibliophile.db.daoToModel
-import com.bibliophile.db.suspendTransaction
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
+
+import com.bibliophile.db.daoToModel
+import com.bibliophile.models.Booklist
+import com.bibliophile.db.entities.BooklistDAO
+import com.bibliophile.db.tables.BooklistTable
+import com.bibliophile.db.suspendTransaction
 
 class BooklistRepository {
 
