@@ -12,14 +12,14 @@ import io.ktor.server.routing.*
 import com.bibliophile.models.Booklist
 import com.bibliophile.repositories.BooklistRepository
 
-fun Application.configureSerialization(repository: BooklistRepository) {
+fun Application.configureSerialization(booklistRepository: BooklistRepository) {
     install(ContentNegotiation) {
         json()
     }
     routing {
         route("/api/booklists") {
             get {
-                val booklists = repository.allBooklists()
+                val booklists = booklistRepository.allBooklists()
                 call.respond(booklists)
             }
 
@@ -29,7 +29,7 @@ fun Application.configureSerialization(repository: BooklistRepository) {
                     call.respond(HttpStatusCode.BadRequest)
                     return@get
                 }
-                val booklist = repository.booklistByName(name)
+                val booklist = booklistRepository.booklistByName(name)
                 if (booklist == null) {
                     call.respond(HttpStatusCode.NotFound)
                     return@get
@@ -37,10 +37,21 @@ fun Application.configureSerialization(repository: BooklistRepository) {
                 call.respond(booklist)
             }
 
+            get("/{name}/books") {
+                val name = call.parameters["name"] ?: return@get call.respond(HttpStatusCode.BadRequest, "Name required")
+                val booklist = booklistRepository.booklistWithBooks(name)
+            
+                if (booklist != null) {
+                    call.respond(booklist)
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "Booklist not found")
+                }
+            }            
+
             post {
                 try {
                     val booklist = call.receive<Booklist>()
-                    repository.addBooklist(booklist)
+                    booklistRepository.addBooklist(booklist)
                     call.respond(HttpStatusCode.NoContent)
                 } catch (ex: IllegalStateException) {
                     call.respond(HttpStatusCode.NoContent)
@@ -55,7 +66,7 @@ fun Application.configureSerialization(repository: BooklistRepository) {
                     call.respond(HttpStatusCode.BadRequest)
                     return@delete
                 }
-                if (repository.removeBooklist(name)) {
+                if (booklistRepository.removeBooklist(name)) {
                     call.respond(HttpStatusCode.NoContent)
                 } else {
                     call.respond(HttpStatusCode.NotFound)

@@ -5,8 +5,11 @@ import org.jetbrains.exposed.sql.deleteWhere
 
 import com.bibliophile.db.daoToModel
 import com.bibliophile.models.Booklist
+import com.bibliophile.models.BooklistWithBooks
 import com.bibliophile.db.entities.BooklistDAO
+import com.bibliophile.db.entities.BooklistBookDAO
 import com.bibliophile.db.tables.BooklistTable
+import com.bibliophile.db.tables.BooklistBookTable
 import com.bibliophile.db.suspendTransaction
 
 class BooklistRepository {
@@ -38,4 +41,17 @@ class BooklistRepository {
         rowsDeleted == 1
     }
 
+    suspend fun booklistWithBooks(name: String): BooklistWithBooks? = suspendTransaction {
+        val booklistDao = BooklistDAO.find { BooklistTable.name eq name }.firstOrNull() ?: return@suspendTransaction null
+        val books = BooklistBookDAO.find { BooklistBookTable.booklistId eq booklistDao.id }
+            .map { it.isbn }
+        
+        BooklistWithBooks(
+            id = booklistDao.id.value,
+            userId = booklistDao.userId,
+            name = booklistDao.name,
+            description = booklistDao.description ?: "",
+            books = books
+        )
+    }
 }

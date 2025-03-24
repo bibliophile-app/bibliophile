@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
-import com.bibliophile.db.tables.BooklistTable
+import com.bibliophile.db.tables.*
 
 object DatabaseFactory {
     
@@ -28,7 +28,7 @@ object DatabaseFactory {
 
         // To prevent Exposed errors, create missing tables and columns
         transaction {
-            SchemaUtils.createMissingTablesAndColumns(BooklistTable)
+            SchemaUtils.createMissingTablesAndColumns(BooklistTable, BooklistBookTable)
         }
     }
 }
