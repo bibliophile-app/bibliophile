@@ -28,7 +28,7 @@ object DatabaseFactory {
 
         // To prevent Exposed errors, create missing tables and columns
         transaction {
-            SchemaUtils.createMissingTablesAndColumns(BooklistTable, BooklistBookTable)
+            SchemaUtils.createMissingTablesAndColumns(BooklistsTable, BooklistBooksTable)
         }
     }
 }

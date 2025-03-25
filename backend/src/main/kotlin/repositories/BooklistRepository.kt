@@ -8,8 +8,8 @@ import com.bibliophile.models.Booklist
 import com.bibliophile.models.BooklistWithBooks
 import com.bibliophile.db.entities.BooklistDAO
 import com.bibliophile.db.entities.BooklistBookDAO
-import com.bibliophile.db.tables.BooklistTable
-import com.bibliophile.db.tables.BooklistBookTable
+import com.bibliophile.db.tables.BooklistsTable
+import com.bibliophile.db.tables.BooklistBooksTable
 import com.bibliophile.db.suspendTransaction
 
 class BooklistRepository {
@@ -20,7 +20,7 @@ class BooklistRepository {
 
     suspend fun booklistByName(name: String): Booklist?  = suspendTransaction {
         BooklistDAO
-            .find { (BooklistTable.name eq name) }
+            .find { (BooklistsTable.listName eq name) }
             .limit(1)
             .map(::daoToModel)
             .firstOrNull()
@@ -29,28 +29,28 @@ class BooklistRepository {
     suspend fun addBooklist(booklist: Booklist): Unit = suspendTransaction {
         BooklistDAO.new {
             userId = booklist.userId
-            name = booklist.name
-            description = booklist.description
+            listName = booklist.listName
+            listDescription = booklist.listDescription
         }
     }    
 
     suspend fun removeBooklist(name: String): Boolean = suspendTransaction {
-        val rowsDeleted = BooklistTable.deleteWhere {
-            BooklistTable.name eq name
+        val rowsDeleted = BooklistsTable.deleteWhere {
+            BooklistsTable.listName eq name
         }
         rowsDeleted == 1
     }
 
     suspend fun booklistWithBooks(name: String): BooklistWithBooks? = suspendTransaction {
-        val booklistDao = BooklistDAO.find { BooklistTable.name eq name }.firstOrNull() ?: return@suspendTransaction null
-        val books = BooklistBookDAO.find { BooklistBookTable.booklistId eq booklistDao.id }
+        val booklistDao = BooklistDAO.find { BooklistsTable.listName eq name }.firstOrNull() ?: return@suspendTransaction null
+        val books = BooklistBookDAO.find { BooklistBooksTable.booklistId eq booklistDao.id }
             .map { it.isbn }
         
         BooklistWithBooks(
             id = booklistDao.id.value,
             userId = booklistDao.userId,
-            name = booklistDao.name,
-            description = booklistDao.description ?: "",
+            listName = booklistDao.listName,
+            listDescription = booklistDao.listDescription ?: "",
             books = books
         )
     }

@@ -6,15 +6,15 @@ import kotlinx.serialization.Serializable
 data class Booklist(
     val id: Int? = null,
     val userId: Int,
-    val name: String,
-    val description: String?,
+    val listName: String,
+    val listDescription: String?,
 )
 
 @Serializable
 data class BooklistWithBooks(
     val id: Int,
     val userId: Int,
-    val name: String,
-    val description: String?,
+    val listName: String,
+    val listDescription: String?,
     val books: List<String>
 )

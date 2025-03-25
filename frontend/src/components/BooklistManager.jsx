@@ -58,8 +58,9 @@ const BooklistManager = () => {
         displayAllBooklists();
     };
 
-    const addNewBooklist = (booklist) => {
-        sendPOST("http://localhost:8080/api/booklists", booklist);
+    const addNewBooklist = async (booklist) => {
+        await sendPOST("http://localhost:8080/api/booklists", booklist);
+        displayAllBooklists();
     };
 
     const buildBooklistFromForm = (event) => {
@@ -67,11 +68,10 @@ const BooklistManager = () => {
         const form = event.target;
         const booklist = {
             userId: form.newBooklistUserId.value,
-            name: form.newBooklistName.value,
-            description: form.newBooklistDescription.value,
+            listName: form.newBooklistName.value,
+            listDescription: form.newBooklistDescription.value,
         };
         addNewBooklist(booklist);
-        displayAllBooklists();
     };
 
     return (
@@ -111,7 +111,7 @@ const BooklistManager = () => {
             <hr />
             <div>
                 Current booklist is{" "}
-                <em>{currentBooklist ? `booklist: ${currentBooklist.name} - ${currentBooklist.description}` : "None"}</em>
+                <em>{currentBooklist ? `booklist: ${currentBooklist.listName} - ${currentBooklist.listDescription}` : "None"}</em>
             </div>
             <hr />
 
@@ -126,15 +126,15 @@ const BooklistManager = () => {
                 </thead>
                 <tbody>
                     {booklists.map((booklist) => (
-                        <tr key={booklist.name}>
-                            <td>{booklist.name}</td>
+                        <tr key={booklist.listName}>
+                            <td>{booklist.listName}</td>
                             <td>
-                                <a href="#!" onClick={() => displayBooklist(booklist.name)}>
+                                <a href="#!" onClick={() => displayBooklist(booklist.listName)}>
                                     View
                                 </a>
                             </td>
                             <td>
-                                <a href="#!" onClick={() => deleteBooklist(booklist.name)}>
+                                <a href="#!" onClick={() => deleteBooklist(booklist.listName)}>
                                     Delete
                                 </a>
                             </td>
