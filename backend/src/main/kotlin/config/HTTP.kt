@@ -17,6 +17,7 @@ fun Application.configureHTTP() {
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Options)
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Accept) // Permite o header Accept

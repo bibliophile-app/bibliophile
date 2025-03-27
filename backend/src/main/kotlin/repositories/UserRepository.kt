@@ -36,6 +36,13 @@ class UserRepository {
         }.let(::daoToModel)
     }
 
+    suspend fun updateUsername(user: User): User = suspendTransaction {
+        UserDAO.findById(user.id!!)?.apply {
+            this.username = user.username
+            this.passwordHash = user.passwordHash
+        }?.let(::daoToModel) ?: throw Exception("User not found")
+    }
+    
     /** Deleta um usuário pelo ID */
     suspend fun deleteUserById(id: Int): Boolean = suspendTransaction {
         val deletedRows = UsersTable.deleteWhere { UsersTable.id eq id }
