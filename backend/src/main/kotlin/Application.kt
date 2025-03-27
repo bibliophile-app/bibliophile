@@ -11,10 +11,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    val repository = BooklistRepository()
-
-    configureSerialization(repository)
-
+    configureSerialization()
     configureMonitoring()
     configureRouting()
     configureHTTP()
