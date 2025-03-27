@@ -48,16 +48,32 @@ fun Application.configureSerialization(userRepository: UserRepository) {
                 }
             }
 
-            delete("/{username}") {
-                val username = call.parameters["username"]
-                if (username == null) {
-                    call.respond(HttpStatusCode.BadRequest, "Username is required")
+            put("/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid user ID")
+                    return@put
+                }
+                
+                try {
+                    val updatedUser = call.receive<User>().copy(id = id)
+                    val result = userRepository.updateUsername(updatedUser)
+                    call.respond(HttpStatusCode.OK, result)
+                } catch (e: Exception) {
+                    call.respond(HttpStatusCode.InternalServerError, "Error updating user")
+                }
+            }         
+
+            delete("/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid user ID")
                     return@delete
                 }
-                if (userRepository.deleteUserByUsername(username)) {  
+                if (userRepository.deleteUserById(id)) {  
                     call.respond(HttpStatusCode.NoContent)
                 } else {
-                    call.respond(HttpStatusCode.NotFound, "User not found")
+                    call.respond(HttpStatusCode.NotFound, "Invalid user ID")
                 }
             }
         }
