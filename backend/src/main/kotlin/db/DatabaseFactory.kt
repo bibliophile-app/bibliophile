@@ -1,8 +1,8 @@
-package com.bibliophile.config
+package com.bibliophile.db
 
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import com.bibliophile.tables.UsersTable
+import com.bibliophile.db.tables.UsersTable
 
 object DatabaseFactory {
     fun init() {
@@ -17,8 +17,5 @@ object DatabaseFactory {
             password = dbPassword
         )
 
-        transaction {
-            SchemaUtils.create(Users)
-        }
     }
 }

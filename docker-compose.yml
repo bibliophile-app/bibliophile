@@ -32,7 +32,7 @@ services:
     env_file:
       - .env
     command: ["gradle", "run", "--no-daemon"]
-
+    
   frontend:
     build: ./frontend
     container_name: react_frontend
