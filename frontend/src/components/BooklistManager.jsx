@@ -1,147 +1,135 @@
 import React, { useState, useEffect } from "react";
 
-// Componente principal
+const API_URL = "http://localhost:8080/booklists";
+
 const BooklistManager = () => {
     const [booklists, setBooklists] = useState([]);
     const [currentBooklist, setCurrentBooklist] = useState(null);
+    const [newBooklist, setNewBooklist] = useState({ userId: "", listName: "", listDescription: "" });
+    const [bookId, setBookId] = useState("");
+    const [isEditing, setIsEditing] = useState(false);
+    const [editBooklist, setEditBooklist] = useState({ listName: "", listDescription: "" });
 
-    // Carrega todas as tarefas
     useEffect(() => {
         displayAllBooklists();
     }, []);
 
-    const fetchAllBooklists = async () => {
-        const response = await sendGET("http://localhost:8080/api/booklists");
-        return response;
-    };
+    const sendRequest = async (url, method = "GET", data = null) => {
+        const options = {
+            method,
+            headers: { "Content-Type": "application/json" },
+        };
 
-    const fetchBooklistWithName = async (name) => {
-        const response = await sendGET(`http://localhost:8080/api/booklists/byName/${name}`);
-        return response;
-    };
+        if (data) options.body = JSON.stringify(data);
 
-    const sendGET = async (url) => {
-        const response = await fetch(url, {
-            headers: { Accept: "application/json" },
-        });
+        const response = await fetch(url, options);
         return response.ok ? response.json() : [];
     };
 
-    const sendPOST = async (url, data) => {
-        await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        });
-    };
-
-    const sendDELETE = async (url) => {
-        await fetch(url, {
-            method: "DELETE",
-        });
-    };
-
     const displayAllBooklists = async () => {
-        const booklists = await fetchAllBooklists();
+        const booklists = await sendRequest(API_URL);
         setBooklists(booklists);
     };
 
-
-    const displayBooklist = async (name) => {
-        const booklist = await fetchBooklistWithName(name);
+    const displayBooklist = async (id) => {
+        const booklist = await sendRequest(`${API_URL}/${id}/books`);
         setCurrentBooklist(booklist);
+        setEditBooklist({ listName: booklist.listName, listDescription: booklist.listDescription });
+        setIsEditing(false);
     };
 
-    const deleteBooklist = async (name) => {
-        await sendDELETE(`http://localhost:8080/api/booklists/${name}`);
+    const deleteBooklist = async (id) => {
+        await sendRequest(`${API_URL}/${id}`, "DELETE");
         setCurrentBooklist(null);
         displayAllBooklists();
     };
 
-    const addNewBooklist = async (booklist) => {
-        await sendPOST("http://localhost:8080/api/booklists", booklist);
+    const addNewBooklist = async (event) => {
+        event.preventDefault();
+        await sendRequest(API_URL, "POST", newBooklist);
+        setNewBooklist({ userId: "", listName: "", listDescription: "" });
         displayAllBooklists();
     };
 
-    const buildBooklistFromForm = (event) => {
-        event.preventDefault();
-        const form = event.target;
-        const booklist = {
-            userId: form.newBooklistUserId.value,
-            listName: form.newBooklistName.value,
-            listDescription: form.newBooklistDescription.value,
-        };
-        addNewBooklist(booklist);
+    const updateBooklist = async () => {
+        if (currentBooklist) {
+            await sendRequest(`${API_URL}/${currentBooklist.id}`, "PUT", {userId: currentBooklist.userId, ...editBooklist});
+            setIsEditing(false);
+            displayBooklist(currentBooklist.id);
+        }
+        displayAllBooklists();
+    };
+
+    const addBookToList = async () => {
+        if (currentBooklist && bookId) {
+            await sendRequest(`${API_URL}/${currentBooklist.id}/books`, "POST", { booklistId: currentBooklist.id, isbn: bookId });
+            displayBooklist(currentBooklist.id);
+            setBookId("");
+        }
+    };
+
+    const removeBookFromList = async (bookId) => {
+        if (currentBooklist) {
+            await sendRequest(`${API_URL}/${currentBooklist.id}/books/${bookId}`, "DELETE");
+            displayBooklist(currentBooklist.id);
+        }
     };
 
     return (
         <div>
-            <h1>Booklist Manager Client</h1>
+            <h1>Booklist Manager</h1>
 
-            {/* Formulários de interações */}
-            <form onSubmit={(e) => { e.preventDefault(); displayAllBooklists(); }}>
-                <span>View all the booklists </span>
-                <input type="submit" value="Go" />
+            <form onSubmit={addNewBooklist}>
+                <h3>Create New Booklist</h3>
+                <input type="number" placeholder="User ID" value={newBooklist.userId} onChange={(e) => setNewBooklist({ ...newBooklist, userId: e.target.value })} required />
+                <input type="text" placeholder="List Name" value={newBooklist.listName} onChange={(e) => setNewBooklist({ ...newBooklist, listName: e.target.value })} required />
+                <input type="text" placeholder="Description" value={newBooklist.listDescription} onChange={(e) => setNewBooklist({ ...newBooklist, listDescription: e.target.value })} />
+                <button type="submit">Add Booklist</button>
             </form>
 
-            {/* Formulário para adicionar nova tarefa */}
-            <form name="addBooklistForm" onSubmit={buildBooklistFromForm}>
-                <span>Create new booklist with </span>
-                
-                <br/>
-                <label htmlFor="newBooklistUserId"><b>User: </b></label>
-                <input type="number" id="newBooklisUserId" name="newBooklistUserId" size="10" />
-                
-                <br/>
-                <label htmlFor="newBooklistName"><b>Name: </b></label>
-                <input type="text" id="newBooklistName" name="newBooklistName" size="10" />
-                
-                <br/>
-                <label htmlFor="newBooklistDescription"><b>Description: </b></label>
-                <input
-                    type="text"
-                    id="newBooklistDescription"
-                    name="newBooklistDescription"
-                    size="20"
-                />
-                <br/>
-                <input type="submit" value="Go" />
-            </form>
+            <h3>All Booklists</h3>
+            <ul>
+                {booklists.map((booklist) => (
+                    <li key={booklist.id}>
+                        {booklist.listName} - {booklist.listDescription}{" "}
+                        <button onClick={() => displayBooklist(booklist.id)}>View</button>
+                        <button onClick={() => deleteBooklist(booklist.id)}>Delete</button>
+                    </li>
+                ))}
+            </ul>
 
-            <hr />
-            <div>
-                Current booklist is{" "}
-                <em>{currentBooklist ? `booklist: ${currentBooklist.listName} - ${currentBooklist.listDescription}` : "None"}</em>
-            </div>
-            <hr />
+            {currentBooklist && (
+                <div>
+                    <h3>Current Booklist</h3>
+                    {isEditing ? (
+                        <div>
+                            <input type="text" value={editBooklist.listName} onChange={(e) => setEditBooklist({ ...editBooklist, listName: e.target.value })} />
+                            <input type="text" value={editBooklist.listDescription} onChange={(e) => setEditBooklist({ ...editBooklist, listDescription: e.target.value })} />
+                            <button onClick={updateBooklist}>Save</button>
+                            <button onClick={() => setIsEditing(false)}>Cancel</button>
+                        </div>
+                    ) : (
+                        <div>
+                            <p><b>Name:</b> {currentBooklist.listName}</p>
+                            <p><b>Description:</b> {currentBooklist.listDescription}</p>
+                            <button onClick={() => setIsEditing(true)}>Edit</button>
+                        </div>
+                    )}
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {booklists.map((booklist) => (
-                        <tr key={booklist.listName}>
-                            <td>{booklist.listName}</td>
-                            <td>
-                                <a href="#!" onClick={() => displayBooklist(booklist.listName)}>
-                                    View
-                                </a>
-                            </td>
-                            <td>
-                                <a href="#!" onClick={() => deleteBooklist(booklist.listName)}>
-                                    Delete
-                                </a>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                    <h4>Books:</h4>
+                    <ul>
+                        {currentBooklist.books?.map((book) => (
+                            <li key={book}>
+                                {book} <button onClick={() => removeBookFromList(book)}>Remove</button>
+                            </li>
+                        ))}
+                    </ul>
+
+                    <h4>Add Book to List</h4>
+                    <input type="number" placeholder="Book ISBN" value={bookId} onChange={(e) => setBookId(e.target.value)} />
+                    <button onClick={addBookToList}>Add Book</button>
+                </div>
+            )}
         </div>
     );
 };

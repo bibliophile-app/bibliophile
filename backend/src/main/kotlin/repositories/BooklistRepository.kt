@@ -2,6 +2,7 @@ package com.bibliophile.repositories
 
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.and
 
 import com.bibliophile.db.daoToModel
 import com.bibliophile.models.Booklist
@@ -18,34 +19,38 @@ class BooklistRepository {
         BooklistDAO.all().map(::daoToModel)
     }
 
-    suspend fun booklistByName(name: String): Booklist?  = suspendTransaction {
-        BooklistDAO
-            .find { (BooklistsTable.listName eq name) }
-            .limit(1)
-            .map(::daoToModel)
-            .firstOrNull()
+    suspend fun booklist(booklistId: Int): Booklist? = suspendTransaction {
+        BooklistDAO.findById(booklistId)?.let(::daoToModel)
     }
-    
+
     suspend fun addBooklist(booklist: Booklist): Unit = suspendTransaction {
         BooklistDAO.new {
             userId = booklist.userId
             listName = booklist.listName
             listDescription = booklist.listDescription
         }
-    }    
-
-    suspend fun removeBooklist(name: String): Boolean = suspendTransaction {
-        val rowsDeleted = BooklistsTable.deleteWhere {
-            BooklistsTable.listName eq name
-        }
-        rowsDeleted == 1
     }
 
-    suspend fun booklistWithBooks(name: String): BooklistWithBooks? = suspendTransaction {
-        val booklistDao = BooklistDAO.find { BooklistsTable.listName eq name }.firstOrNull() ?: return@suspendTransaction null
+    suspend fun updateBooklist(booklistId: Int, updatedBooklist: Booklist): Boolean = suspendTransaction {
+        val booklistDao = BooklistDAO.findById(booklistId) ?: return@suspendTransaction false
+        booklistDao.apply {
+            userId = updatedBooklist.userId
+            listName = updatedBooklist.listName
+            listDescription = updatedBooklist.listDescription
+        }
+        true
+    }
+
+    suspend fun removeBooklist(booklistId: Int): Boolean = suspendTransaction {
+        BooklistBooksTable.deleteWhere { BooklistBooksTable.booklistId eq booklistId }
+        BooklistsTable.deleteWhere { id eq booklistId } > 0
+    }
+
+    suspend fun booklistWithBooks(booklistId: Int): BooklistWithBooks? = suspendTransaction {
+        val booklistDao = BooklistDAO.findById(booklistId) ?: return@suspendTransaction null
         val books = BooklistBookDAO.find { BooklistBooksTable.booklistId eq booklistDao.id }
             .map { it.isbn }
-        
+
         BooklistWithBooks(
             id = booklistDao.id.value,
             userId = booklistDao.userId,
@@ -53,5 +58,19 @@ class BooklistRepository {
             listDescription = booklistDao.listDescription ?: "",
             books = books
         )
+    }
+
+    suspend fun addBookToBooklist(booklistId: Int, bookISBN: String): Boolean = suspendTransaction {
+        val booklistDao = BooklistDAO.findById(booklistId) ?: return@suspendTransaction false
+        
+        BooklistBookDAO.new {
+            this.booklistId = booklistDao.id
+            this.isbn = bookISBN
+        }
+        true
+    }
+
+    suspend fun removeBookFromBooklist(booklistId: Int, bookISBN: String): Boolean = suspendTransaction {
+        BooklistBooksTable.deleteWhere { (BooklistBooksTable.booklistId eq booklistId) and (BooklistBooksTable.isbn eq bookISBN) } > 0
     }
 }

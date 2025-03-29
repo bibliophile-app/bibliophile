@@ -15,6 +15,7 @@ fun Application.configureHTTP() {
     install(CORS) {
         anyHost()
         allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Delete)
         allowMethod(HttpMethod.Options)

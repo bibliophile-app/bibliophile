@@ -10,5 +10,5 @@ class BooklistBookDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<BooklistBookDAO>(BooklistBooksTable)
 
     var isbn by BooklistBooksTable.isbn
-    var booklist by BooklistBooksTable.booklistId
+    var booklistId by BooklistBooksTable.booklistId
 }

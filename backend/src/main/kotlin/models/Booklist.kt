@@ -18,3 +18,9 @@ data class BooklistWithBooks(
     val listDescription: String?,
     val books: List<String>
 )
+
+@Serializable
+data class BooklistBook(
+    val booklistId: Int,
+    val isbn: String,
+)
