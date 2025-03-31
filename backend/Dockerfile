@@ -16,6 +16,3 @@ COPY . .
 
 # Porta do Ktor
 EXPOSE 8080
-
-# Comando padrão para rodar no modo desenvolvimento
-CMD ["gradle", "run", "--no-daemon"]

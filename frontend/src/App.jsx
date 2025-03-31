@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import BooklistManager from './components/BooklistManager';
+import Home from './pages/Home';
 
 function App() {
-    const [message, setMessage] = useState("");
-
-    useEffect(() => {
-        fetch("http://localhost:8080/")
-            .then((res) => res.text())
-            .then(setMessage);
-    }, []);
-
-    return <h1>{message}</h1>;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/test/booklists" element={<BooklistManager />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
