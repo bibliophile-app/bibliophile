@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: mariadb:latest
@@ -32,7 +30,7 @@ services:
     env_file:
       - .env
     command: ["gradle", "run", "--no-daemon"]
-    
+
   frontend:
     build: ./frontend
     container_name: react_frontend
@@ -42,7 +40,6 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-
     environment:
       - CHOKIDAR_USEPOLLING=true  
     depends_on:

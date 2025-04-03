@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:8080/api/users";
+const API_URL = "http://localhost:8080/users";
 
 export default function UserManager() {
   const [users, setUsers] = useState([]);

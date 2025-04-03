@@ -15,13 +15,12 @@ fun Application.configureHTTP() {
     install(CORS) {
         anyHost()
         allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Delete)
-        allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Options)
         allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Accept) // Permite o header Accept
-        allowHeader("Access-Control-Allow-Origin") 
         allowHeader(HttpHeaders.Authorization)
     }
 }
