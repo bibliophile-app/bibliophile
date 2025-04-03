@@ -5,6 +5,7 @@ import io.ktor.server.response.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
 import com.bibliophile.routes.booklistRoutes
+import com.bibliophile.routes.userRoutes
 
 fun Application.configureRouting() {
     routing {
@@ -13,5 +14,6 @@ fun Application.configureRouting() {
         }
         
         booklistRoutes()
+        userRoutes()
     }
 }

@@ -6,9 +6,7 @@ import com.bibliophile.models.Booklist
 import com.bibliophile.models.BooklistBook
 import com.bibliophile.repositories.BooklistRepository
 
-class BooklistService {
-
-    private val booklistRepository = BooklistRepository()
+class BooklistService(private val booklistRepository: BooklistRepository) {
 
     suspend fun getAllBooklists(): List<Booklist> = booklistRepository.allBooklists()
 

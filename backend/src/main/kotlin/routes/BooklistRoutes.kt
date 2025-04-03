@@ -8,10 +8,11 @@ import io.ktor.server.routing.*
 import com.bibliophile.models.Booklist
 import com.bibliophile.models.BooklistBook
 import com.bibliophile.services.BooklistService
+import com.bibliophile.repositories.BooklistRepository
 
 fun Route.booklistRoutes() {
 
-    val booklistService = BooklistService()
+    val booklistService = BooklistService(BooklistRepository())
 
     route("booklists") {
 
