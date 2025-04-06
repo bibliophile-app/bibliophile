@@ -27,16 +27,15 @@ class QuoteRepository {
     }
 
     suspend fun editQuote(quoteId: Int, quote: Quote): Boolean = suspendTransaction {
-        val QuoteDAO = QuoteDAO.findById(quoteId) ?: return@suspendTransaction false
-        QuoteDAO.apply {
-            userId = editQuote.userId
-            content = editQuote.content
+        val quoteDao = QuoteDAO.findById(quoteId) ?: return@suspendTransaction false
+        quoteDao.apply {
+            userId = quote.userId
+            content = quote.content
         }
         true
     }
 
     suspend fun deleteQuote(quoteId: Int): Boolean = suspendTransaction {
-        QuotesTable.deleteWhere { QuotesTable.quoteId eq quoteId }
         QuotesTable.deleteWhere { id eq quoteId } > 0
     }
 

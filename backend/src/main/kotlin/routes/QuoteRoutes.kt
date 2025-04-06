@@ -32,8 +32,8 @@ fun Route.quoteRoutes() {
 
         put("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
-            val updatedQuote = call.receive<Quote>()
-            val (status, message) = quoteService.updateQuote(id, updatedQuote)
+            val editQuote = call.receive<Quote>()
+            val (status, message) = quoteService.editQuote(id, editQuote)
             call.respond(status, message)
         }
 

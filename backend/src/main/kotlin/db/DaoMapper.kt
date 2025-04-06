@@ -4,7 +4,7 @@ import com.bibliophile.models.User
 import com.bibliophile.models.Quote
 import com.bibliophile.models.Booklist
 import com.bibliophile.db.entities.UserDAO
-import com.bibliophile.models.QuoteDAO
+import com.bibliophile.db.entities.QuoteDAO
 import com.bibliophile.db.entities.BooklistDAO
 
 fun daoToModel(dao: BooklistDAO) = Booklist(

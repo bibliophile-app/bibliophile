@@ -39,7 +39,7 @@ class QuoteService(private val quoteRepository: QuoteRepository) {
         }
     }
 
-    suspend fun updateQuote(id: Int?, quote: Quote): Pair<HttpStatusCode, Any> {
+    suspend fun editQuote(id: Int?, quote: Quote): Pair<HttpStatusCode, Any> {
         if (id == null) {
             return HttpStatusCode.BadRequest to mapOf("message" to "Invalid ID")
         }
