@@ -8,3 +8,6 @@ data class User(
     val username: String,
     val passwordHash: String
 ) 
+
+@Serializable
+data class UserSession(val userId: Int?)

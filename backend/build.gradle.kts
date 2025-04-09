@@ -30,9 +30,16 @@ dependencies {
     implementation(libs.ktor.server.config.yaml)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
+
     implementation("org.jetbrains.exposed:exposed-core:0.41.1")
     implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.0.7")
     implementation("org.flywaydb:flyway-core:8.0.0")
+
+    implementation("at.favre.lib:bcrypt:0.9.0")
+    implementation("io.ktor:ktor-server-auth")
+    implementation("io.ktor:ktor-server-sessions")
+    implementation("io.ktor:ktor-server-auth-jvm")
+
 }

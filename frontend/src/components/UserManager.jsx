@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:8080/users";
+const API_URL = "/users";
 
 export default function UserManager() {
   const [users, setUsers] = useState([]);
@@ -43,10 +43,10 @@ export default function UserManager() {
 
   const handleAddUser = async () => {
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch("http://localhost:8080/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, passwordHash: password })
+        body: JSON.stringify({ username, password: password })
       });
       if (response.ok) {
         fetchUsers();
