@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import UserManager from './components/UserManager';
 import QuoteManager from './components/QuoteManager';
 import ReviewManager from './components/ReviewManager';
+import FollowerManager from './components/FollowerManager';
 import BooklistManager from './components/BooklistManager';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/test/users" element={<UserManager/>}/>
         <Route path="/test/quotes" element={<QuoteManager/>}/>
         <Route path="/test/reviews" element={<ReviewManager/>}/>
+        <Route path="/test/followers" element={<FollowerManager/>}/>
       </Routes>
     </Router>
   );
