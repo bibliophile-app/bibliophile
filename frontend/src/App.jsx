@@ -14,6 +14,7 @@ import Register from './components/Register';
 import NavBar from './components/navigation/NavBar';
 import QuoteManager from './components/QuoteManager';
 import ReviewManager from './components/ReviewManager';
+import FollowerManager from './components/FollowerManager';
 import BooklistManager from './components/BooklistManager';
 
 const PageWrapper = styled(Box, {
@@ -54,6 +55,7 @@ function App() {
 								<Route path="/test/quotes" element={<QuoteManager />} />
 								<Route path="/test/booklists" element={<BooklistManager />} />
 								<Route path="/test/reviews" element={<ReviewManager />} />
+								<Route path="/test/followers" element={<FollowerManager/>}/>
 							</Routes>
             			</CustomContainer>
           			</PageWrapper>
