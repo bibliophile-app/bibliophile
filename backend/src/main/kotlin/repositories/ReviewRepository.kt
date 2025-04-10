@@ -70,11 +70,5 @@ class ReviewRepository {
         val deletedRows = ReviewsTable.deleteWhere { ReviewsTable.userId eq userId }
         deletedRows > 0
     }
-
-    /** Deleta todas as reviews de um livro (ISBN) */
-    suspend fun deleteReviewsByIsbn(isbn: String): Boolean = suspendTransaction {
-        val deletedRows = ReviewsTable.deleteWhere { ReviewsTable.isbn eq isbn }
-        deletedRows > 0
-    }
     
 }

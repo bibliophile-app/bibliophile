@@ -23,6 +23,7 @@ object DatabaseFactory {
         // Apply migrations with Flyway
         Flyway.configure()
             .dataSource(DB_URL, DB_USER, DB_PASSWORD)
+            .locations("classpath:migrations")
             .load()
             .migrate()
 

@@ -42,7 +42,6 @@ class BooklistRepository {
     }
 
     suspend fun removeBooklist(booklistId: Int): Boolean = suspendTransaction {
-        BooklistBooksTable.deleteWhere { BooklistBooksTable.booklistId eq booklistId }
         BooklistsTable.deleteWhere { id eq booklistId } > 0
     }
 
