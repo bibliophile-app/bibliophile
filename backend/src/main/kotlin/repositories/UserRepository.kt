@@ -2,12 +2,12 @@ package com.bibliophile.repositories
 
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
-
 import com.bibliophile.db.daoToModel
-import com.bibliophile.models.User
-import com.bibliophile.db.entities.UserDAO
-import com.bibliophile.db.tables.UsersTable
 import com.bibliophile.db.suspendTransaction
+import com.bibliophile.models.User
+import com.bibliophile.models.UserProfileResponse
+import com.bibliophile.db.entities.*
+import com.bibliophile.db.tables.*
 
 class UserRepository {
 
@@ -27,6 +27,21 @@ class UserRepository {
             .map(::daoToModel)
             .firstOrNull()
     }
+
+    suspend fun getUserProfile(userId: Int): UserProfileResponse? = suspendTransaction {
+        val user = UserDAO.findById(userId) ?: return@suspendTransaction null
+        val booklists = BooklistDAO.find { BooklistsTable.userId eq userId }.map(::daoToModel)
+        val reviews = ReviewDAO.find { ReviewsTable.userId eq userId }.map(::daoToModel)
+        val quotes = QuoteDAO.find { QuotesTable.userId eq userId }.map(::daoToModel)
+    
+        UserProfileResponse(
+            id = user.id.value,
+            username = user.username,
+            booklists = booklists,
+            quotes = quotes,
+            reviews = reviews
+        )
+    }    
 
     suspend fun authenticate(username: String, passwordHash: String): User? {
         val user = findByUsername(username)

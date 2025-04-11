@@ -4,9 +4,11 @@ import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.sessions.*
 import io.ktor.server.application.*
-import com.bibliophile.models.Booklist
-import com.bibliophile.models.BooklistBook
+import com.bibliophile.models.UserSession
+import com.bibliophile.models.BookRequest
+import com.bibliophile.models.BooklistRequest
 import com.bibliophile.repositories.BooklistRepository
 
 fun Route.booklistRoutes() {
@@ -55,10 +57,16 @@ fun Route.booklistRoutes() {
         }
 
         post {
-            val booklist = call.receive<Booklist>()
+            val booklist = call.receive<BooklistRequest>()
+            val session = call.sessions.get<UserSession>()
+            val userId = session?.userId
+            if (userId == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@post
+            }
 
             runCatching {
-                booklistRepository.addBooklist(booklist)
+                booklistRepository.addBooklist(session.userId, booklist)
             }.onSuccess {
                 call.respond(HttpStatusCode.Created, mapOf("message" to "Booklist created successfully"))
             }.onFailure {
@@ -70,10 +78,17 @@ fun Route.booklistRoutes() {
 
         post("/{id}/books") {
             val id = call.getIntParam() ?: return@post
-            val booklistBook = call.receive<BooklistBook>()
+            val session = call.sessions.get<UserSession>()
+            val userId = session?.userId
+            
+            if (userId == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@post
+            }
+            val book = call.receive<BookRequest>()
             
             runCatching {
-                booklistRepository.addBookToBooklist(id, booklistBook.isbn)
+                booklistRepository.addBookToBooklist(id, userId, book.isbn)
             }.onSuccess {
                 call.respond(HttpStatusCode.Created, mapOf("message" to "Book added to booklist successfully"))
             }.onFailure {
@@ -85,15 +100,22 @@ fun Route.booklistRoutes() {
 
         put("/{id}") {
             val id = call.getIntParam() ?: return@put
-            val updated = call.receive<Booklist>()
+            val session = call.sessions.get<UserSession>()
+            val userId = session?.userId
+            if (userId == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@put
+            }
+            
+            val booklist = call.receive<BooklistRequest>()
 
             runCatching {
-                booklistRepository.updateBooklist(id, updated)
+                booklistRepository.updateBooklist(id, userId, booklist)
             }.onSuccess {
                 if (it)
                     call.respond(HttpStatusCode.OK, mapOf("message" to "Booklist updated successfully"))
                 else
-                    call.respond(HttpStatusCode.NotFound, mapOf("message" to "Booklist not found"))
+                    call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this booklist"))
             }.onFailure {
                 call.respondSqlException(it)
             }
@@ -101,14 +123,20 @@ fun Route.booklistRoutes() {
 
         delete("/{id}") {
             val id = call.getIntParam() ?: return@delete
+            val session = call.sessions.get<UserSession>()
+            val userId = session?.userId
+            if (userId == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@delete
+            }
             
             runCatching {
-                booklistRepository.removeBooklist(id)
+                booklistRepository.removeBooklist(id, userId)
             }.onSuccess {
                 if (it)
                     call.respond(HttpStatusCode.OK, mapOf("message" to "Booklist deleted successfully"))
                 else
-                    call.respond(HttpStatusCode.NotFound, mapOf("message" to "Booklist not found"))
+                    call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this booklist"))
             }.onFailure {
                 call.respondServerError("Failed to delete booklist")
             }
@@ -117,14 +145,20 @@ fun Route.booklistRoutes() {
         delete("/{id}/books/{isbn}") {
             val id = call.getIntParam() ?: return@delete
             val isbn = call.getParam("isbn") ?: return@delete
-            
+            val session = call.sessions.get<UserSession>()
+            val userId = session?.userId
+            if (userId == null) {
+                call.respond(HttpStatusCode.Unauthorized)
+                return@delete
+            }
+
             runCatching {
-                booklistRepository.removeBookFromBooklist(id, isbn)
+                booklistRepository.removeBookFromBooklist(id, userId, isbn)
             }.onSuccess {
                 if (it)
                     call.respond(HttpStatusCode.OK, mapOf("message" to "Book deleted from booklist successfully"))
                 else
-                    call.respond(HttpStatusCode.NotFound, mapOf("message" to "Book not found in this booklist"))
+                    call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this booklist"))
             }.onFailure {
                 call.respondServerError("Failed to delete book from booklist")
             }

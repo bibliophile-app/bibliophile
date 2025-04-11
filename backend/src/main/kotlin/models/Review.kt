@@ -8,6 +8,14 @@ data class Review(
     val isbn: String,
     val userId: Int,
     val content: String,
-    val rate: Int,
+    val rating: Int,
     val favorite: Boolean
-) 
+)
+
+@Serializable
+data class ReviewRequest(
+    val isbn: String,
+    val content: String,
+    val rating: Int,
+    val favorite: Boolean
+)

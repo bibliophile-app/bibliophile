@@ -52,11 +52,16 @@ fun Route.authRoutes() {
 
     get("/me") {
         val session = call.sessions.get<UserSession>()
-        val user = session?.let { id -> UserRepository.findById(id.userId!!) }
-        if (user == null) {
-            call.respond(HttpStatusCode.Unauthorized)
-        } else {
-            call.respond(user)
+        val userId = session?.userId
+
+        if (userId == null)
+            call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Not authenticated"))
+        else {
+            val profile = UserRepository.getUserProfile(userId)
+            if (profile == null) 
+                call.respond(HttpStatusCode.NotFound, mapOf("error" to "Profile not found"))
+            else
+                call.respond(profile)
         }
     }
 
