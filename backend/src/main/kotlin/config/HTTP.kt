@@ -13,15 +13,14 @@ import org.slf4j.event.*
 
 fun Application.configureHTTP() {
     install(CORS) {
-        allowHost("localhost:3000", schemes = listOf("http"))
         allowCredentials = true
+        allowHost("localhost:3000", schemes = listOf("http"))
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Delete)
         allowMethod(HttpMethod.Options)
         allowHeader(HttpHeaders.ContentType)
-        allowHeader(HttpHeaders.Accept) // Permite o header Accept
         allowHeader(HttpHeaders.Authorization)
     }
 }

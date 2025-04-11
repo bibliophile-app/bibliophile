@@ -15,10 +15,10 @@ fun main(args: Array<String>) {
 fun Application.module() {
     install(Sessions) {
         cookie<UserSession>("USER_SESSION") {
-            cookie.httpOnly = true
+            cookie.httpOnly = true 
             cookie.secure = true // `false` only if running locally (not HTTPS)
-            cookie.path = "/"
-            cookie.maxAgeInSeconds = 60 * 60 * 24 // 1 dia
+            cookie.extensions["SameSite"] = "None"
+            cookie.maxAgeInSeconds = 60 * 60 * 24
         }
     }
 
