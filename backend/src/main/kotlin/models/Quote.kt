@@ -8,3 +8,8 @@ data class Quote(
     val userId: Int,
     val content: String
 ) 
+
+@Serializable
+data class QuoteRequest(
+    val content: String
+) 

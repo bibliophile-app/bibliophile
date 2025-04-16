@@ -4,11 +4,11 @@ const API_URL = "http://localhost:8080/quotes";
 
 const QuoteManager = () => {
     const [quotes, setQuotes] = useState([]);
-    const [newQuote, setNewQuote] = useState({ userId: "", content: "" });
+    const [newQuote, setNewQuote] = useState({ content: "" });
     const [searchId, setSearchId] = useState("");
     const [foundQuote, setFoundQuote] = useState(null);
     const [editQuote, setEditQuote] = useState(null);
-    const [editData, setEditData] = useState({ userId: "", content: "" });
+    const [editData, setEditData] = useState({ content: "" });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -22,6 +22,7 @@ const QuoteManager = () => {
             const options = {
                 method,
                 headers: { "Content-Type": "application/json" },
+                credentials: 'include',
                 body: data ? JSON.stringify(data) : null
             };
 
@@ -65,18 +66,12 @@ const QuoteManager = () => {
 
     const addQuote = async (e) => {
         e.preventDefault();
-        const userId = parseInt(newQuote.userId);
         
-        if (isNaN(userId)) {
-            setError("User ID must be a valid number");
-            return;
-        }
 
         if (await sendRequest(API_URL, "POST", {
-            userId,
             content: newQuote.content
         })) {
-            setNewQuote({ userId: "", content: "" });
+            setNewQuote({ content: "" });
             await fetchQuotes();
         }
     };
@@ -92,27 +87,18 @@ const QuoteManager = () => {
     const startEdit = (quote) => {
         setEditQuote(quote);
         setEditData({
-            userId: quote.userId.toString(),
             content: quote.content
         });
     };
 
     const updateQuote = async () => {
         if (!editQuote) return;
-        
-        const userId = parseInt(editData.userId);
-        if (isNaN(userId)) {
-            setError("User ID must be a valid number");
-            return;
-        }
 
         if (await sendRequest(`${API_URL}/${editQuote.id}`, "PUT", {
-            id: editQuote.id,
-            userId,
             content: editData.content
         })) {
             setEditQuote(null);
-            setEditData({ userId: "", content: "" });
+            setEditData({ content: "" });
             await fetchQuotes();
         }
     };
@@ -131,15 +117,6 @@ const QuoteManager = () => {
             <form onSubmit={addQuote} className="mb-6 p-4 border rounded">
                 <h3 className="text-lg font-semibold mb-2">Add New Quote</h3>
                 <div className="flex gap-2 mb-2">
-                    <input
-                        type="number"
-                        placeholder="User ID"
-                        value={newQuote.userId}
-                        onChange={(e) => setNewQuote({...newQuote, userId: e.target.value})}
-                        className="border p-2 w-32"
-                        min="1"
-                        required
-                    />
                     <input
                         type="text"
                         placeholder="Quote Content"
@@ -232,15 +209,6 @@ const QuoteManager = () => {
                     <div className="bg-white p-6 rounded-lg w-full max-w-2xl">
                         <h3 className="text-lg font-semibold mb-4">Edit Quote</h3>
                         <div className="space-y-3">
-                            <input
-                                type="number"
-                                placeholder="User ID"
-                                value={editData.userId}
-                                onChange={(e) => setEditData({...editData, userId: e.target.value})}
-                                className="border p-2 w-full"
-                                min="1"
-                                required
-                            />
                             <textarea
                                 placeholder="Quote Content"
                                 value={editData.content}
@@ -252,7 +220,7 @@ const QuoteManager = () => {
                                 <button 
                                     onClick={() => {
                                         setEditQuote(null);
-                                        setEditData({ userId: "", content: "" });
+                                        setEditData({ content: "" });
                                     }}
                                     className="bg-gray-500 text-white p-2 px-4 rounded hover:bg-gray-600"
                                 >

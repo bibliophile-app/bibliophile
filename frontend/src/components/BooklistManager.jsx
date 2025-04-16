@@ -5,7 +5,7 @@ const API_URL = "http://localhost:8080/booklists";
 const BooklistManager = () => {
     const [booklists, setBooklists] = useState([]);
     const [currentBooklist, setCurrentBooklist] = useState(null);
-    const [newBooklist, setNewBooklist] = useState({ userId: "", listName: "", listDescription: "" });
+    const [newBooklist, setNewBooklist] = useState({ listName: "", listDescription: "" });
     const [bookId, setBookId] = useState("");
     const [isEditing, setIsEditing] = useState(false);
     const [editBooklist, setEditBooklist] = useState({ listName: "", listDescription: "" });
@@ -18,6 +18,7 @@ const BooklistManager = () => {
         const options = {
             method,
             headers: { "Content-Type": "application/json" },
+            credentials: 'include'
         };
 
         if (data) options.body = JSON.stringify(data);
@@ -47,13 +48,13 @@ const BooklistManager = () => {
     const addNewBooklist = async (event) => {
         event.preventDefault();
         await sendRequest(API_URL, "POST", newBooklist);
-        setNewBooklist({ userId: "", listName: "", listDescription: "" });
+        setNewBooklist({ listName: "", listDescription: "" });
         displayAllBooklists();
     };
 
     const updateBooklist = async () => {
         if (currentBooklist) {
-            await sendRequest(`${API_URL}/${currentBooklist.id}`, "PUT", {userId: currentBooklist.userId, ...editBooklist});
+            await sendRequest(`${API_URL}/${currentBooklist.id}`, "PUT", {...editBooklist});
             setIsEditing(false);
             displayBooklist(currentBooklist.id);
         }
@@ -62,7 +63,7 @@ const BooklistManager = () => {
 
     const addBookToList = async () => {
         if (currentBooklist && bookId) {
-            await sendRequest(`${API_URL}/${currentBooklist.id}/books`, "POST", { booklistId: currentBooklist.id, isbn: bookId });
+            await sendRequest(`${API_URL}/${currentBooklist.id}/books`, "POST", { isbn: bookId });
             displayBooklist(currentBooklist.id);
             setBookId("");
         }
@@ -81,7 +82,6 @@ const BooklistManager = () => {
 
             <form onSubmit={addNewBooklist}>
                 <h3>Create New Booklist</h3>
-                <input type="number" placeholder="User ID" value={newBooklist.userId} onChange={(e) => setNewBooklist({ ...newBooklist, userId: e.target.value })} required />
                 <input type="text" placeholder="List Name" value={newBooklist.listName} onChange={(e) => setNewBooklist({ ...newBooklist, listName: e.target.value })} required />
                 <input type="text" placeholder="Description" value={newBooklist.listDescription} onChange={(e) => setNewBooklist({ ...newBooklist, listDescription: e.target.value })} />
                 <button type="submit">Add Booklist</button>

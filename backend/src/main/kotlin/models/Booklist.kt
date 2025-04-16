@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Booklist(
-    val id: Int? = null,
+    val id: Int,
     val userId: Int,
     val listName: String,
     val listDescription: String?,
@@ -20,7 +20,12 @@ data class BooklistWithBooks(
 )
 
 @Serializable
-data class BooklistBook(
-    val booklistId: Int,
+data class BookRequest(
     val isbn: String,
+)
+
+@Serializable
+data class BooklistRequest(
+    val listName: String,
+    val listDescription: String?,
 )

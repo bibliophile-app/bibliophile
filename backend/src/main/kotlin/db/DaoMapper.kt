@@ -10,10 +10,10 @@ import com.bibliophile.db.entities.ReviewDAO
 import com.bibliophile.db.entities.BooklistDAO
 
 fun daoToModel(dao: BooklistDAO) = Booklist(
-    dao.id.value,
-    dao.userId,
-    dao.listName,
-    dao.listDescription ?: "",
+    id = dao.id.value,
+    userId = dao.userId.value,
+    listName = dao.listName,
+    listDescription = dao.listDescription ?: "",
 )
 
 fun daoToModel(dao: UserDAO) = User(
@@ -23,16 +23,16 @@ fun daoToModel(dao: UserDAO) = User(
 )
 
 fun daoToModel(dao: QuoteDAO) = Quote (
-    dao.id.value,
-    dao.userId,
-    dao.content
+    id = dao.id.value,
+    userId = dao.userId.value,
+    content = dao.content
 )
 
 fun daoToModel(dao: ReviewDAO) = Review (
-    dao.id.value,
-    dao.isbn,
-    dao.userId,
-    dao.content,
-    dao.rate,
-    dao.favorite
+    id = dao.id.value,
+    isbn = dao.isbn,
+    userId = dao.userId.value,
+    content = dao.content,
+    rating = dao.rating,
+    favorite = dao.favorite
 )

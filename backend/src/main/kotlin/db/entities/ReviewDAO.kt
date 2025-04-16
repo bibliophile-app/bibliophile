@@ -11,6 +11,6 @@ class ReviewDAO(id: EntityID<Int>) : IntEntity(id) {
     var isbn by ReviewsTable.isbn
     var userId by ReviewsTable.userId
     var content by ReviewsTable.content
-    var rate by ReviewsTable.rate
+    var rating by ReviewsTable.rating
     var favorite by ReviewsTable.favorite
 }
