@@ -1,6 +1,7 @@
 package com.bibliophile.routes
 
 import io.ktor.http.*
+import io.ktor.util.date.GMTDate
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -47,8 +48,9 @@ fun Route.authRoutes() {
     
     get("/logout") {
         call.sessions.clear<UserSession>()
+        call.response.cookies.append(expiredSessionCookie())
         call.respond(HttpStatusCode.OK, mapOf("message" to "Logged out"))
-    }
+    }    
 
     get("/me") {
         val session = call.sessions.get<UserSession>()
@@ -74,4 +76,16 @@ fun Route.authRoutes() {
             call.respond(mapOf("username" to user.username))
         }
     }
+}
+
+private fun expiredSessionCookie(): Cookie {
+    return Cookie(
+        name = "USER_SESSION",
+        value = "",
+        path = "/",                
+        secure = true,
+        httpOnly = true,
+        extensions = mapOf("SameSite" to "None"),
+        expires = GMTDate.START       
+    )
 }

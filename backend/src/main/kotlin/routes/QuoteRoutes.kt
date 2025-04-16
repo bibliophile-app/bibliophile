@@ -1,6 +1,7 @@
 package com.bibliophile.routes
 
 import io.ktor.http.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -41,67 +42,53 @@ fun Route.quoteRoutes() {
             }
         }
 
-        post {
-            val quote = call.receive<QuoteRequest>()
-            val session = call.sessions.get<UserSession>()
-            val userId = session?.userId
-            if (userId == null) {
-                call.respond(HttpStatusCode.Unauthorized)
-                return@post
-            }
+        authenticate("auth-session") { 
+            post {
+                val quote = call.receive<QuoteRequest>()
+                val session = call.sessions.get<UserSession>()
 
-            runCatching {
-                quoteRepository.addQuote(session.userId, quote)
-            }.onSuccess {
-                call.respond(HttpStatusCode.Created, mapOf("message" to "Quote created successfully"))
-            }.onFailure {
-                call.respondServerError("Failed to create quote")
-            }
-        }
-
-        put("/{id}") {
-            val id = call.getIntParam() ?: return@put
-            val session = call.sessions.get<UserSession>()
-            val userId = session?.userId
-            if (userId == null) {
-                call.respond(HttpStatusCode.Unauthorized)
-                return@put
-            }
-
-            val updatedQuote = call.receive<QuoteRequest>()
-
-            runCatching {
-                quoteRepository.editQuote(id, userId, updatedQuote)
-            }.onSuccess { updated ->
-                if (updated) {
-                    call.respond(HttpStatusCode.OK, mapOf("message" to "Quote updated successfully"))
-                } else {
-                    call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this quote"))
+                runCatching {
+                    quoteRepository.addQuote(session?.userId!!, quote)
+                }.onSuccess {
+                    call.respond(HttpStatusCode.Created, mapOf("message" to "Quote created successfully"))
+                }.onFailure {
+                    call.respondServerError("Failed to create quote")
                 }
-            }.onFailure {
-                call.respondServerError("Failed to update quote")
-            }
-        }
-
-        delete("/{id}") {
-            val id = call.getIntParam() ?: return@delete
-            val session = call.sessions.get<UserSession>()
-            val userId = session?.userId
-            if (userId == null) {
-                call.respond(HttpStatusCode.Unauthorized)
-                return@delete
             }
 
-            runCatching {
-                quoteRepository.deleteQuote(id, userId)
-            }.onSuccess { deleted ->
-                if (deleted) {
-                    call.respond(HttpStatusCode.OK, mapOf("message" to "Quote deleted successfully"))
-                } else {
-                    call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this quote"))
+            put("/{id}") {
+                val id = call.getIntParam() ?: return@put
+                val updatedQuote = call.receive<QuoteRequest>()
+                val session = call.sessions.get<UserSession>()
+
+                runCatching {
+                    quoteRepository.editQuote(id, session?.userId!!, updatedQuote)
+                }.onSuccess { updated ->
+                    if (updated) {
+                        call.respond(HttpStatusCode.OK, mapOf("message" to "Quote updated successfully"))
+                    } else {
+                        call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this quote"))
+                    }
+                }.onFailure {
+                    call.respondServerError("Failed to update quote")
                 }
-            }.onFailure {
-                call.respondServerError("Failed to delete quote")
+            }
+
+            delete("/{id}") {
+                val id = call.getIntParam() ?: return@delete
+                val session = call.sessions.get<UserSession>()
+
+                runCatching {
+                    quoteRepository.deleteQuote(id, session?.userId!!)
+                }.onSuccess { deleted ->
+                    if (deleted) {
+                        call.respond(HttpStatusCode.OK, mapOf("message" to "Quote deleted successfully"))
+                    } else {
+                        call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this quote"))
+                    }
+                }.onFailure {
+                    call.respondServerError("Failed to delete quote")
+                }
             }
         }
     }

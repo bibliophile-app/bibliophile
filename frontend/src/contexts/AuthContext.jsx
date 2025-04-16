@@ -49,8 +49,8 @@ function AuthProvider ({ children }) {
     await authUser();
   }
 
-  function logout() {
-    fetch(`${API_URL}/login`, { credentials: 'include' })
+  async function logout() {
+    await fetch(`${API_URL}/logout`, { credentials: 'include' })
     setUser(null)
   }
 
