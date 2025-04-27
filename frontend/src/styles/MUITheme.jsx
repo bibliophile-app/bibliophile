@@ -40,7 +40,11 @@ const theme = createTheme({
   
 
   shape: {
-    borderRadius: 8,
+    borderRadius: {
+      rounded: '50px',
+      pill: '20px',
+    },
+
   },
 
 
@@ -90,6 +94,31 @@ const theme = createTheme({
       color: '#E9F2F9',
     },    
   },
+
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          textTransform: 'none',
+          transition: theme.transitions.create(
+            ['border-color', 'background-color', 'transform', 'color'],
+            { duration: theme.transitions.duration.short }
+          ),
+          '&:hover': {
+            transform: 'scale(1.02)',
+          },
+          '&:active': {
+            transform: 'scale(0.98)',
+          },
+        }),
+      },
+      defaultProps: {
+        disableElevation: true,
+        variant: 'contained',
+        color: 'primary',
+      },
+    },
+  },  
 });
 
 export default theme;
