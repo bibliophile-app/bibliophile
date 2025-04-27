@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Login from '../components/Login'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -10,7 +10,7 @@ function Home() {
   }
 
   return (
-    <div>
+    <div style={{ minHeight: '100%' }}>
       <h1>Bem-vindo, {user.username}</h1>
       <button onClick={() => {
         logout().then(() => window.location.reload())
