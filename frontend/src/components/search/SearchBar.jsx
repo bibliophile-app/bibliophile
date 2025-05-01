@@ -4,14 +4,18 @@ import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
-const SearchContainer = styled('div')(({ theme, isOpen }) => ({
+import { useNavigate } from 'react-router-dom';
+
+const SearchContainer = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'isOpen'
+})(({ theme, isOpen }) => ({
   position: 'relative',
   height: '1rem',
   display: 'flex',
+  borderRadius: '20px',
   alignItems: 'center',
   flexDirection: 'row-reverse',
   color: theme.palette.neutral.main,
-  borderRadius: theme.shape.borderRadius.pill,
   backgroundColor: isOpen ? 'rgba(255, 255, 255, 0.25)' : 'transparent',
   width: isOpen ? '180px' : '40px',
   padding: isOpen ? theme.spacing(0.5, 1) : 0,
@@ -49,7 +53,7 @@ const StyledInputBase = styled(InputBase)(({ theme, isOpen }) => ({
   },
 }));
 
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
+const StyledIconButton = styled(IconButton)(({
   color: 'inherit',
   padding: '1px',
 }));
@@ -58,10 +62,24 @@ function SearchBar() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const inputRef = useRef(null);
+  const navigate = useNavigate();
+
+  function onSearch() {
+    if (query && query.trim()) {
+      navigate(`/search/${encodeURIComponent(query.trim())}`);
+    }
+  };
+
 
   function handleToggle() {
     setOpen((prev) => !prev);
-    if (open) setQuery(""); // clear query if closing
+  }
+
+  function handleSubmit(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      onSearch();
+    }
   }
 
   useEffect(() => {
@@ -75,6 +93,7 @@ function SearchBar() {
       <StyledInputBase
           inputRef={inputRef}
           value={query}
+          onKeyDown={(e) => handleSubmit(e)}
           onChange={(e) => setQuery(e.target.value)}
           placeholder=""
           isOpen={open}
