@@ -16,7 +16,9 @@ import QuoteManager from './components/QuoteManager';
 import ReviewManager from './components/ReviewManager';
 import BooklistManager from './components/BooklistManager';
 
-const PageWrapper = styled(Box)(({ theme }) => ({
+const PageWrapper = styled(Box, {
+	shouldForwardProp: (prop) => prop !== 'disabledGutters'
+  })(({ theme }) => ({
   minHeight: '100vh',
   alignItems: 'center',
   justifyContent: 'center',

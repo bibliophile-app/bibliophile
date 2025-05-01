@@ -17,7 +17,7 @@ const SearchContainer = styled('div', {
   flexDirection: 'row-reverse',
   color: theme.palette.neutral.main,
   backgroundColor: isOpen ? 'rgba(255, 255, 255, 0.25)' : 'transparent',
-  width: isOpen ? '180px' : '40px',
+  width: isOpen ? '120px' : '40px',
   padding: isOpen ? theme.spacing(0.5, 1) : 0,
   overflow: 'hidden',
 
@@ -38,7 +38,9 @@ const SearchContainer = styled('div', {
   }
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme, isOpen }) => ({
+const StyledInputBase = styled(InputBase, {
+  shouldForwardProp: (prop) => prop !== 'isOpen'
+})(({ theme, isOpen }) => ({
   color: 'inherit',
   fontSize: '0.8rem',
   lineHeight: 1.2, 
