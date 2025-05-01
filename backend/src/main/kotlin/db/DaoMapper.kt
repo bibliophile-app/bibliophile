@@ -41,7 +41,6 @@ fun daoToModel(dao: ReviewDAO) = Review (
 
 fun daoToModel(dao: FollowerDAO) = Follower (
     id = dao.id.value,
-    followingUserId = dao.following_user_id,
-    followedUserId = dao.followed_user_id
-
+    followerId = dao.followerId.value,
+    followeeId = dao.followeeId.value
 )
