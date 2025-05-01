@@ -8,3 +8,9 @@ data class Follower(
     val following_user_id: Int,
     val followed_user_id: Int
 ) 
+
+@Serializable
+data class FollowerRequest(
+    val following_user_id: Int,
+    val followed_user_id: Int
+)

@@ -4,6 +4,15 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 
 object FollowersTable : IntIdTable("followers") {
 
-    val following_user_id = integer("following_user_id")
-    val followed_user_id = integer("followed_user_id")
+    val followingUser = reference(
+        name = "following_user_id",
+        foreign = UsersTable,
+        onDelete = ReferenceOption.CASCADE
+    )
+
+    val followedUser = reference(
+        name = "followed_user_id",
+        foreign = UsersTable,
+        onDelete = ReferenceOption.CASCADE
+    )
 }
