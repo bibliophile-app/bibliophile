@@ -12,7 +12,9 @@ export default function FollowerManager() {
 
   const fetchFollowers = async () => {
     try {
-      const res = await fetch(`${API_URL}/followers/${userId}`);
+      const res = await fetch(`${API_URL}/followers/${userId}`, {
+        credentials: "include"
+      });
       const data = await res.json();
       setFollowers(data);
     } catch (err) {
@@ -22,7 +24,9 @@ export default function FollowerManager() {
 
   const fetchFollowing = async () => {
     try {
-      const res = await fetch(`${API_URL}/following/${userId}`);
+      const res = await fetch(`${API_URL}/following/${userId}`, {
+        credentials: "include"
+      });
       const data = await res.json();
       setFollowing(data);
     } catch (err) {
@@ -32,7 +36,9 @@ export default function FollowerManager() {
 
   const checkIsFollowing = async () => {
     try {
-      const res = await fetch(`${API_URL}/check?followingId=${userId}&followedId=${followedId}`);
+      const res = await fetch(`${API_URL}/check?followingId=${userId}&followedId=${followedId}`, {
+        credentials: "include"
+      });      
       const data = await res.json();
       setIsFollowingResult(data.isFollowing);
     } catch (err) {
@@ -45,6 +51,7 @@ export default function FollowerManager() {
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           following_user_id: parseInt(userId),
           followed_user_id: parseInt(followedId),
@@ -62,6 +69,7 @@ export default function FollowerManager() {
     try {
       const res = await fetch(`${API_URL}?followingId=${userId}&followedId=${followedId}`, {
         method: "DELETE",
+        credentials: "include",
       });
       const text = await res.text();
       setMessage(text);

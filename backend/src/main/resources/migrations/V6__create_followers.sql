@@ -1,11 +1,11 @@
 CREATE TABLE followers (
-  id integer PRIMARY KEY,
-  follower_id integer NOT NULL,
-  followee_id integer NOT NULL,
+  id INTEGER PRIMARY KEY,
+  follower_id INTEGER NOT NULL,
+  followee_id INTEGER NOT NULL,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  
+
   FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (followee_id) REFERENCES users(id) ON DELETE CASCADE
 );
