@@ -8,6 +8,6 @@ import com.bibliophile.db.tables.FollowersTable
 class FollowerDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<FollowerDAO>(FollowersTable)
 
-    var following_user_id by FollowersTable.following_user_id
-    var followed_user_id by FollowersTable.followed_user_id
+    var followerId by FollowersTable.followerId
+    var followeeId by FollowersTable.followeeId 
 }
