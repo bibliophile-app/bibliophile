@@ -4,95 +4,58 @@ const theme = createTheme({
   spacing: 8,
 
   palette: {
-    // Cores principais da interface
-    primary:   { main: '#1C4280' },       // azul profundo
-    secondary: { main: '#9CC4E4' },       // azul claro
+    primary:   { main: '#2D4857' },  // azul petróleo escuro
+    secondary: { main: '#7BA1B9' },  // azul acinzentado leve
+    
     background: {
-      default: '#2C343F',                // fundo principal (cinza)
-      surface: '#14171C',                // fundo de cartões e elementos elevados
-      muted:   '#556678',                // elementos neutros, linhas, botões desativados
+      default: '#1A242F',           // fundo geral escuro
+      surface: '#0F151B',           // elementos elevados (cards)
+      muted:   '#556678',           // linhas, bordas, placeholders
     },
-  
-    // Neutros
+
     neutral: {
-      main: '#E9F2F9',                   // quase branco azulado
-      secondary: '#FFFFFF',             // branco puro para contraste
+      main: '#CFD8DC',              // cinza claro azulado (texto)
+      secondary: '#F0F4F8',         // branco azulado para contraste
     },
-  
-    // Feedback e mensagens
-    error:   { main: '#E83030' },        // vermelho vivo
-    warning: { main: '#FF9800' },        // laranja vibrante
-    success: { main: '#09DE5A' },        // verde neon
-    info:    { main: '#15B48F' },        // ciano equilibrado
-  
-    // Cores auxiliares
+
+    error:   { main: '#FF4C4C' },
+    warning: { main: '#FFB347' },
+    success: { main: '#4CE894' },
+    info:    { main: '#4CCCD3' },
+
     white:  { main: '#FFFFFF' },
     black:  { main: '#000000' },
-    red:    { main: '#E83030' },
-    yellow: { main: '#FFD12B' },
-    orange: { main: '#FF9800' },
+    red:    { main: '#FF4C4C' },
+    yellow: { main: '#FFD700' },
+    orange: { main: '#FFA726' },
     brown:  { main: '#8E7143' },
-    green:  { main: '#09DE5A' },
-    cyan:   { main: '#15B48F' },
-    purple: { main: '#6762CD' },         // tom frio, combina com o azul
-    pink:   { main: '#F73EF6' },
+    green:  { main: '#4CE894' },
+    cyan:   { main: '#4CCCD3' },
+    purple: { main: '#7F7FD5' },
+    pink:   { main: '#E06BB0' },
   },
-  
 
   shape: {
-    borderRadius: {
-      rounded: '50px',
-      pill: '20px',
-    },
-
+    borderRadius: 8,
   },
-
 
   typography: {
     fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
     allVariants: {
-      color: '#E9F2F9',
+      color: '#CFD8DC',
     },
-    h1: {
-      fontSize: '2rem',            // maior para impacto
-      lineHeight: '2.5rem',
-      fontWeight: 800,              // quase bold, mas ainda elegante
-    },
-    h2: {
-      fontSize: '1.75rem',
-      lineHeight: '2.25rem',
-      fontWeight: 700,
-    },
-    h3: {
-      fontSize: '1.5rem',
-      lineHeight: '2rem',
-      fontWeight: 600,
-    },
-    h4: {
-      fontSize: '1.25rem',
-      lineHeight: '1.75rem',
-      fontWeight: 500,
-    },
-    h5: {
-      fontSize: '1rem',
-      lineHeight: '1.5rem',
-      fontWeight: 500,
-    },
-    p: {
-      fontSize: '0.875rem',
-      lineHeight: '1.25rem',
-      fontWeight: 400,
-    },
-    small: {
-      fontSize: '0.75rem',
-      lineHeight: '1rem',
-      fontWeight: 400,
-    },
+    h1: { fontSize: '2rem', fontWeight: 800, lineHeight: '2.5rem' },
+    h2: { fontSize: '1.75rem', fontWeight: 700, lineHeight: '2.25rem' },
+    h3: { fontSize: '1.5rem', fontWeight: 600, lineHeight: '2rem' },
+    h4: { fontSize: '1.25rem', fontWeight: 500, lineHeight: '1.75rem' },
+    h5: { fontSize: '1rem', fontWeight: 500, lineHeight: '1.5rem' },
+    p:  { fontSize: '0.875rem', fontWeight: 400, lineHeight: '1.25rem' },
+    small: { fontSize: '0.75rem', fontWeight: 400, lineHeight: '1rem' },
     logo: {
       fontFamily: "'Libre Baskerville', serif",
       fontWeight: 600,
-      color: '#E9F2F9',
-    },    
+      color: '#CFD8DC',
+    },
   },
 
   components: {
@@ -115,10 +78,10 @@ const theme = createTheme({
       defaultProps: {
         disableElevation: true,
         variant: 'contained',
-        color: 'primary',
+        color: 'transparent',
       },
     },
-  },  
+  },
 });
 
 export default theme;
