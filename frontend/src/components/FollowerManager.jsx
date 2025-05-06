@@ -12,7 +12,8 @@ export default function FollowerManager() {
 
   const fetchFollowers = async () => {
     try {
-      const res = await fetch(`${API_URL}/followers/${userId}`, {
+      if (userId.trim() == "") return;
+      const res = await fetch(`${API_URL}/${userId}/followers`, {
         credentials: "include"
       });
       const data = await res.json();
@@ -24,7 +25,8 @@ export default function FollowerManager() {
 
   const fetchFollowing = async () => {
     try {
-      const res = await fetch(`${API_URL}/following/${userId}`, {
+      if (userId.trim() == "") return;
+      const res = await fetch(`${API_URL}/${userId}/following`, {
         credentials: "include"
       });
       const data = await res.json();
@@ -36,7 +38,7 @@ export default function FollowerManager() {
 
   const checkIsFollowing = async () => {
     try {
-      const res = await fetch(`${API_URL}/check?followingId=${userId}&followedId=${followedId}`, {
+      const res = await fetch(`${API_URL}/check?followerId=${userId}&followeeId=${followedId}`, {
         credentials: "include"
       });      
       const data = await res.json();
@@ -53,10 +55,11 @@ export default function FollowerManager() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          following_user_id: parseInt(userId),
-          followed_user_id: parseInt(followedId),
+          followerId: parseInt(userId),
+          followeeId: parseInt(followedId),
         }),
       });
+
       const text = await res.text();
       setMessage(text);
       fetchFollowing(); // atualiza a lista após follow
@@ -67,10 +70,16 @@ export default function FollowerManager() {
 
   const handleDeleteFollow = async () => {
     try {
-      const res = await fetch(`${API_URL}?followingId=${userId}&followedId=${followedId}`, {
+      const res = await fetch(API_URL, {
         method: "DELETE",
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
+        body: JSON.stringify({
+          followerId: parseInt(userId),
+          followeeId: parseInt(followedId),
+        }),
       });
+
       const text = await res.text();
       setMessage(text);
       fetchFollowing(); // atualiza a lista após unfollow
