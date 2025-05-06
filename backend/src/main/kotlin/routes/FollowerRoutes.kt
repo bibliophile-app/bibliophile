@@ -29,7 +29,7 @@ fun Route.followerRoutes() {
 
         // retorna quem o usuário segue
         get("/{userId}/following") {
-            val userId = call.getIntParam() ?: return@get
+            val userId = call.getIntParam("userId") ?: return@get
             runCatching {
                 if (userId < 0) throw IllegalArgumentException("User ID inválido")
                 followerRepository.getFollowingUsers(userId)
@@ -42,7 +42,7 @@ fun Route.followerRoutes() {
 
         // retorna seguidores de um usuário
         get("/{userId}/followers") {
-            val userId = call.getIntParam() ?: return@get
+            val userId = call.getIntParam("userId") ?: return@get
             runCatching {
                 if (userId < 0) throw IllegalArgumentException("User ID inválido")
                 followerRepository.getFollowersOfUser(userId)
@@ -57,23 +57,23 @@ fun Route.followerRoutes() {
         get("/check") {
             val followerId = call.request.queryParameters["followerId"]?.toIntOrNull()
             val followeeId = call.request.queryParameters["followeeId"]?.toIntOrNull()
-            
+        
+            if (followerId == null || followeeId == null) {
+                call.respond(HttpStatusCode.BadRequest, mapOf("message" to "Both user IDs are required"))
+                return@get
+            }
+        
             runCatching {
-                if (followerId == null || followeeId == null) {
-                    call.respond(HttpStatusCode.BadRequest, mapOf("message" to "Both user IDs are required"))
-                    return@get
-                }
                 followerRepository.isFollowing(followerId, followeeId)
-                //call.respond(HttpStatusCode.OK, mapOf("isFollowing" to isFollowing))
-            }.onSuccess {
-                call.respond(HttpStatusCode.Created, mapOf("message" to "Follow verification successful"))
+            }.onSuccess { isFollowing ->
+                call.respond(HttpStatusCode.OK, mapOf("isFollowing" to isFollowing))
             }.onFailure {
                 call.respondServerError("Error checking follow status")
             }
-        }
+        }        
+
 
         authenticate("auth-session") {
-            // cria um follow
             post {
                 val follower = call.receive<FollowerRequest>()
 
@@ -96,49 +96,15 @@ fun Route.followerRoutes() {
                 }
             }
 
-            // deleta um follow específico
             delete {
-                val followerId = call.request.queryParameters["followerId"]?.toIntOrNull()
-                val followeeId = call.request.queryParameters["followeeId"]?.toIntOrNull()
+                val follower = call.receive<FollowerRequest>()
 
                 runCatching {
-                    if (followerId == null || followeeId == null) {
-                        call.respond(HttpStatusCode.BadRequest, mapOf("message" to "Both user IDs are required"))
-                        return@runCatching
-                    }
-                    followerRepository.deleteFollow(followerId, followeeId)
+                    followerRepository.deleteFollow(follower.followerId, follower.followeeId)
                 }.onSuccess {
                     call.respond(HttpStatusCode.OK, mapOf("message" to "Follow deleted successfully"))
                 }.onFailure {
                     call.respondServerError("Failed to delete follow")
-                }
-            }
-
-            // deleta todos que o usuário segue
-            delete("/user/{userId}/following") {
-                //val userId = call.getIntParam() ?: return@runCatching
-                val session = call.sessions.get<UserSession>()
-
-                runCatching {
-                    followerRepository.deleteAllFollowsByUser(session?.userId!!)
-                }.onSuccess {
-                    call.respond(HttpStatusCode.OK, mapOf("message" to "All follows deleted for user"))
-                }.onFailure {
-                    call.respondServerError("Failed to delete all follows by user")
-                }
-            }
-
-            // deleta todos os seguidores de um usuário
-            delete("/user/{userId}/followers") {
-                //val userId = call.getIntParam() ?: return@runCatching
-                val session = call.sessions.get<UserSession>()
-
-                runCatching {
-                    followerRepository.deleteAllFollowersOfUser(session?.userId!!)
-                }.onSuccess {
-                    call.respond(HttpStatusCode.OK, mapOf("message" to "All followers deleted for user"))
-                }.onFailure {
-                    call.respondServerError("Failed to delete all followers of user")
                 }
             }
         }
