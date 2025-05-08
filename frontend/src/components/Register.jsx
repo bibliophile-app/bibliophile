@@ -1,57 +1,140 @@
-import { useState } from "react";
+//import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
+import React, { useState } from 'react';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';   // ← não esqueça!
 
-function Register() {
-  const navigate = useNavigate();
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import KeyIcon from '@mui/icons-material/Key';
+import EmailIcon from '@mui/icons-material/Email';
+
+import {
+  IconButton,
+  InputAdornment,
+} from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+
+export default function Register({ onSuccess }) {
+  //const navigate = useNavigate();
   const { register } = useAuth();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  
+  const handleMouseDownPassword = (e) => e.preventDefault();
 
-
-  const handleSubmit = async (e) => {
+  async function handleRegister(e) {
     e.preventDefault();
-    const res = await register({email, username, password});
-    setPassword("");
-    
-    if (res.ok) {
-      setUsername("");
-      navigate("/");
-    }  
-
-    else alert("Error to register user");
-  };
+    setError('');           // limpa mensagem antiga
+    try {
+      await register({ username, password, email });
+      setUsername('');
+      setPassword('');
+      setEmail('');
+      // AVISA AO MODAL QUE DEU CERTO
+      onSuccess?.();
+    } catch (error) {
+      setError(error.message);
+    }
+  }
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Registro de Usuário</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border px-3 py-2"
+      <Box
+        component="form"
+        onSubmit={handleRegister}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300 }}
+      >
+        <TextField
+          required
+          id="email"
+          label="Email"
+          value={email}                            // 1. value
+          onChange={e => setEmail(e.target.value)} // 2. onChange
+          autoComplete="email"
+          
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <EmailIcon />
+              </InputAdornment>
+            )
+          }}
+          
         />
-        <input
-          type="text"
-          placeholder="Usuário"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full border px-3 py-2"
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border px-3 py-2"
-        />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2">Register</button>
-      </form>
-    </div>
-  );
-}
 
-export default Register;
+        <TextField
+          required
+          id="username"
+          label="Username"
+          value={username}                            // 1. value
+          onChange={e => setUsername(e.target.value)} // 2. onChange
+          autoComplete="username"
+          
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <AccountCircleIcon />
+              </InputAdornment>
+            )
+          }}
+          
+        />
+  
+        <TextField
+          label="Password"
+          required
+          fullWidth
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <KeyIcon />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={
+                    showPassword
+                      ? 'Ocultar senha'
+                      : 'Mostrar senha'
+                  }
+                  onClick={() => setShowPassword(show => !show)}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword
+                    ? <Visibility />
+                    : <VisibilityOff />
+                  }
+                </IconButton>
+              </InputAdornment>              
+            )
+          }}
+        />
+      {/* Exibe a mensagem de erro */}
+      {error && (
+          <Typography color="error" variant="body2">
+            {error}
+          </Typography>
+        )}
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"    // <— adiciona isso
+        fullWidth          // <— opcional, mas costuma melhorar o layout
+      >
+        Sign Up
+      </Button>
+      </Box>
+    );
+}

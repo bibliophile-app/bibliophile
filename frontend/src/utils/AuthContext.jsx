@@ -35,6 +35,16 @@ function AuthProvider ({ children }) {
         credentials: 'include',
         body: JSON.stringify({ email, username, password })
       });
+      if (!response.ok) {
+      
+        let message = "Não foi possível criar a conta"
+        try {
+          const data = await response.json()
+          message = data.message || message;
+        } catch (_){
+          throw new Error(message);
+        }
+      }
   }
 
   async function login({ username, password }) {
@@ -45,6 +55,16 @@ function AuthProvider ({ children }) {
         body: JSON.stringify({ username, password })
     })
    
+    if (!response.ok) {
+      
+      let message = "Usuário ou senha inválidos"
+      try {
+        const data = await response.json()
+        message = data.message || message;
+      } catch (_){
+        throw new Error(message);
+      }
+    }
     await authUser();
   }
 
