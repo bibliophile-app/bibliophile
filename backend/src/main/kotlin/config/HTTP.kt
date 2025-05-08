@@ -12,6 +12,7 @@ import io.ktor.server.routing.*
 import org.slf4j.event.*
 
 fun Application.configureHTTP() {
+    
     install(CORS) {
         allowCredentials = true
         allowHost("localhost:3000", schemes = listOf("http"))
