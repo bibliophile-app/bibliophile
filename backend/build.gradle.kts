@@ -1,8 +1,8 @@
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.plugin.serialization)
+    id("org.jetbrains.kotlinx.kover") version "0.7.3"
 }
 
 group = "com.bibliophile"
