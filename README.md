@@ -12,7 +12,8 @@ O projeto utiliza as seguintes tecnologias:
 - **Frontend**: Construído com React JSX, garantindo uma interface dinâmica e responsiva.
 - **Containerização**: Utiliza Docker e Docker Compose para facilitar a execução e o gerenciamento do ambiente.
 
-### Bibliotecas Utilizadas:
+### Bibliotecas Utilizadas
+
 - **Material-UI (MUI)** para componentes visuais modernos e acessíveis.
 
 ## Como Rodar o Projeto
@@ -29,3 +30,29 @@ Edite o arquivo .env e preencha os valores necessários, como credenciais do ban
 1. Certifique-se de que o Docker e o Docker Compose estão instalados em sua máquina.
 2. No diretório raiz do projeto, execute: `docker-compose up --build`
 3. O backend e o frontend estarão acessíveis nos endpoints configurados no `docker-compose.yml`.
+
+### Testes Automatizados
+
+Para executar os testes automatizados, siga os passos abaixo:
+
+1. Acesse o container do backend utilizando o comando:
+
+    ```bash
+    docker-compose exec backend bash
+    ```
+
+2. Dentro do container, execute o comando para rodar os testes:
+
+    ```bash
+    ./gradlew test
+    ```
+
+    Os relatórios de testes estarão disponíveis no seguinte caminho: `build/reports/tests/test/index.html`
+
+3. Para gerar e visualizar o relatório de cobertura de testes, execute:
+
+    ```bash
+    ./gradlew koverHtmlReport
+    ```
+
+    O relatório de cobertura será gerado no seguinte caminho: `build/reports/kover/html/index.html`
