@@ -48,27 +48,19 @@ fun Route.reviewRoutes() {
             runCatching {
                 reviewRepository.getReviewsByUserId(userId)
             }.onSuccess { reviews ->
-                if (reviews != null) {
-                    call.respond(HttpStatusCode.OK, reviews)
-                } else {
-                    call.respond(HttpStatusCode.NotFound, mapOf("message" to "Reviews not found"))
-                }
+                call.respond(HttpStatusCode.OK, reviews)
             }.onFailure {
                 call.respondServerError("Error retrieving reviews")
             }
         }
 
-        get("/book/{isbn}") {
-            val isbn = call.getParam("isbn") ?: return@get
+        get("/book/{bookId}") {
+            val bookId = call.getParam("bookId") ?: return@get
 
             runCatching {
-                reviewRepository.getReviewsByIsbn(isbn)
+                reviewRepository.getReviewsById(bookId)
             }.onSuccess { reviews ->
-                if (reviews != null) {
-                    call.respond(HttpStatusCode.OK, reviews)
-                } else {
-                    call.respond(HttpStatusCode.NotFound, mapOf("message" to "Reviews not found"))
-                }
+                call.respond(HttpStatusCode.OK, reviews)
             }.onFailure {
                 call.respondServerError("Error retrieving reviews")
             }
@@ -141,8 +133,8 @@ fun Route.reviewRoutes() {
 private fun validateReview(review: ReviewRequest): Pair<HttpStatusCode, String>? {
     return when {
         review.content.isBlank() -> HttpStatusCode.BadRequest to "Review content cannot be empty"
-        review.rating !in 1..10 -> HttpStatusCode.BadRequest to "Rating must be between 1 and 10"
-        review.isbn.isBlank() -> HttpStatusCode.BadRequest to "ISBN is required"
+        review.rate !in 0..10 -> HttpStatusCode.BadRequest to "Rate must be between 0 and 10"
+        review.bookId.isBlank() -> HttpStatusCode.BadRequest to "Book ID is required"
         else -> null
     }
 }

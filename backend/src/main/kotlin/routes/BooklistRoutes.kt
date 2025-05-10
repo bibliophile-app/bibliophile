@@ -79,7 +79,7 @@ fun Route.booklistRoutes() {
                 val session = call.sessions.get<UserSession>()
                 
                 runCatching {
-                    booklistRepository.addBookToBooklist(id, session?.userId!!, book.isbn)
+                    booklistRepository.addBookToBooklist(id, session?.userId!!, book.bookId)
                 }.onSuccess {
                     call.respond(HttpStatusCode.Created, mapOf("message" to "Book added to booklist successfully"))
                 }.onFailure {
@@ -122,13 +122,13 @@ fun Route.booklistRoutes() {
                 }
             }
 
-            delete("/{id}/books/{isbn}") {
+            delete("/{id}/books/{bookId}") {
                 val id = call.getIntParam() ?: return@delete
-                val isbn = call.getParam("isbn") ?: return@delete
+                val bookId = call.getParam("bookId") ?: return@delete
                 val session = call.sessions.get<UserSession>()
 
                 runCatching {
-                    booklistRepository.removeBookFromBooklist(id, session?.userId!!, isbn)
+                    booklistRepository.removeBookFromBooklist(id, session?.userId!!, bookId)
                 }.onSuccess {
                     if (it)
                         call.respond(HttpStatusCode.OK, mapOf("message" to "Book deleted from booklist successfully"))

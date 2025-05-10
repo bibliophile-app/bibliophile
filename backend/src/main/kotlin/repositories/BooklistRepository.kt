@@ -66,7 +66,7 @@ class BooklistRepository {
     suspend fun booklistWithBooks(booklistId: Int): BooklistWithBooks? = suspendTransaction {
         val booklistDAO = BooklistDAO.findById(booklistId) ?: return@suspendTransaction null
         val books = BooklistBookDAO.find { BooklistBooksTable.booklistId eq booklistDAO.id }
-            .map { it.isbn }
+            .map { it.bookId }
 
         BooklistWithBooks(
             id = booklistDAO.id.value,
@@ -78,12 +78,12 @@ class BooklistRepository {
     }
 
     /** Adiciona um livro à booklist, se ela pertencer ao usuário */
-    suspend fun addBookToBooklist(booklistId: Int, userId: Int, bookISBN: String): Boolean = suspendTransaction {
+    suspend fun addBookToBooklist(booklistId: Int, userId: Int, bookId: String): Boolean = suspendTransaction {
         val booklistDAO = BooklistDAO.findById(booklistId)
         if (booklistDAO != null && booklistDAO.userId.value == userId) {
             BooklistBookDAO.new {
                 this.booklistId = booklistDAO.id
-                this.isbn = bookISBN
+                this.bookId = bookId
             }
             true
         } else {
@@ -92,12 +92,12 @@ class BooklistRepository {
     }
 
     /** Remove um livro da booklist, se ela pertencer ao usuário */
-    suspend fun removeBookFromBooklist(booklistId: Int, userId: Int, bookISBN: String): Boolean = suspendTransaction {
+    suspend fun removeBookFromBooklist(booklistId: Int, userId: Int, bookId: String): Boolean = suspendTransaction {
         val booklistDAO = BooklistDAO.findById(booklistId)
         if (booklistDAO != null && booklistDAO.userId.value == userId) {
             BooklistBooksTable.deleteWhere {
                 (BooklistBooksTable.booklistId eq booklistId) and
-                (BooklistBooksTable.isbn eq bookISBN)
+                (BooklistBooksTable.bookId eq bookId)
             } > 0
         } else {
             false

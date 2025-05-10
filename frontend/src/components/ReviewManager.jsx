@@ -3,19 +3,22 @@ import React, { useEffect, useState } from "react";
 const API_URL = "http://localhost:8080/reviews";
 
 export default function ReviewManager() {
+  const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+
   const [reviews, setReviews] = useState([]);
-  const [isbn, setIsbn] = useState("");
+  const [bookId, setBookId] = useState("");
   const [content, setContent] = useState("");
   const [rate, setRate] = useState("");
   const [favorite, setFavorite] = useState(false);
   const [searchId, setSearchId] = useState("");
   const [foundReview, setFoundReview] = useState(null);
   const [editReview, setEditReview] = useState(null);
-  const [newISBN, setNewISBN] = useState("");
-  const [newUserId, setNewUserId] = useState("");
+  const [newBookId, setNewBookId] = useState("");
   const [newContent, setNewContent] = useState("");
   const [newRate, setNewRate] = useState("");
   const [newFavorite, setNewFavorite] = useState(false);
+  const [reviewedAt, setReviewedAt] = useState(today);
+  const [newReviewedAt, setNewReviewedAt] = useState("");
 
   useEffect(() => {
     fetchReviews();
@@ -53,15 +56,16 @@ export default function ReviewManager() {
         headers: { "Content-Type": "application/json" },
         credentials: 'include',
         body: JSON.stringify({
-          isbn,
+          bookId,
           content,
-          rating: Number(rate),
-          favorite
+          rate: Number(rate),
+          favorite,
+          reviewedAt
         })
       });
       if (response.ok) {
         fetchReviews();
-        setIsbn("");
+        setBookId("");
         setContent("");
         setRate("");
         setFavorite(false);
@@ -87,10 +91,11 @@ export default function ReviewManager() {
 
   const handleEditReview = (review) => {
     setEditReview(review);
-    setNewISBN(review.isbn);
+    setNewBookId(review.bookId);
     setNewContent(review.content);
     setNewRate(String(review.rate));
     setNewFavorite(review.favorite);
+    setNewReviewedAt(review.reviewedAt);
   };
 
   const handleUpdateReview = async () => {
@@ -101,10 +106,11 @@ export default function ReviewManager() {
         headers: { "Content-Type": "application/json" },
         credentials: 'include',
         body: JSON.stringify({
-          isbn: newISBN,
+          bookId: newBookId,
           content: newContent,
-          rating: Number(newRate),
-          favorite: newFavorite
+          rate: Number(newRate),
+          favorite: newFavorite,
+          reviewedAt: newReviewedAt
         })
       });
       if (response.ok) {
@@ -124,14 +130,20 @@ export default function ReviewManager() {
       <div className="mb-6 p-4 border rounded">
         <h2 className="text-xl font-semibold mb-2">Add New Review</h2>
         <div className="grid grid-cols-2 gap-4">
-          <input type="text" placeholder="ISBN" value={isbn} onChange={(e) => setIsbn(e.target.value)} className="border p-2" />
+          <input type="text" placeholder="Book ID" value={bookId} onChange={(e) => setBookId(e.target.value)} className="border p-2" />
           <textarea placeholder="Review Content" value={content} onChange={(e) => setContent(e.target.value)} className="border p-2 col-span-2" />
           <div className="flex items-center gap-4">
-            <input type="number" min="1" max="5" placeholder="Rating (1-5)" value={rate} onChange={(e) => setRate(e.target.value)} className="border p-2 flex-1" />
+            <input type="number" min="0" max="10" placeholder="Rating (0-10)" value={rate} onChange={(e) => setRate(e.target.value)} className="border p-2 flex-1" />
             <label className="flex items-center gap-2">
               <input type="checkbox" checked={favorite} onChange={(e) => setFavorite(e.target.checked)} className="w-4 h-4" />
               Favorite
             </label>
+            <input
+              type="date"
+              value={reviewedAt}
+              onChange={(e) => setReviewedAt(e.target.value)}
+              className="border p-2"
+            />
           </div>
           <button onClick={handleAddReview} className="bg-blue-500 text-white p-2 col-span-2">Add Review</button>
         </div>
@@ -147,9 +159,16 @@ export default function ReviewManager() {
         {foundReview && (
           <div className="mt-4 p-4 border rounded bg-gray-50">
             <h3 className="font-semibold">Found Review:</h3>
-            <p>ISBN: {foundReview.isbn}</p>
+            <p>Book ID: {foundReview.bookId}</p>
             <p>User ID: {foundReview.userId}</p>
-            <p>Rating: {foundReview.rating / 2}/5</p>
+            <p>Rate: {foundReview.rate / 2}/5</p>
+            <p>
+              Reviewed: {new Date(foundReview.reviewedAt + 'T00:00:00').toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+              })}
+            </p>
             <p>{foundReview.content}</p>
           </div>
         )}
@@ -162,8 +181,8 @@ export default function ReviewManager() {
           {reviews.map((review) => (
             <div key={review.id} className="p-4 border rounded flex justify-between items-center">
               <div>
-                <div className="font-semibold">ISBN: {review.isbn}</div>
-                <div>User ID: {review.userId} | Rating: {review.rating / 2}/5</div>
+                <div className="font-semibold">Book ID: {review.bookId}</div>
+                <div>User ID: {review.userId} | Rate: {review.rate / 2}/5 | Reviewed: {new Date(review.reviewedAt + 'T00:00:00').toLocaleDateString("pt-BR")} </div>
                 <div className="text-gray-600">{review.content}</div>
               </div>
               <div className="flex gap-2">
@@ -180,14 +199,20 @@ export default function ReviewManager() {
         <div className="mt-6 p-4 border rounded bg-gray-100">
           <h2 className="text-xl font-semibold mb-2">Edit Review</h2>
           <div className="grid grid-cols-2 gap-4">
-            <input type="text" placeholder="ISBN" value={newISBN} onChange={(e) => setNewISBN(e.target.value)} className="border p-2" />
+            <input type="text" placeholder="Book ID" value={newBookId} onChange={(e) => setNewBookId(e.target.value)} className="border p-2" />
             <textarea placeholder="Review Content" value={newContent} onChange={(e) => setNewContent(e.target.value)} className="border p-2 col-span-2" />
             <div className="flex items-center gap-4">
-              <input type="number" min="1" max="5" placeholder="Rating" value={newRate} onChange={(e) => setNewRate(e.target.value)} className="border p-2 flex-1" />
+              <input type="number" min="0" max="10" placeholder="Rating" value={newRate} onChange={(e) => setNewRate(e.target.value)} className="border p-2 flex-1" />
               <label className="flex items-center gap-2">
                 <input type="checkbox" checked={newFavorite} onChange={(e) => setNewFavorite(e.target.checked)} className="w-4 h-4" />
                 Favorite
               </label>
+              <input
+                type="date"
+                value={newReviewedAt}
+                onChange={(e) => setNewReviewedAt(e.target.value)}
+                className="border p-2"
+              />
             </div>
             <button onClick={handleUpdateReview} className="bg-blue-500 text-white p-2">Update Review</button>
             <button onClick={() => setEditReview(null)} className="bg-gray-500 text-white p-2">Cancel</button>

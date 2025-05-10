@@ -8,7 +8,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.application.*
 import com.bibliophile.models.UserSession
-import com.bibliophile.models.FollowerRequest
+import com.bibliophile.models.FollowRequest
 import com.bibliophile.repositories.FollowerRepository
 
 
@@ -75,20 +75,21 @@ fun Route.followerRoutes() {
 
         authenticate("auth-session") {
             post {
-                val follower = call.receive<FollowerRequest>()
+                val session = call.sessions.get<UserSession>()
+                val userId = session?.userId!!
+                val follow = call.receive<FollowRequest>()
 
                 runCatching {
-                    // valida campos
-                    if (follower.followerId == follower.followeeId) {
+                    if (userId == follow.followeeId) {
                         call.respond(HttpStatusCode.BadRequest, mapOf("message" to "User cannot follow themselves"))
                         return@runCatching
                     }
-                    // verifica existência
-                    if (followerRepository.isFollowing(follower.followerId, follower.followeeId)) {
+                    
+                    if (followerRepository.isFollowing(userId, follow.followeeId)) {
                         call.respond(HttpStatusCode.Conflict, mapOf("message" to "User is already following this person"))
                         return@runCatching
                     }
-                    followerRepository.addFollow(follower)
+                    followerRepository.addFollow(userId, follow)
                 }.onSuccess{
                     call.respond(HttpStatusCode.Created, mapOf("message" to "Follow created successfully"))
                 }.onFailure {
@@ -97,10 +98,12 @@ fun Route.followerRoutes() {
             }
 
             delete {
-                val follower = call.receive<FollowerRequest>()
+                val session = call.sessions.get<UserSession>()
+                val userId = session?.userId!!
+                val follow = call.receive<FollowRequest>()
 
                 runCatching {
-                    followerRepository.deleteFollow(follower.followerId, follower.followeeId)
+                    followerRepository.deleteFollow(userId, follow)
                 }.onSuccess {
                     call.respond(HttpStatusCode.OK, mapOf("message" to "Follow deleted successfully"))
                 }.onFailure {

@@ -2,6 +2,7 @@ package com.bibliophile.db.tables
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.javatime.date
 
 object ReviewsTable : IntIdTable("reviews") {
     val userId = reference(
@@ -9,8 +10,9 @@ object ReviewsTable : IntIdTable("reviews") {
         foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE
     )
-    val isbn = varchar("isbn", 13)
+    val bookId = varchar("book_id", 132)
     val content = varchar("content", 255)
-    val rating = integer("rating")
-    val favorite = bool("favorite")
+    val rate = integer("rate")
+    val favorite = bool("favorite").default(false)
+    val reviewedAt = date("reviewed_at")
 }

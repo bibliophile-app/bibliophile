@@ -49,8 +49,9 @@ class UserRepository {
     }
 
     /** Adiciona um novo usuário e retorna o usuário criado */
-    suspend fun create(username: String, passwordHash: String): User = suspendTransaction {
+    suspend fun create(email: String, username: String, passwordHash: String): User = suspendTransaction {
         UserDAO.new {
+            this.email = email
             this.username = username
             this.passwordHash = passwordHash
         }.let(::daoToModel)

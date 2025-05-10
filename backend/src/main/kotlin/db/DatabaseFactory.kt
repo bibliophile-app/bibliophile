@@ -2,10 +2,6 @@ package com.bibliophile.db
 
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
-
-import com.bibliophile.db.tables.*
 
 object DatabaseFactory {
     
@@ -26,10 +22,5 @@ object DatabaseFactory {
             .locations("classpath:migrations")
             .load()
             .migrate()
-
-        // To prevent Exposed errors, create missing tables and columns
-        transaction {
-            SchemaUtils.createMissingTablesAndColumns(UsersTable, BooklistsTable, BooklistBooksTable, QuotesTable, ReviewsTable, FollowersTable)
-        }
     }
 }

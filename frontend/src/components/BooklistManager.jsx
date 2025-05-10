@@ -63,7 +63,7 @@ const BooklistManager = () => {
 
     const addBookToList = async () => {
         if (currentBooklist && bookId) {
-            await sendRequest(`${API_URL}/${currentBooklist.id}/books`, "POST", { isbn: bookId });
+            await sendRequest(`${API_URL}/${currentBooklist.id}/books`, "POST", { bookId });
             displayBooklist(currentBooklist.id);
             setBookId("");
         }
@@ -126,7 +126,7 @@ const BooklistManager = () => {
                     </ul>
 
                     <h4>Add Book to List</h4>
-                    <input type="number" placeholder="Book ISBN" value={bookId} onChange={(e) => setBookId(e.target.value)} />
+                    <input type="number" placeholder="Book ID" value={bookId} onChange={(e) => setBookId(e.target.value)} />
                     <button onClick={addBookToList}>Add Book</button>
                 </div>
             )}

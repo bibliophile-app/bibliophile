@@ -5,13 +5,14 @@ import { useAuth } from "../utils/AuthContext";
 function Register() {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await register({username, password});
+    const res = await register({email, username, password});
     setPassword("");
     
     if (res.ok) {
@@ -26,6 +27,13 @@ function Register() {
     <div className="p-4 max-w-md mx-auto">
       <h2 className="text-xl font-bold mb-4">Registro de Usuário</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="email"
+          placeholder="E-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full border px-3 py-2"
+        />
         <input
           type="text"
           placeholder="Usuário"

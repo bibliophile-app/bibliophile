@@ -8,9 +8,10 @@ import com.bibliophile.db.tables.ReviewsTable
 class ReviewDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<ReviewDAO>(ReviewsTable)
 
-    var isbn by ReviewsTable.isbn
+    var bookId by ReviewsTable.bookId
     var userId by ReviewsTable.userId
     var content by ReviewsTable.content
-    var rating by ReviewsTable.rating
+    var rate by ReviewsTable.rate
     var favorite by ReviewsTable.favorite
+    var reviewedAt by ReviewsTable.reviewedAt
 }

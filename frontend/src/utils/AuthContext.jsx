@@ -29,12 +29,12 @@ function AuthProvider ({ children }) {
     }
   }
   
-  async function register({ username, password }) {
+  async function register({ email, username, password }) {
     return await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: 'include',
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, username, password })
       });
   }
 

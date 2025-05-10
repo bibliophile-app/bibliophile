@@ -29,19 +29,20 @@ class ReviewRepository {
         ReviewDAO.find { ReviewsTable.userId eq userId }.map(::daoToModel)
     }
 
-    /** Busca reviews por ISBN */
-    suspend fun getReviewsByIsbn(isbn: String): List<Review> = suspendTransaction {
-        ReviewDAO.find { ReviewsTable.isbn eq isbn }.map(::daoToModel)
+    /** Busca reviews por Book ID */
+    suspend fun getReviewsById(bookId: String): List<Review> = suspendTransaction {
+        ReviewDAO.find { ReviewsTable.bookId eq bookId }.map(::daoToModel)
     }
 
     /** Adiciona uma nova review e retorna a criada */
     suspend fun addReview(userId: Int, review: ReviewRequest): Review = suspendTransaction {
         ReviewDAO.new {
             this.userId = EntityID(userId, UsersTable)
-            this.isbn = review.isbn
+            this.bookId = review.bookId
             this.content = review.content
-            this.rating = review.rating
+            this.rate = review.rate
             this.favorite = review.favorite
+            this.reviewedAt = review.reviewedAt 
         }.let(::daoToModel)
     }
 
@@ -50,10 +51,11 @@ class ReviewRepository {
         val reviewDAO = ReviewDAO.findById(reviewId)
         if (reviewDAO != null && reviewDAO.userId.value == userId) {
             reviewDAO.apply {
-                isbn = review.isbn
+                bookId = review.bookId
                 content = review.content
-                rating = review.rating
+                rate = review.rate
                 favorite = review.favorite
+                reviewedAt = review.reviewedAt
             }
             true
         } else {
