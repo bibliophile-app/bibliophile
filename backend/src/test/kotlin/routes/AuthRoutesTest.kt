@@ -12,9 +12,8 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.testing.*
 
-
+import com.bibliophile.utils.*
 import com.bibliophile.models.UserSession
-import com.bibliophile.db.TestDatabaseFactory
 
 class AuthRoutesTest {
 
@@ -43,34 +42,6 @@ class AuthRoutesTest {
         }
     }
 
-    private suspend fun HttpClient.registerUser(
-        email: String,
-        username: String,
-        password: String
-    ): HttpResponse = post("/register") {
-        header(HttpHeaders.ContentType, ContentType.Application.Json)
-        setBody("""
-            {
-                "email": "$email",
-                "username": "$username",
-                "password": "$password"
-            }
-        """.trimIndent())
-    }
-
-    private suspend fun HttpClient.loginUser(
-        username: String,
-        password: String
-    ): HttpResponse = post("/login") {
-        header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-        setBody("""
-            {
-                "username": "$username",
-                "password": "$password"
-            }
-        """.trimIndent())
-    }
-
     @Test
     fun `test register with valid data`() = testApplication {
         application { setupTestModule() }
@@ -97,6 +68,25 @@ class AuthRoutesTest {
     }
 
     @Test
+    fun `test get user by username found`() = testApplication {
+        application { setupTestModule() }
+
+        client.registerUser("test@example.com", "testuser", "password123")
+        val response = client.get("/users/testuser")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertTrue(response.bodyAsText().contains("testuser"))
+    }
+
+    @Test
+    fun `test get user by username not found`() = testApplication {
+        application { setupTestModule() }
+
+        val response = client.get("/users/unknownuser")
+        assertEquals(HttpStatusCode.NotFound, response.status)
+    }
+
+    @Test
     fun `test login with valid credentials`() = testApplication {
         application { setupTestModule() }
         
@@ -117,6 +107,16 @@ class AuthRoutesTest {
         assertEquals("Invalid credentials", response.bodyAsText())
     }
 
+    @Test
+    fun `test login with wrong password`() = testApplication {
+        application { setupTestModule() }
+
+        client.registerUser("test@example.com", "testuser", "password123")
+        val response = client.loginUser("testuser", "wrongpassword")
+
+        assertEquals(HttpStatusCode.Unauthorized, response.status)
+        assertEquals("Invalid credentials", response.bodyAsText())
+    }
 
     @Test
     fun `test logout`() = testApplication {

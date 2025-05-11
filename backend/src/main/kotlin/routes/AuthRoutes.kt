@@ -63,7 +63,7 @@ fun Route.authRoutes() {
     }
 
     get("/users/{username}") {
-        val username = call.parameters["username"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+        val username = call.getParam("username") ?: return@get
         val user = UserRepository.findByUsername(username)
         if (user == null) {
             call.respond(HttpStatusCode.NotFound)

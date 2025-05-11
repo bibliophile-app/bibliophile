@@ -29,12 +29,12 @@ class BooklistRepository {
     }
 
     /** Adiciona uma nova booklist */
-    suspend fun addBooklist(userId: Int, booklist: BooklistRequest): Unit = suspendTransaction {
+    suspend fun addBooklist(userId: Int, booklist: BooklistRequest): Booklist = suspendTransaction {
         BooklistDAO.new {
             this.userId = EntityID(userId, UsersTable) 
             listName = booklist.listName
             listDescription = booklist.listDescription
-        }
+        }.let(::daoToModel)
     }
 
     /** Atualiza uma booklist existente */
