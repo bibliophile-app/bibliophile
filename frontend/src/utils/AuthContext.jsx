@@ -37,6 +37,9 @@ function AuthProvider ({ children }) {
         body: JSON.stringify({ username, password })
       });
       if (!response.ok) {
+        if (response.status === 409) {
+          throw new Error("username já existe");
+        }
       
         let message = "Não foi possível criar a conta"
         try {

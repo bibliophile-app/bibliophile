@@ -48,7 +48,6 @@ export default function PopUp({ open, onClose, children}) {
 PopUp.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  title:   PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
 };
 
