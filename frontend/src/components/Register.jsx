@@ -1,44 +1,82 @@
-//import { useState } from "react";
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
-import React, { useState } from 'react';
+
+import { alpha, styled } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';   // ← não esqueça!
+import InputBase from '@mui/material/InputBase';
+import InputLabel from '@mui/material/InputLabel';
+import Typography from '@mui/material/Typography';   
+import FormControl from '@mui/material/FormControl';
 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import KeyIcon from '@mui/icons-material/Key';
-import EmailIcon from '@mui/icons-material/Email';
 
-import {
-  IconButton,
-  InputAdornment,
-} from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+const TextInput  = styled(InputBase)(({ theme }) => ({
+  'label + &': {
+    marginTop: theme.spacing(3),
+  },
+  '& .MuiInputBase-input': {
+    borderRadius: 4,
+    backgroundColor: '#F3F6F9',
+    border: '1px solid',
+    borderColor: '#E0E3E7',
+    fontSize: 15,
+    padding: '10px 12px',
+    color: theme.palette.primary.main,      
+    
+    '&:focus': {
+      borderColor: theme.palette.primary.main,
+    },
+  },
+}));
+
+
+const RenderInputField = ({ id, label, value, onChange, type = 'text' }) => (
+  <FormControl
+    required
+    id={id}
+    variant="standard"
+    fullWidth
+    value={value}
+    onChange={onChange}
+  >
+    <InputLabel
+      shrink
+      htmlFor={`${id}-input`}
+      sx={{
+        color: 'primary.main',
+        fontSize: '1.5rem',
+        fontWeight: 500,
+        '& .MuiFormLabel-asterisk': {
+          display: 'none',
+        },
+      }}
+    >
+      {label}
+    </InputLabel>
+    <TextInput id={`${id}-input`} type={type} />
+  </FormControl>
+);
 
 export default function Register({ onSuccess }) {
-  //const navigate = useNavigate();
   const { register } = useAuth();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   
   const handleMouseDownPassword = (e) => e.preventDefault();
 
   async function handleRegister(e) {
     e.preventDefault();
-    setError('');           // limpa mensagem antiga
+    setError('');          
     try {
       await register({ username, password, email });
       setUsername('');
       setPassword('');
       setEmail('');
-      // AVISA AO MODAL QUE DEU CERTO
       onSuccess?.();
     } catch (error) {
       setError(error.message);
@@ -51,90 +89,43 @@ export default function Register({ onSuccess }) {
         onSubmit={handleRegister}
         sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300 }}
       >
-        <TextField
-          required
-          id="email"
-          label="Email"
-          value={email}                            // 1. value
-          onChange={e => setEmail(e.target.value)} // 2. onChange
-          autoComplete="email"
-          
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <EmailIcon />
-              </InputAdornment>
-            )
-          }}
-          
+        <RenderInputField
+        id="email"
+        label="Email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
         />
 
-        <TextField
-          required
-          id="username"
-          label="Username"
-          value={username}                            // 1. value
-          onChange={e => setUsername(e.target.value)} // 2. onChange
-          autoComplete="username"
-          
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <AccountCircleIcon />
-              </InputAdornment>
-            )
-          }}
-          
+        <RenderInputField
+        id="username"
+        label="Username"
+        value={username}
+        onChange={e => setUsername(e.target.value)}
         />
-  
-        <TextField
+
+        <RenderInputField
+          id="password"
           label="Password"
-          required
-          fullWidth
-          type={showPassword ? 'text' : 'password'}
           value={password}
           onChange={e => setPassword(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <KeyIcon />
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label={
-                    showPassword
-                      ? 'Ocultar senha'
-                      : 'Mostrar senha'
-                  }
-                  onClick={() => setShowPassword(show => !show)}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword
-                    ? <Visibility />
-                    : <VisibilityOff />
-                  }
-                </IconButton>
-              </InputAdornment>              
-            )
-          }}
+          type="password"
         />
-      {/* Exibe a mensagem de erro */}
-      {error && (
-          <Typography color="error" variant="body2">
-            {error}
-          </Typography>
-        )}
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"    // <— adiciona isso
-        fullWidth          // <— opcional, mas costuma melhorar o layout
-      >
-        Sign Up
-      </Button>
+  
+
+        {error && (
+            <Typography color="error" variant="body2">
+              {error}
+            </Typography>
+          )}
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"    
+          fullWidth          
+        >
+          Sign Up
+        </Button>
+
       </Box>
     );
 }

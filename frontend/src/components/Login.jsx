@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth } from '../utils/AuthContext';
 
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography'; 
-
-//novas
 import { alpha, styled } from '@mui/material/styles';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import InputBase from '@mui/material/InputBase';
 import InputLabel from '@mui/material/InputLabel';
+import Typography from '@mui/material/Typography'; 
 import FormControl from '@mui/material/FormControl';
-
 
 
 const TextInput  = styled(InputBase)(({ theme }) => ({
@@ -24,9 +21,8 @@ const TextInput  = styled(InputBase)(({ theme }) => ({
     border: '1px solid',
     borderColor: '#E0E3E7',
     fontSize: 15,
-    //fontFamily: /*...*/,
     padding: '10px 12px',
-    color: theme.palette.primary.main,      // texto sempre na cor primária
+    color: theme.palette.primary.main, 
     
     '&:focus': {
       borderColor: theme.palette.primary.main,
@@ -34,23 +30,49 @@ const TextInput  = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const RenderInputField = ({ id, label, value, onChange, type = 'text' }) => (
+  <FormControl
+    required
+    id={id}
+    variant="standard"
+    fullWidth
+    value={value}
+    onChange={onChange}
+  >
+    <InputLabel
+      shrink
+      htmlFor={`${id}-input`}
+      sx={{
+        color: 'primary.main',
+        fontSize: '1.5rem',
+        fontWeight: 500,
+        '& .MuiFormLabel-asterisk': {
+          display: 'none',
+        },
+      }}
+    >
+      {label}
+    </InputLabel>
+    <TextInput id={`${id}-input`} type={type} />
+  </FormControl>
+);
+
+
 export default function Login({ onSuccess }) {
   const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
 
   const handleMouseDownPassword = (e) => e.preventDefault();
 
   async function handleLogin(e) {
     e.preventDefault();
-    setError('');           // limpa mensagem antiga
+    setError('');          
     try {
       await login({ username, password });
       setUsername('');
       setPassword('');
-      // AVISA AO MODAL QUE DEU CERTO
       onSuccess?.();
     } catch (error) {
       setError(error.message);
@@ -63,38 +85,20 @@ export default function Login({ onSuccess }) {
       onSubmit={handleLogin}
       sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300 }}      
     >
-      
-
-      <FormControl 
+      <RenderInputField
         id="username"
-        variant="standard" 
-        fullWidth
-        value={username}                            
-        onChange={e => setUsername(e.target.value)}       
-      >
-        <InputLabel shrink htmlFor="username-input"
-          sx={{color: 'primary.main', fontSize: '1.5rem', fontWeight: 500}}>
-          Username
-        </InputLabel>
-        
-        <TextInput/>
+        label="Username"
+        value={username}
+        onChange={e => setUsername(e.target.value)}
+      />
 
-      </FormControl>
-
-      <FormControl 
+      <RenderInputField
         id="password"
-        variant="standard" 
-        fullWidth
-        value={password}                            
+        label="Password"
+        value={password}
         onChange={e => setPassword(e.target.value)}
-        
-      >
-        <InputLabel shrink htmlFor="bootstrap-input"
-          sx={{ color: 'primary.main', fontSize: '1.5rem', fontWeight: 500 }}>
-          Password
-        </InputLabel>
-        <TextInput type="password"/>
-      </FormControl>
+        type="password"
+      />
     
       {error && (
           <Typography color="error" variant="body2">
