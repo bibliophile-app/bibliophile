@@ -40,6 +40,18 @@ suspend fun HttpClient.loginUser(
     """.trimIndent())
 }
 
+/**
+ * Função de extensão para criar e logar um usuário e retornar cookie
+ */
+suspend fun HttpClient.registerAndLoginUser(
+    email: String,
+    username: String, 
+    password: String
+): String {
+    val sessionCookie = registerUser(email, username, password).setCookie().find { it.name == "USER_SESSION" }
+    requireNotNull(sessionCookie) { "Login did not return a session cookie" }
+    return "${sessionCookie.name}=${sessionCookie.value}"
+}
 
 /**
  * Função para fazer criar cookie de sessão manualmente

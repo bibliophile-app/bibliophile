@@ -10,8 +10,8 @@ object ReviewsTable : IntIdTable("reviews") {
         foreign = UsersTable,
         onDelete = ReferenceOption.CASCADE
     )
-    val bookId = varchar("book_id", 132)
-    val content = varchar("content", 255)
+    val bookId = varchar("book_id", 32)
+    val content = varchar("content", 255).nullable()
     val rate = integer("rate")
     val favorite = bool("favorite").default(false)
     val reviewedAt = date("reviewed_at")

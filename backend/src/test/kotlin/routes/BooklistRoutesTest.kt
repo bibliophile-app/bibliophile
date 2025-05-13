@@ -97,12 +97,6 @@ class BooklistRoutesTest {
         """.trimIndent())
     }
 
-    private suspend fun HttpClient.registerAndLoginUser(email: String, username: String, password: String): String {
-        val sessionCookie = registerUser(email, username, password).setCookie().find { it.name == "USER_SESSION" }
-        requireNotNull(sessionCookie) { "Login did not return a session cookie" }
-        return "${sessionCookie.name}=${sessionCookie.value}"
-    }
-
     private fun String.extractBooklistId(): Int {
         val regex = """Booklist ID:\s*(\d+)""".toRegex()
         val match = regex.find(this)

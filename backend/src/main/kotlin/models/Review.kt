@@ -9,7 +9,7 @@ data class Review(
     val id: Int,
     val bookId: String,
     val userId: Int,
-    val content: String,
+    val content: String?,
     val rate: Int,
     val favorite: Boolean,
     @Serializable(with = LocalDateSerializer::class)
@@ -19,7 +19,7 @@ data class Review(
 @Serializable
 data class ReviewRequest(
     val bookId: String,
-    val content: String,
+    val content: String?,
     val rate: Int,
     val favorite: Boolean,
     @Serializable(with = LocalDateSerializer::class)
