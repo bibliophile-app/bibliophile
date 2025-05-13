@@ -1,4 +1,4 @@
-package com.bibliophile.auth
+package com.bibliophile.utils
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 

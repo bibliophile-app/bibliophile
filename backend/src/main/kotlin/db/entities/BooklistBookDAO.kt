@@ -9,6 +9,6 @@ import com.bibliophile.db.tables.BooklistBooksTable
 class BooklistBookDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<BooklistBookDAO>(BooklistBooksTable)
 
-    var isbn by BooklistBooksTable.isbn
+    var bookId by BooklistBooksTable.bookId
     var booklistId by BooklistBooksTable.booklistId
 }

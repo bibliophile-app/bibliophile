@@ -17,61 +17,32 @@ fun Route.reviewRoutes() {
     route("reviews") {
         
         get {
-            runCatching {
-                reviewRepository.allReviews()
-            }.onSuccess {
-                call.respond(HttpStatusCode.OK, it)
-            }.onFailure {
-                call.respondServerError("Failed to retrieve reviews")
-            }
+            call.respond(HttpStatusCode.OK, reviewRepository.allReviews())
         }
 
         get("/{id}") {
             val id = call.getIntParam() ?: return@get
 
-            runCatching {
-                reviewRepository.review(id)
-            }.onSuccess { review ->
-                if (review != null) {
-                    call.respond(HttpStatusCode.OK, review)
-                } else {
-                    call.respond(HttpStatusCode.NotFound, mapOf("message" to "Review not found"))
-                }
-            }.onFailure {
-                call.respondServerError("Error retrieving review")
+            val review = reviewRepository.review(id)
+            if (review != null) {
+                call.respond(HttpStatusCode.OK, review)
+            } else {
+                call.respond(HttpStatusCode.NotFound, mapOf("message" to "Review not found"))
             }
         }
 
         get("/user/{userId}") {
             val userId = call.getIntParam("userId") ?: return@get
 
-            runCatching {
-                reviewRepository.getReviewsByUserId(userId)
-            }.onSuccess { reviews ->
-                if (reviews != null) {
-                    call.respond(HttpStatusCode.OK, reviews)
-                } else {
-                    call.respond(HttpStatusCode.NotFound, mapOf("message" to "Reviews not found"))
-                }
-            }.onFailure {
-                call.respondServerError("Error retrieving reviews")
-            }
+            val reviews = reviewRepository.getReviewsByUserId(userId)
+            call.respond(HttpStatusCode.OK, reviews)
         }
 
-        get("/book/{isbn}") {
-            val isbn = call.getParam("isbn") ?: return@get
+        get("/book/{bookId}") {
+            val bookId = call.getParam("bookId") ?: return@get
 
-            runCatching {
-                reviewRepository.getReviewsByIsbn(isbn)
-            }.onSuccess { reviews ->
-                if (reviews != null) {
-                    call.respond(HttpStatusCode.OK, reviews)
-                } else {
-                    call.respond(HttpStatusCode.NotFound, mapOf("message" to "Reviews not found"))
-                }
-            }.onFailure {
-                call.respondServerError("Error retrieving reviews")
-            }
+            val reviews = reviewRepository.getReviewsById(bookId)
+            call.respond(HttpStatusCode.OK, reviews)
         }
 
         authenticate("auth-session") { 
@@ -84,15 +55,8 @@ fun Route.reviewRoutes() {
                     return@post
                 }
             
-                runCatching {
-                    reviewRepository.addReview(session?.userId!!, review)
-                }.onSuccess {
-                    call.respond(HttpStatusCode.Created, mapOf("message" to "Review created successfully"))
-                }.onFailure {
-                    call.respondSqlException(it) { ex ->
-                        ex.message?.contains("unique constraint", ignoreCase = true) == true
-                    }
-                }            
+                val response = reviewRepository.addReview(session?.userId!!, review)
+                call.respond(HttpStatusCode.Created, mapOf("message" to "Review created successfully - Review ID: ${response.id}"))           
             }
             
             put("/{id}") {
@@ -105,16 +69,11 @@ fun Route.reviewRoutes() {
                     return@put
                 }
                 
-                runCatching {
-                    reviewRepository.updateReview(id, session?.userId!!, review)
-                }.onSuccess {    
-                    if (it) {
-                        call.respond(HttpStatusCode.OK, mapOf("message" to "Review updated successfully"))
-                    } else {
-                        call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this review"))
-                    }
-                }.onFailure {
-                    call.respondServerError("Failed to update review")
+                val status = reviewRepository.updateReview(id, session?.userId!!, review)
+                if (status) {
+                    call.respond(HttpStatusCode.OK, mapOf("message" to "Review updated successfully"))
+                } else {
+                    call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this review"))
                 }
             }
 
@@ -122,17 +81,12 @@ fun Route.reviewRoutes() {
                 val id = call.getIntParam() ?: return@delete
                 val session = call.sessions.get<UserSession>()
             
-                runCatching {
-                    reviewRepository.deleteReview(id, session?.userId!!)
-                }.onSuccess {
-                    if (it) {
-                        call.respond(HttpStatusCode.OK, mapOf("message" to "Review deleted successfully"))
-                    } else {
-                        call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this review"))
-                    }
-                }.onFailure {
-                    call.respondServerError("Failed to delete review")
-                }
+                val status = reviewRepository.deleteReview(id, session?.userId!!)
+                if (status) {
+                    call.respond(HttpStatusCode.OK, mapOf("message" to "Review deleted successfully"))
+                } else {
+                    call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this review"))
+                } 
             }        
         }
     }
@@ -140,9 +94,8 @@ fun Route.reviewRoutes() {
 
 private fun validateReview(review: ReviewRequest): Pair<HttpStatusCode, String>? {
     return when {
-        review.content.isBlank() -> HttpStatusCode.BadRequest to "Review content cannot be empty"
-        review.rating !in 1..10 -> HttpStatusCode.BadRequest to "Rating must be between 1 and 10"
-        review.isbn.isBlank() -> HttpStatusCode.BadRequest to "ISBN is required"
+        review.rate !in 0..10 -> HttpStatusCode.BadRequest to "Rate must be between 0 and 10"
+        review.bookId.isBlank() -> HttpStatusCode.BadRequest to "Book ID is required"
         else -> null
     }
 }

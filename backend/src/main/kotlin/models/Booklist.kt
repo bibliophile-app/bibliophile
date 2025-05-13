@@ -21,7 +21,7 @@ data class BooklistWithBooks(
 
 @Serializable
 data class BookRequest(
-    val isbn: String,
+    val bookId: String,
 )
 
 @Serializable

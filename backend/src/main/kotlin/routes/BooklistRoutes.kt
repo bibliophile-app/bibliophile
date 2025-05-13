@@ -18,43 +18,27 @@ fun Route.booklistRoutes() {
     route("booklists") {
 
         get {
-            runCatching {
-                booklistRepository.allBooklists()
-            }.onSuccess {
-                call.respond(HttpStatusCode.OK, it)
-            }.onFailure {
-                call.respondServerError("Failed to retrieve booklists")
-            }
+            call.respond(HttpStatusCode.OK, booklistRepository.allBooklists())
         }
 
         get("/{id}") {
             val id = call.getIntParam() ?: return@get
 
-            runCatching {
-                booklistRepository.booklist(id)
-            }.onSuccess {
-                if (it == null)
-                    call.respond(HttpStatusCode.NotFound, mapOf("message" to "Booklist not found"))
-                else
-                    call.respond(HttpStatusCode.OK, it)
-            }.onFailure {
-                call.respondSqlException(it)
-            }
+            val booklist = booklistRepository.booklist(id)
+            if (booklist == null)
+                call.respond(HttpStatusCode.NotFound, mapOf("message" to "Booklist not found"))
+            else
+                call.respond(HttpStatusCode.OK, booklist)
         }
 
         get("/{id}/books") {            
             val id = call.getIntParam() ?: return@get
 
-            runCatching {
-                booklistRepository.booklistWithBooks(id)
-            }.onSuccess {
-                if (it == null)
-                    call.respond(HttpStatusCode.NotFound, mapOf("message" to "Booklist not found"))
-                else
-                    call.respond(HttpStatusCode.OK, it)
-            }.onFailure {
-                call.respondSqlException(it)
-            }
+            val booklist = booklistRepository.booklistWithBooks(id)
+            if (booklist == null)
+                call.respond(HttpStatusCode.NotFound, mapOf("message" to "Booklist not found"))
+            else
+                call.respond(HttpStatusCode.OK, booklist)
         }
 
         authenticate("auth-session") { 
@@ -65,7 +49,7 @@ fun Route.booklistRoutes() {
                 runCatching {
                     booklistRepository.addBooklist(session?.userId!!, booklist)
                 }.onSuccess {
-                    call.respond(HttpStatusCode.Created, mapOf("message" to "Booklist created successfully"))
+                    call.respond(HttpStatusCode.Created, mapOf("message" to "Booklist created successfully - Booklist ID: ${it.id}"))
                 }.onFailure {
                     call.respondSqlException(it) { sql ->
                         sql.message?.contains("unique constraint", ignoreCase = true) == true
@@ -78,15 +62,11 @@ fun Route.booklistRoutes() {
                 val book = call.receive<BookRequest>()
                 val session = call.sessions.get<UserSession>()
                 
-                runCatching {
-                    booklistRepository.addBookToBooklist(id, session?.userId!!, book.isbn)
-                }.onSuccess {
+                val response = booklistRepository.addBookToBooklist(id, session?.userId!!, book.bookId)
+                if (response)
                     call.respond(HttpStatusCode.Created, mapOf("message" to "Book added to booklist successfully"))
-                }.onFailure {
-                    call.respondSqlException(it) { sql ->
-                        sql.message?.contains("unique constraint", ignoreCase = true) == true
-                    }
-                }
+                else 
+                    call.respond(HttpStatusCode.Conflict)
             }
 
             put("/{id}") {
@@ -110,33 +90,23 @@ fun Route.booklistRoutes() {
                 val id = call.getIntParam() ?: return@delete
                 val session = call.sessions.get<UserSession>()
                 
-                runCatching {
-                    booklistRepository.removeBooklist(id, session?.userId!!)
-                }.onSuccess {
-                    if (it)
-                        call.respond(HttpStatusCode.OK, mapOf("message" to "Booklist deleted successfully"))
-                    else
-                        call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this booklist"))
-                }.onFailure {
-                    call.respondServerError("Failed to delete booklist")
-                }
+                val status = booklistRepository.removeBooklist(id, session?.userId!!)
+                if (status)
+                    call.respond(HttpStatusCode.OK, mapOf("message" to "Booklist deleted successfully"))
+                else
+                    call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this booklist"))
             }
 
-            delete("/{id}/books/{isbn}") {
+            delete("/{id}/books/{bookId}") {
                 val id = call.getIntParam() ?: return@delete
-                val isbn = call.getParam("isbn") ?: return@delete
+                val bookId = call.getParam("bookId") ?: return@delete
                 val session = call.sessions.get<UserSession>()
 
-                runCatching {
-                    booklistRepository.removeBookFromBooklist(id, session?.userId!!, isbn)
-                }.onSuccess {
-                    if (it)
-                        call.respond(HttpStatusCode.OK, mapOf("message" to "Book deleted from booklist successfully"))
-                    else
-                        call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this booklist"))
-                }.onFailure {
-                    call.respondServerError("Failed to delete book from booklist")
-                }
+                val status = booklistRepository.removeBookFromBooklist(id, session?.userId!!, bookId)
+                if (status)
+                    call.respond(HttpStatusCode.OK, mapOf("message" to "Book deleted from booklist successfully"))
+                else
+                    call.respond(HttpStatusCode.Forbidden, mapOf("message" to "You don't own this booklist"))
             }
         }
     }

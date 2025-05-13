@@ -1,21 +1,27 @@
 package com.bibliophile.models
 
+import java.time.LocalDate
 import kotlinx.serialization.Serializable
+import com.bibliophile.utils.LocalDateSerializer
 
 @Serializable
 data class Review(
-    val id: Int? = null,
-    val isbn: String,
+    val id: Int,
+    val bookId: String,
     val userId: Int,
-    val content: String,
-    val rating: Int,
-    val favorite: Boolean
+    val content: String?,
+    val rate: Int,
+    val favorite: Boolean,
+    @Serializable(with = LocalDateSerializer::class)
+    val reviewedAt: LocalDate
 )
 
 @Serializable
 data class ReviewRequest(
-    val isbn: String,
-    val content: String,
-    val rating: Int,
-    val favorite: Boolean
+    val bookId: String,
+    val content: String?,
+    val rate: Int,
+    val favorite: Boolean,
+    @Serializable(with = LocalDateSerializer::class)
+    val reviewedAt: LocalDate
 )

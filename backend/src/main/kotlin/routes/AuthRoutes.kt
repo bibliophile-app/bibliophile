@@ -8,17 +8,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import kotlinx.serialization.Serializable
-import com.bibliophile.auth.*
+
+import com.bibliophile.utils.*
 import com.bibliophile.models.UserSession
+import com.bibliophile.models.LoginRequest
+import com.bibliophile.models.RegisterRequest
 import com.bibliophile.repositories.UserRepository
-
-// DTOS
-@Serializable
-data class RegisterRequest(val username: String, val password: String)
-
-@Serializable
-data class LoginRequest(val username: String, val password: String)
-
 
 fun Route.authRoutes() {
 
@@ -30,7 +25,7 @@ fun Route.authRoutes() {
             call.respond(HttpStatusCode.Conflict, "Username already exists")
             return@post
         }
-        val user = UserRepository.create(data.username, hashPassword(data.password))
+        val user = UserRepository.create(data.email, data.username, hashPassword(data.password))
         call.sessions.set(UserSession(user.id))
         call.respond(HttpStatusCode.OK, mapOf("message" to "Registered"))
     }
@@ -68,7 +63,7 @@ fun Route.authRoutes() {
     }
 
     get("/users/{username}") {
-        val username = call.parameters["username"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+        val username = call.getParam("username") ?: return@get
         val user = UserRepository.findByUsername(username)
         if (user == null) {
             call.respond(HttpStatusCode.NotFound)

@@ -8,6 +8,7 @@ import com.bibliophile.db.tables.UsersTable
 class UserDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<UserDAO>(UsersTable)
 
+    var email by UsersTable.email
     var username by UsersTable.username
     var passwordHash by UsersTable.passwordHash
 }

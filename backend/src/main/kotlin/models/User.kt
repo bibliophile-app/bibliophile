@@ -4,13 +4,20 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class User(
-    val id: Int? = null,
+    val id: Int,
+    val email: String,
     val username: String,
     val passwordHash: String
 ) 
 
 @Serializable
 data class UserSession(val userId: Int?)
+
+@Serializable
+data class RegisterRequest(val email: String, val username: String, val password: String)
+
+@Serializable
+data class LoginRequest(val username: String, val password: String)
 
 @Serializable
 data class UserProfileResponse(

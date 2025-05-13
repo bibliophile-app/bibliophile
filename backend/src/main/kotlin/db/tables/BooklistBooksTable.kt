@@ -9,9 +9,9 @@ object BooklistBooksTable : IntIdTable("booklist_books") {
         foreign = BooklistsTable,
         onDelete = ReferenceOption.CASCADE
     )
-    val isbn = varchar("isbn", 13)
-    
+    val bookId = varchar("book_id", 32)
+
     init {
-        uniqueIndex("uq_book_per_list", isbn, booklistId)
+        uniqueIndex("uq_book_per_list", bookId, booklistId)
     }
 }

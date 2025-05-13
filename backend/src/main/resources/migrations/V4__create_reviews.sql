@@ -1,12 +1,11 @@
 CREATE TABLE reviews (
-  id integer PRIMARY KEY,
-  isbn varchar(13) NOT NULL,
-  user_id integer NOT NULL,
-  content varchar(255) NOT NULL,
-  rating integer NOT NULL,
-  favorite boolean NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  book_id VARCHAR(32) NOT NULL,
+  user_id BIGINT NOT NULL,
+  content VARCHAR(255),
+  rate INT NOT NULL CHECK (rate BETWEEN 0 AND 10),
+  favorite BOOLEAN NOT NULL DEFAULT FALSE,
+  reviewed_at DATE DEFAULT CURRENT_DATE,
 
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

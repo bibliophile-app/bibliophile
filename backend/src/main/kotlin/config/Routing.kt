@@ -12,10 +12,6 @@ import com.bibliophile.routes.authRoutes
 
 fun Application.configureRouting() {
     routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
-        
         booklistRoutes()
         authRoutes()
         quoteRoutes()

@@ -1,10 +1,9 @@
 CREATE TABLE booklist_books (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  isbn VARCHAR(13) NOT NULL,
-  booklist_id INT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  book_id VARCHAR(32) NOT NULL,
+  booklist_id BIGINT NOT NULL,
+  added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   
-  UNIQUE KEY uq_book_per_list (isbn, booklist_id),
+  UNIQUE KEY uq_book_per_list (book_id, booklist_id),
   FOREIGN KEY (booklist_id) REFERENCES booklists(id) ON DELETE CASCADE
 );
