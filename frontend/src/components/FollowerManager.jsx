@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-const API_URL = "http://localhost:8080/followers";
+const API_URL = "/followers";
 
 export default function FollowerManager() {
   const [userId, setUserId] = useState("");
@@ -55,6 +55,7 @@ export default function FollowerManager() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
+          followerId: parseInt(userId),
           followeeId: parseInt(followedId),
         }),
       });
@@ -74,6 +75,7 @@ export default function FollowerManager() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
+          followerId: parseInt(userId),
           followeeId: parseInt(followedId),
         }),
       });

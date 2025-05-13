@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 
-const API_URL = 'http://localhost:8080'
 const AuthContext = createContext()
 
 function AuthProvider ({ children }) {
@@ -8,7 +7,7 @@ function AuthProvider ({ children }) {
   const [loading, setLoading] = useState(true)
 
   async function authUser() {
-    const response = await fetch(`${API_URL}/me`, {
+    const response = await fetch(`/me`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -29,8 +28,8 @@ function AuthProvider ({ children }) {
     }
   }
   
-  async function register({ email, username, password }) {
-    return await fetch(`${API_URL}/register`, {
+  async function register({ username, password }) {
+    const response = await fetch(`/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: 'include',
@@ -39,7 +38,7 @@ function AuthProvider ({ children }) {
   }
 
   async function login({ username, password }) {
-    await fetch(`${API_URL}/login`, {
+    const response = await fetch(`/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -50,7 +49,7 @@ function AuthProvider ({ children }) {
   }
 
   async function logout() {
-    await fetch(`${API_URL}/logout`, { credentials: 'include' })
+    await fetch(`/logout`, { credentials: 'include' })
     setUser(null)
   }
 
