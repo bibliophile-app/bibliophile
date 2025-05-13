@@ -47,7 +47,7 @@ Para executar os testes automatizados, siga os passos abaixo:
     ./gradlew test
     ```
 
-    Os relatórios de testes estarão disponíveis no seguinte caminho: `build/reports/tests/test/index.html`
+    Os relatórios de testes estarão disponíveis no seguinte caminho: `backend/build/reports/tests/test/index.html`
 
 3. Para gerar e visualizar o relatório de cobertura de testes, execute:
 
@@ -55,4 +55,4 @@ Para executar os testes automatizados, siga os passos abaixo:
     ./gradlew koverHtmlReport
     ```
 
-    O relatório de cobertura será gerado no seguinte caminho: `build/reports/kover/html/index.html`
+    O relatório de cobertura será gerado no seguinte caminho: `backend/build/reports/kover/html/index.html`
