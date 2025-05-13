@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:8080/reviews";
+const API_URL = "/reviews";
 
 export default function ReviewManager() {
   const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"

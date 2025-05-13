@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
-const API_URL = "http://localhost:8080/booklists";
+const API_URL = "/booklists";
 
 const BooklistManager = () => {
     const [booklists, setBooklists] = useState([]);
