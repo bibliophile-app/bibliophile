@@ -1,6 +1,9 @@
-import { Box, Typography, Avatar, Paper } from '@mui/material';
+import { Box, Typography, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-  
+
+import BookImage from '../../atoms/BookImage';
+
 const StyledItem = styled(Paper)(({ theme }) => ({
     display: 'flex',
     marginBottom: "10px",
@@ -15,25 +18,25 @@ const StyledItem = styled(Paper)(({ theme }) => ({
     },
 }));
   
-const BookCover = styled(Avatar)({
-    width: 64,
-    height: 96,
-    borderRadius: 4,
-    backgroundColor: '#e0e0e0',
-    flexShrink: 0,
-});
-
 function ResultBooks({ books, paginatedBooks }) {
+    const navigate = useNavigate();
+    function onSelect(bookId) {
+        navigate(`/book/${encodeURIComponent(bookId)}`);
+    };
+
     return !books.length ? (
-        <Typography mt={4}>
-          NO RESULTS FOUND
+        <Typography variant="body" fontSize={"0.8rem"}>
+          NO RESULTS FOUND...
         </Typography>           
     ) : ( 
-        paginatedBooks.map((book, index) => (
-            <StyledItem key={index} elevation={1}>
-                <BookCover variant="square" src={book.coverUrl} alt={book.title}>
-                    N/A
-                </BookCover>
+        paginatedBooks.map((book, _) => (
+            <StyledItem key={book.olid} elevation={1} onClick={() => onSelect(book.olid)}>
+                <BookImage
+                  src={book.coverUrl}
+                  alt={book.title}
+                  width={64}
+                  height={96}
+                />
 
                 <Box sx={{ ml: 2 }}>
                     <Typography variant="h7" fontWeight="bold" color='white' gutterBottom>

@@ -8,9 +8,10 @@ const theme = createTheme({
     secondary: { main: '#7BA1B9' },  // azul acinzentado leve
     
     background: {
-      default: '#1A242F',           // fundo geral escuro
-      surface: '#0F151B',           // elementos elevados (cards)
-      muted:   '#556678',           // linhas, bordas, placeholders
+      default: '#1A242F',   // fundo geral (petróleo escuro)
+      surface: '#0F151B',   // navbar, painéis
+      contrast: '#556677',  // botões, inputs elevados
+      muted:   '#44515C',   // divisores, ícones passivos
     },
 
     neutral: {
@@ -20,8 +21,8 @@ const theme = createTheme({
 
     error:   { main: '#FF4C4C' },
     warning: { main: '#FFB347' },
-    success: { main: '#4CE894' },
-    info:    { main: '#4CCCD3' },
+    success: { main: '#00e054' },
+    info:    { main: '#40bcf4' },
 
     white:  { main: '#FFFFFF' },
     black:  { main: '#000000' },
@@ -31,8 +32,12 @@ const theme = createTheme({
     brown:  { main: '#8E7143' },
     green:  { main: '#4CE894' },
     cyan:   { main: '#4CCCD3' },
-    purple: { main: '#7F7FD5' },
     pink:   { main: '#E06BB0' },
+    purple: {
+      main: '#B38BFF',
+      secondary: '#9F8BFF',
+    }
+
   },
 
   shape: {

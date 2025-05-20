@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
@@ -69,9 +69,9 @@ function SearchBar() {
   function onSearch() {
     if (query && query.trim()) {
       navigate(`/search/${encodeURIComponent(query.trim())}`);
+      setQuery("");
     }
   };
-
 
   function handleToggle() {
     setOpen((prev) => !prev);

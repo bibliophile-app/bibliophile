@@ -1,8 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Divider, Pagination, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Box, Divider, Pagination, Stack, Typography, useMediaQuery } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 
+import LoadingBox from '../atoms/LoadingBox';
 import useOpenLibrary from '../utils/useOpenLibrary';
 import Categories from '../components/search/Categories';
 import ResultBooks from '../components/search/ResultBooks';
@@ -50,11 +51,7 @@ function SearchPage() {
   );
 
   if (loading) {
-    return (
-      <Box textAlign="center" mt={6}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingBox />
   }
 
   if (error) {
@@ -76,13 +73,15 @@ function SearchPage() {
           
           <ResultBooks books={results} paginatedBooks={paginatedResults}/>
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-            <StyledPagination
-              count={Math.ceil(results.length / ITEMS_PER_PAGE)}
-              page={page}
-              onChange={(_, val) => setPage(val)}
-            />
-          </Box>
+          {results.length > 0 &&
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+              <StyledPagination
+                count={Math.ceil(results.length / ITEMS_PER_PAGE)}
+                page={page}
+                onChange={(_, val) => setPage(val)}
+              />
+            </Box>
+          }
         </Stack>
 
         {!isMobile && (
