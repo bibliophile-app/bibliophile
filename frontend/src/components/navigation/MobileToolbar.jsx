@@ -1,19 +1,15 @@
 import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Box, Button, Divider, Drawer, IconButton, MenuItem } from '@mui/material';
+import { Box, Button, Drawer, IconButton, MenuItem } from '@mui/material';
 
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import ListIcon from '@mui/icons-material/List';
 
 import Logo from '../../atoms/Logo';
+import Divider from '../../atoms/Divider';
 import SearchBar from '../search/SearchBar';
-
-const ItemDivider = styled(Divider)(({ theme }) => ({
-	my: 0.5, 
-	backgroundColor: theme.palette.background.muted, 
-}));
 
 const StyledMenuItem = styled(MenuItem)(({
 	padding: '6px 3px',
@@ -55,15 +51,15 @@ function MobileToolbar({ user, options }) {
 					{!user && (
 						<React.Fragment>
 							<StyledMenuItem> Log In </StyledMenuItem>
-							<ItemDivider />
+							<Divider />
 							<StyledMenuItem> Create Account </StyledMenuItem>
-							<ItemDivider />
+							<Divider />
 						</React.Fragment>
 					)}
 					
 					{options.map((option, index) => (
 						<React.Fragment key={option.name}>
-							{index !== 0 && <ItemDivider />}
+							{index !== 0 && <Divider />}
 							<StyledMenuItem component={Link} to={option.path} >
 								{option.icon && <option.icon fontSize="small" />}
 								{option.name}
