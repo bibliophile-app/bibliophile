@@ -1,57 +1,130 @@
-import { useState } from "react";
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 
-function Register() {
-  const navigate = useNavigate();
+import { alpha, styled } from '@mui/material/styles';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import InputBase from '@mui/material/InputBase';
+import InputLabel from '@mui/material/InputLabel';
+import Typography from '@mui/material/Typography';   
+import FormControl from '@mui/material/FormControl';
+
+
+const TextInput  = styled(InputBase)(({ theme }) => ({
+  'label + &': {
+    marginTop: theme.spacing(3),
+  },
+  '& .MuiInputBase-input': {
+    borderRadius: 4,
+    backgroundColor: '#F3F6F9',
+    border: '1px solid',
+    borderColor: '#E0E3E7',
+    fontSize: 15,
+    padding: '10px 12px',
+    color: theme.palette.primary.main,      
+    
+    '&:focus': {
+      borderColor: theme.palette.primary.main,
+    },
+  },
+}));
+
+
+const RenderInputField = ({ id, label, value, onChange, type = 'text' }) => (
+  <FormControl
+    required
+    id={id}
+    variant="standard"
+    fullWidth
+    value={value}
+    onChange={onChange}
+  >
+    <InputLabel
+      shrink
+      htmlFor={`${id}-input`}
+      sx={{
+        color: 'primary.main',
+        fontSize: '1.5rem',
+        fontWeight: 500,
+        '& .MuiFormLabel-asterisk': {
+          display: 'none',
+        },
+      }}
+    >
+      {label}
+    </InputLabel>
+    <TextInput id={`${id}-input`} type={type} />
+  </FormControl>
+);
+
+export default function Register({ onSuccess }) {
   const { register } = useAuth();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState('');
+  
+  const handleMouseDownPassword = (e) => e.preventDefault();
 
-
-  const handleSubmit = async (e) => {
+  async function handleRegister(e) {
     e.preventDefault();
-    const res = await register({email, username, password});
-    setPassword("");
-    
-    if (res.ok) {
-      setUsername("");
-      navigate("/");
-    }  
-
-    else alert("Error to register user");
-  };
+    setError('');          
+    try {
+      await register({ username, password, email });
+      setUsername('');
+      setPassword('');
+      setEmail('');
+      onSuccess?.();
+    } catch (error) {
+      setError(error.message);
+    }
+  }
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Registro de Usuário</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border px-3 py-2"
+      <Box
+        component="form"
+        onSubmit={handleRegister}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300 }}
+      >
+        <RenderInputField
+        id="email"
+        label="Email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
         />
-        <input
-          type="text"
-          placeholder="Usuário"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full border px-3 py-2"
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border px-3 py-2"
-        />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2">Register</button>
-      </form>
-    </div>
-  );
-}
 
-export default Register;
+        <RenderInputField
+        id="username"
+        label="Username"
+        value={username}
+        onChange={e => setUsername(e.target.value)}
+        />
+
+        <RenderInputField
+          id="password"
+          label="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          type="password"
+        />
+  
+
+        {error && (
+            <Typography color="error" variant="body2">
+              {error}
+            </Typography>
+          )}
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"    
+          fullWidth          
+        >
+          Sign Up
+        </Button>
+
+      </Box>
+    );
+}
