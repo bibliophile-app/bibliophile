@@ -3,7 +3,7 @@ import { useAuth } from '../../utils/AuthContext';
 
 import { Link, useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Box, Button, Drawer, IconButton, MenuItem } from '@mui/material';
+import { Box, Drawer, IconButton, MenuItem } from '@mui/material';
 
 import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
