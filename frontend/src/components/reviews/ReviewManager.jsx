@@ -108,7 +108,7 @@ export default function ReviewManager() {
         body: JSON.stringify({
           bookId: newBookId,
           content: newContent,
-          rate: Number(newRate),
+          rate: Number(newRate) * 2,
           favorite: newFavorite,
           reviewedAt: newReviewedAt
         })
