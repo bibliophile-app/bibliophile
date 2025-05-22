@@ -11,16 +11,21 @@ const useOpenLibrary = ({ language = 'en', onResults, onError }) => {
   async function fetchBookByOLID(olid) {
     setLoading(true);
     try {
-      const url = `${BASE_REQUEST_URL}/olid/${olid}.json`;
+      const url = `${BASE_REQUEST_URL}/books/${olid}.json`;
       const response = await fetch(url);
       const data = await response.json();
 
-      const coverId = data.covers ? data.covers[0] : null;
-      const coverUrl = coverId
-        ? `${BASE_COVER_URL}/b/olid/${coverId}-L.jpg`
-        : null;
+      const coverUrl = `${BASE_COVER_URL}/b/olid/${olid}-M.jpg`
 
-      onResults({ ...data, coverUrl });
+      const book =({
+        olid: olid,
+        title: data.title,
+        description: data.description,
+        coverUrl: coverUrl,
+        publish_year: data.first_publish_year
+      })
+
+      onResults(book);
     } catch (error) {
       onError(error);
     } finally {
@@ -36,13 +41,17 @@ const useOpenLibrary = ({ language = 'en', onResults, onError }) => {
       const response = await fetch(url);
       const data = await response.json();
 
-      const books = data.docs.map((book) => ({
-        title: book.title,
-        author: book.author_name ? book.author_name[0] : 'Unknown',
-        olid: book.cover_edition_key,
-        coverUrl: book.cover_edition_key
-          ? `${BASE_COVER_URL}/b/olid/${book.cover_edition_key}-M.jpg`
-          : null,
+      const books = data.docs
+        .filter((book) =>
+          Array.isArray(book.author_name) &&
+          book.author_name.length > 0 &&
+          book.cover_edition_key
+        )
+        .map((book) => ({
+          title: book.title,
+          author: book.author_name.join(', '),
+          olid: book.cover_edition_key,
+          coverUrl: `${BASE_COVER_URL}/b/olid/${book.cover_edition_key}-M.jpg`,
       }));
 
       onResults(books);

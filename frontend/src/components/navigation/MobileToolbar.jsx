@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Box, Button, Drawer, IconButton, MenuItem } from '@mui/material';
+import { Box, Drawer, IconButton, MenuItem } from '@mui/material';
 
-import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import ListIcon from '@mui/icons-material/List';
 
@@ -66,14 +65,6 @@ function MobileToolbar({ user, options }) {
 							</StyledMenuItem>
 						</React.Fragment>
 					))}
-
-					{user && (
-						<Button color="primary" variant="contained" fullWidth
-							sx={{ display: 'flex', justifyContent: 'center', gap: 0.5, mt: 2 }}				
-						>	
-							<AddIcon fontSize="small" /> Log
-						</Button>
-					)}
 				</Box>
 			</Drawer>
 		</React.Fragment>

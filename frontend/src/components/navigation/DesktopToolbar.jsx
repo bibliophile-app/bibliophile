@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 
 import SearchBar from '../search/SearchBar';
 
@@ -23,14 +22,6 @@ function DesktopToolbar({ options, user }) {
 			))}
 
 			<SearchBar />
-			
-			{user && (
-				<Button color="primary" size="small" variant="contained" 
-				  	sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}
-				>
-					<AddIcon fontSize="small" /> Log
-				</Button>
-			)}
   		</React.Fragment>
 	);
 }
