@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { styled, ThemeProvider } from '@mui/material/styles';
 import { Box } from '@mui/material';
@@ -9,11 +8,13 @@ import { AuthProvider } from "./utils/AuthContext";
 
 import Home from './pages/Home';
 import Profile from './pages/Profile';
+import DiaryPage from './pages/Diary';
+import BookPage from './pages/BookPage';
 import SearchPage from './pages/SearchPage';
 import Register from './components/Register';
 import NavBar from './components/navigation/NavBar';
 import QuoteManager from './components/QuoteManager';
-import ReviewManager from './components/ReviewManager';
+import ReviewManager from './components/reviews/ReviewManager';
 import FollowerManager from './components/FollowerManager';
 import BooklistManager from './components/BooklistManager';
 
@@ -23,7 +24,7 @@ const PageWrapper = styled(Box, {
   minHeight: '100vh',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundImage: `
+  background: `
   radial-gradient(
 	circle at top left,
 	rgba(32, 44, 55, 0.6) 0%,
@@ -34,9 +35,6 @@ const PageWrapper = styled(Box, {
 	${theme.palette.background.default} 0%,
 	${theme.palette.background.surface} 100%
   )`,
-  backgroundRepeat: 'no-repeat',
-  backgroundSize: 'cover',
-  backgroundAttachment: 'fixed',
 }));
 
 function App() {
@@ -51,6 +49,8 @@ function App() {
 								<Route path="/" element={<Home />} />
 								<Route path="/profile" element={<Profile />} />
 								<Route path="/signin" element={<Register />} />
+								<Route path="/diary" element={<DiaryPage />} />
+								<Route path="/book/:olid" element={<BookPage />} /> 
 								<Route path="/search/:query" element={<SearchPage />} /> 
 								<Route path="/test/quotes" element={<QuoteManager />} />
 								<Route path="/test/booklists" element={<BooklistManager />} />
