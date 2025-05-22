@@ -51,7 +51,6 @@ const theme = createTheme({
     h5: { fontSize: '1rem', fontWeight: 500, lineHeight: '1.5rem' },
     p:  { fontSize: '0.875rem', fontWeight: 400, lineHeight: '1.25rem' },
     small: { fontSize: '0.75rem', fontWeight: 400, lineHeight: '1rem' },
-    maissmall: { fontSize: '0.1rem', fontWeight: 50, lineHeight: '0.1rem' },
     logo: {
       fontFamily: "'Libre Baskerville', serif",
       fontWeight: 600,

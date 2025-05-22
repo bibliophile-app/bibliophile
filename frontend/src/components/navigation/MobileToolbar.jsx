@@ -10,7 +10,7 @@ import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-import PopUp from '../PopUp'
+import PopUp from '../../atoms/PopUp'
 import Login from '../Login';
 import Register from '../Register';
 import Logo from '../../atoms/Logo';

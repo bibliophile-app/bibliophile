@@ -6,7 +6,7 @@ function Home() {
 
   if (!user) {
     return (<div style={{ minHeight: '100%' }}>
-              <h1>Frase bem legal e alguma imagem</h1>
+              <h1></h1>
             </div>
     )
   }

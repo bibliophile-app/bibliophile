@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-import PopUp from '../PopUp'
+import PopUp from '../../atoms/PopUp'
 import Login from '../Login';
 import Register from '../Register';
 import SearchBar from '../search/SearchBar';

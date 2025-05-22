@@ -64,7 +64,6 @@ export default function Register({ onSuccess }) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [error, setError] = useState('');
   
   const handleMouseDownPassword = (e) => e.preventDefault();
