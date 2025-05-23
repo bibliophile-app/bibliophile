@@ -33,7 +33,7 @@ const StyledDate = styled('input')(({ theme }) => ({
   },
 }));
 
-function ReviewForm({ open = true, onClose, book, reviewId = null}) {
+function ReviewForm({ book, open, onClose, onSubmit, reviewId = null}) {
   const today = new Date().toISOString().slice(0, 10);
   const maxLength = 255;
 
@@ -77,7 +77,7 @@ function ReviewForm({ open = true, onClose, book, reviewId = null}) {
     onClose();
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const reviewData = {
       bookId: book.olid,
       reviewedAt: readDate,
@@ -86,8 +86,9 @@ function ReviewForm({ open = true, onClose, book, reviewId = null}) {
       favorite,
     };
 
-    if (mode === 'create') addReview(reviewData);
-    else updateReview(reviewId, reviewData);
+    if (mode === 'create') await addReview(reviewData);
+    else await updateReview(reviewId, reviewData);
+    if (onSubmit) onSubmit(); 
     handleExit();
   };
 
@@ -155,9 +156,7 @@ function ReviewForm({ open = true, onClose, book, reviewId = null}) {
             <BookImage
               src={book.coverUrl}
               alt={book.title}
-              width={180}
-              height={240}
-              sx={{ display: { xs: 'none', md: 'block' } }}
+              sx={{ width: 180, height: 240, display: { xs: 'none', md: 'block' } }}
             />
 
             <Box sx={{ width: '100%'}}>

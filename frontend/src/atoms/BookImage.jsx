@@ -12,25 +12,33 @@ const BookCover = styled(Avatar, {
   overflow: 'hidden',
 }));
 
-function BookImage({ src, alt = 'Book cover', width = 180, height = 240, sx = {} }) {
-  const [loaded, setLoaded] = useState(false);
+const loadedImages = new Set();
+
+function BookImage({ src, alt = 'Book cover', sx = {} }) {
+  const [loaded, setLoaded] = useState(() => loadedImages.has(src));
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    setLoaded(false);
+    if (!src) return;
+    if (loadedImages.has(src)) {
+      setLoaded(true);
+    } else {
+      setLoaded(false);
+    }
     setError(false);
   }, [src]);
+
+  const handleLoad = () => {
+    loadedImages.add(src);
+    setLoaded(true);
+  };
 
   const showFallback = error || !src;
 
   return (
     <BookCover
       hasImage={!showFallback}
-      sx={{
-        width,
-        height,
-        ...sx,
-      }}
+      sx={{ ...sx }}
       variant="rounded"
     >
       {!showFallback ? (
@@ -46,13 +54,16 @@ function BookImage({ src, alt = 'Book cover', width = 180, height = 240, sx = {}
           <img
             src={src}
             alt={alt}
-            onLoad={() => setLoaded(true)}
+            loading="lazy"
+            onLoad={handleLoad}
             onError={() => setError(true)}
             style={{
-              display: loaded ? 'block' : 'none',
+              display: 'block',
               width: '100%',
               height: '100%',
               objectFit: 'contain',
+              opacity: loaded ? 1 : 0,
+              transition: 'opacity 0.3s ease-in-out',
             }}
           />
         </>

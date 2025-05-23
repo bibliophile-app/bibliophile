@@ -34,57 +34,63 @@ const ReviewHistogram = ({ reviews }) => {
 
   return (
     <Paper elevation={0} sx={{ bgcolor: 'transparent', width: '100%' }}>
-      <Stack direction="row" spacing={2} alignItems="center">
-        <Box sx={{ width: {sm: 240, md: 180}, height: 100}}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} barCategoryGap={0}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.1} />
-              <XAxis
-                dataKey="rating"
-                tick={{ fontSize: 12, fill: '#666' }}
-                domain={[0, 5]}
-                type="category"
-                hide
-              />
+      {reviews?.length > 4 ? (
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Box sx={{ width: {sm: 240, md: 180}, height: 100}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data} barCategoryGap={0}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.1} />
+                <XAxis
+                  dataKey="rating"
+                  tick={{ fontSize: 12, fill: '#666' }}
+                  domain={[0, 5]}
+                  type="category"
+                  hide
+                />
 
-              <Tooltip
-                cursor={{ fill: 'rgba(0,0,0,0.1)' }}
-                contentStyle={{
-                  background: '#fff',
-                  borderRadius: '4px',
-                  border: '1px solid #ccc',
-                  fontSize: '12px'
-                }}
-                formatter={(value) => [formatCount(value), 'Reviews']}
-                labelFormatter={(label) => `${label} stars`}
-              />
+                <Tooltip
+                  cursor={{ fill: 'rgba(0,0,0,0.1)' }}
+                  contentStyle={{
+                    background: '#fff',
+                    borderRadius: '4px',
+                    border: '1px solid #ccc',
+                    fontSize: '12px'
+                  }}
+                  formatter={(value) => [formatCount(value), 'Reviews']}
+                  labelFormatter={(label) => `${label} stars`}
+                />
 
-              <Bar dataKey="count"
-                   fill="#44515C" 
-                   radius={[2, 2, 0, 0]} 
-                   minPointSize={2}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </Box>
+                <Bar dataKey="count"
+                    fill="#44515C" 
+                    radius={[2, 2, 0, 0]} 
+                    minPointSize={2}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </Box>
 
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          justifyContent: 'center', 
-          alignItems: 'center',
-          width: '20%'
-        }}>
-          <Typography variant="h6" fontSize="1rem" >{average}</Typography>
-          <StyledRating
-            name="average-rating"
-            value={parseFloat(average)}
-            precision={0.1}
-            readOnly
-            sx={{ fontSize: '0.8rem' }}
-          />
-        </Box>
-      </Stack>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            width: '20%'
+          }}>
+            <Typography variant="h5" fontSize="1rem" >{average}</Typography>
+            <StyledRating
+              name="average-rating"
+              value={parseFloat(average)}
+              precision={0.1}
+              readOnly
+              sx={{ fontSize: '0.8rem' }}
+            />
+          </Box>
+        </Stack>
+      ) : (
+        <Typography variant="h5" sx={{ fontSize: '0.8rem' }}>
+          Not enough ratings!
+        </Typography>
+      )}
     </Paper>
   );
 };

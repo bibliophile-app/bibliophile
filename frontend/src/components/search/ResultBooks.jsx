@@ -34,8 +34,7 @@ function ResultBooks({ books, paginatedBooks }) {
                 <BookImage
                   src={book.coverUrl}
                   alt={book.title}
-                  width={64}
-                  height={96}
+                  sx={{width: 64, height: 96}}
                 />
 
                 <Box sx={{ ml: 2 }}>

@@ -2,9 +2,9 @@ import Icon from '../assets/icon.svg?react';
 import { Typography, Box } from "@mui/material";
 
 const sizeMap = {
-  sm: "1.8",
-  md: "2.5",
-  lg: "3",
+  sm: "1.7",
+  md: "2.0",
+  lg: "2.5",
 };
 
 function Logo({ size = "sm", variant = "full" }) {

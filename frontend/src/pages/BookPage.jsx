@@ -63,7 +63,7 @@ function BookPage() {
           <BookImage
             src={book.coverUrl}
             alt={`Cover of ${book.title}`}
-            sx={{ width: {sx: '50%', md: '180px'}}}
+            sx={{ width: '180px', height: '100%' }}
           />
 
           {/* Detalhes do livro */}
@@ -92,8 +92,8 @@ function BookPage() {
 
               {/* Placeholder de reviews */}
               <Box mt={6}>
-                {user && <ReviewSection title={"Your reviews"} reviews={reviews?.filter(review => review.username === user.username)}/> }
-                <ReviewSection title={"Recent reviews"} reviews={reviews?.filter(review => review.username !== user?.username)}/>
+                {user && <ReviewSection title={"Your reviews"} reviews={reviews?.filter((review) => review.username === user.username && review.content)}/> }
+                <ReviewSection title={"Recent reviews"} reviews={reviews?.filter(review => review.username !== user?.username && review.content)}/>
             </Box>              
           </Stack>
 
@@ -115,7 +115,12 @@ function BookPage() {
         <ReviewForm 
           book={book}
           open={reviewFormOpen} 
-          onClose={() => { fetchReviews(); setReviewFormOpen(false); }}/>
+          onClose={() => setReviewFormOpen(false)}
+          onSubmit={() => {
+            fetchReviews();
+            setReviewFormOpen(false);
+          }}
+        />        
       </>
     );
 }
