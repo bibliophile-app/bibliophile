@@ -15,7 +15,7 @@ import SearchBar from '../search/SearchBar';
 
 function DesktopToolbar({ options, user }) {
 	const { logout } = useAuth();
-	const { navigate } = useNavigate();
+	const navigate = useNavigate();
 	const [openLogin, setOpenLogin] = useState(false);
 	const [openRegister, setOpenRegister] = useState(false);
 

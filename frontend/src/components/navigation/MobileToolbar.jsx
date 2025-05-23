@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import { useAuth } from '../../utils/AuthContext';
-
 import { Link, useNavigate } from 'react-router-dom';
+
 import { styled } from '@mui/material/styles';
-import { Box, Drawer, IconButton, MenuItem } from '@mui/material';
+import { Box, Button, Drawer, IconButton, MenuItem } from '@mui/material';
 
 import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
@@ -23,7 +23,7 @@ const StyledMenuItem = styled(MenuItem)(({
 // Component for rendering drawer content
 function MobileToolbar({ user, options }) {
 	const { logout } = useAuth();
-	const { navigate } = useNavigate();
+	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
 	const [openLogin, setOpenLogin] = useState(false);
 	const [openRegister, setOpenRegister] = useState(false);
@@ -68,9 +68,9 @@ function MobileToolbar({ user, options }) {
 					
 					{!user && (
 						<React.Fragment>
-							<StyledMenuItem> Log In </StyledMenuItem>
+							<StyledMenuItem onClick={() => setOpenLogin(true)}> Log In </StyledMenuItem>
 							<Divider />
-							<StyledMenuItem> Create Account </StyledMenuItem>
+							<StyledMenuItem onClick={() => setOpenRegister(true)}> Create Account </StyledMenuItem>
 							<Divider />
 						</React.Fragment>
 					)}
@@ -93,7 +93,6 @@ function MobileToolbar({ user, options }) {
 						<React.Fragment key={option.name}>
 							{index !== 0 && <Divider />}
 							<StyledMenuItem component={Link} to={option.path} onClick={toggleDrawer(false)}>
-
 								{option.icon && <option.icon fontSize="small" />}
 								{option.name}
 							</StyledMenuItem>
