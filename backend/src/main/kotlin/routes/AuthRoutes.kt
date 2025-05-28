@@ -69,6 +69,19 @@ fun Route.authRoutes() {
             call.respond(mapOf("username" to user.username))
         }
     }
+
+    get("/users") {
+        val search = call.request.queryParameters["search"]?.lowercase() ?: ""
+        val users = if (search.isNotBlank()) {
+            UserRepository.getAllUsers().filter {
+                it.username.lowercase().contains(search)
+            }
+        } else {
+            UserRepository.getAllUsers()
+        }
+        
+        call.respond(HttpStatusCode.OK, users.map { UserSearchResponse(it.id, it.username, it.email) })
+    }
 }
 
 private fun expiredSessionCookie(): Cookie {
@@ -82,3 +95,6 @@ private fun expiredSessionCookie(): Cookie {
         expires = GMTDate.START       
     )
 }
+
+@kotlinx.serialization.Serializable
+data class UserSearchResponse(val id: Int, val username: String, val email: String)

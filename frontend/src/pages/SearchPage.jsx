@@ -7,6 +7,7 @@ import LoadingBox from '../atoms/LoadingBox';
 import useOpenLibrary from '../utils/useOpenLibrary';
 import Categories from '../components/search/Categories';
 import ResultBooks from '../components/search/ResultBooks';
+import ResultUsers from '../components/search/ResultUsers';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -39,11 +40,27 @@ function SearchPage() {
   });
 
   useEffect(() => {
-    if (query) {
-      setPage(1);
+    if (!query) return;
+    setPage(1);
+    setResults([]);
+    setError(null);
+
+    if (category === "Books") {
       fetchResults(query);
+    } else if (category === "Users") {
+      //TO DO: consertar
+      fetch('http://localhost:8080/users?search=' + encodeURIComponent(query))
+        .then(results => {
+          console.log("Status da resposta:", results.status);
+            return results.json();
+          })
+          .then(data => setResults(data))
+          .catch(err => {
+          console.error("Erro completo:", err);
+          setError(err);
+        });
     }
-  }, [query]);
+  }, [query, category]);
 
   const paginatedResults = results.slice(
     (page - 1) * ITEMS_PER_PAGE,
@@ -63,16 +80,18 @@ function SearchPage() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', justifyContent: 'center', px: { xs: 3, lg: 0 } }}>
+    <Box sx={{ minHeight: '100vh', justifyContent: 'center', px: { xs: 33, lg: 0 } }}>
       <Stack spacing={4} direction="row">
         <Stack sx={{ width: { xs: "100%", md: "70%" } }}>
           <Typography variant="body" fontSize={"0.8rem"} gutterBottom>
             MOSTRANDO RESULTADOS PARA “{query.toUpperCase()}”
           </Typography>
           <Divider sx={{ my: 2, bgcolor: "background.muted" }} />
-          
-          <ResultBooks books={results} paginatedBooks={paginatedResults}/>
 
+          { category === 'Users' && <ResultUsers users={paginatedResults} /> } 
+          { category === 'Books' && <ResultBooks books={results} paginatedBooks={paginatedResults}/>}
+
+          
           {results.length > 0 &&
             <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
               <StyledPagination
