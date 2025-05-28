@@ -12,7 +12,7 @@ import com.bibliophile.db.tables.ReviewsTable
 import com.bibliophile.db.tables.UsersTable
 import com.bibliophile.db.suspendTransaction
 
-class ReviewRepository {
+object ReviewRepository {
 
     /** Retorna todas as reviews */
     suspend fun allReviews(): List<Review> = suspendTransaction {

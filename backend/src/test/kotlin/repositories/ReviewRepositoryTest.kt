@@ -9,9 +9,6 @@ import com.bibliophile.utils.TestDatabaseFactory
 
 class ReviewRepositoryTest {
 
-    private val userRepository = UserRepository()
-    private val reviewRepository = ReviewRepository()
-
     @BeforeTest
     fun setup() {
         TestDatabaseFactory.init()
@@ -24,7 +21,7 @@ class ReviewRepositoryTest {
 
     @Test
     fun `test create review`() = runBlocking {
-        val user = userRepository.create("test@example.com", "testuser", "hashedpassword")
+        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
         val reviewRequest = ReviewRequest(
             bookId = "book123",
             content = "Great book!",
@@ -33,7 +30,7 @@ class ReviewRepositoryTest {
             reviewedAt = LocalDate.parse("2000-01-01")
         )
 
-        val review = reviewRepository.addReview(userId = user.id, review = reviewRequest)
+        val review = ReviewRepository.addReview(userId = user.id, review = reviewRequest)
 
         assertNotNull(review)
         assertEquals("book123", review.bookId)
@@ -44,15 +41,15 @@ class ReviewRepositoryTest {
 
     @Test
     fun `test get review`() = runBlocking {
-        val user1 = userRepository.create("a@a.com", "user1", "pw1")
-        val user2 = userRepository.create("b@b.com", "user2", "pw2")
+        val user1 = UserRepository.create("a@a.com", "user1", "pw1")
+        val user2 = UserRepository.create("b@b.com", "user2", "pw2")
         val reviewRequest1 = ReviewRequest("book123", "Amazing!", 5, true, LocalDate.parse("2000-01-01"))
         val reviewRequest2 = ReviewRequest("book456", "Not bad", 3, false, LocalDate.parse("2000-01-01"))
 
-        reviewRepository.addReview(userId = user1.id, review = reviewRequest1)
-        reviewRepository.addReview(userId = user2.id, review = reviewRequest2)
+        ReviewRepository.addReview(userId = user1.id, review = reviewRequest1)
+        ReviewRepository.addReview(userId = user2.id, review = reviewRequest2)
 
-        val reviews = reviewRepository.allReviews()
+        val reviews = ReviewRepository.allReviews()
         assertEquals(2, reviews.size)
         assertNotNull(reviews[0])
         assertEquals("book123", reviews[0].bookId)
@@ -64,7 +61,7 @@ class ReviewRepositoryTest {
 
     @Test
     fun `test get review by ID`() = runBlocking {
-        val user = userRepository.create("test@example.com", "testuser", "hashedpassword")
+        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
         val reviewRequest = ReviewRequest(
             bookId = "book123",
             content = "Great book!",
@@ -73,8 +70,8 @@ class ReviewRepositoryTest {
             reviewedAt = LocalDate.parse("2000-01-01")
         )
 
-        val createdReview = reviewRepository.addReview(userId = user.id, review = reviewRequest)
-        val review = reviewRepository.review(createdReview.id)
+        val createdReview = ReviewRepository.addReview(userId = user.id, review = reviewRequest)
+        val review = ReviewRepository.review(createdReview.id)
 
         assertNotNull(review)
         assertEquals("book123", review.bookId)
@@ -83,42 +80,42 @@ class ReviewRepositoryTest {
 
     @Test
     fun `test get reviews by user ID`() = runBlocking {
-        val user = userRepository.create("test@example.com", "testuser", "hashedpassword")
+        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
         val reviewRequest1 = ReviewRequest("book123", "Amazing!", 5, true, LocalDate.parse("2000-01-01"))
         val reviewRequest2 = ReviewRequest("book456", "Not bad", 3, false, LocalDate.parse("2000-01-01"))
 
-        reviewRepository.addReview(userId = user.id, review = reviewRequest1)
-        reviewRepository.addReview(userId = user.id, review = reviewRequest2)
+        ReviewRepository.addReview(userId = user.id, review = reviewRequest1)
+        ReviewRepository.addReview(userId = user.id, review = reviewRequest2)
 
-        val reviews = reviewRepository.getReviewsByUserId(user.id)
+        val reviews = ReviewRepository.getReviewsByUserId(user.id)
         assertEquals(2, reviews.size)
     }
 
     @Test
     fun `test get reviews by book ID`() = runBlocking {
-        val user = userRepository.create("test@example.com", "testuser", "hashedpassword")
+        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
         val reviewRequest = ReviewRequest("book123", "Amazing!", 5, true, LocalDate.parse("2000-01-01"))
 
-        reviewRepository.addReview(userId = user.id, review = reviewRequest)
+        ReviewRepository.addReview(userId = user.id, review = reviewRequest)
 
-        val reviews = reviewRepository.getReviewsById("book123")
+        val reviews = ReviewRepository.getReviewsById("book123")
         assertEquals(1, reviews.size)
         assertEquals("Amazing!", reviews[0].content)
     }
 
     @Test
     fun `test update review`() = runBlocking {
-        val user = userRepository.create("test@example.com", "testuser", "hashedpassword")
+        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
         val reviewRequest = ReviewRequest("book123", "Good book", 4, false, LocalDate.parse("2000-01-01"))
 
-        val createdReview = reviewRepository.addReview(userId = user.id, review = reviewRequest)
+        val createdReview = ReviewRepository.addReview(userId = user.id, review = reviewRequest)
 
         val updatedRequest = ReviewRequest("book123", "Excellent book", 5, true, LocalDate.parse("2000-01-02"))
-        val updateResult = reviewRepository.updateReview(createdReview.id, user.id, updatedRequest)
+        val updateResult = ReviewRepository.updateReview(createdReview.id, user.id, updatedRequest)
 
         assertTrue(updateResult)
 
-        val updatedReview = reviewRepository.review(createdReview.id)
+        val updatedReview = ReviewRepository.review(createdReview.id)
         assertNotNull(updatedReview)
         assertEquals("Excellent book", updatedReview.content)
         assertEquals(5, updatedReview.rate)
@@ -127,56 +124,56 @@ class ReviewRepositoryTest {
 
     @Test
     fun `test update review with invalid ID returns false`() = runBlocking {
-        val user = userRepository.create("test@example.com", "testuser", "hashedpassword")
+        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
         val reviewRequest = ReviewRequest("book123", "Good book", 4, false, LocalDate.parse("2000-01-01"))
 
-        val updateResult = reviewRepository.updateReview(-1, user.id, reviewRequest)
+        val updateResult = ReviewRepository.updateReview(-1, user.id, reviewRequest)
         assertFalse(updateResult)
     }
 
     @Test
     fun `test update review with wrong user ID returns false`() = runBlocking {
-        val user1 = userRepository.create("a@a.com", "user1", "pw1")
-        val user2 = userRepository.create("b@b.com", "user2", "pw2")
+        val user1 = UserRepository.create("a@a.com", "user1", "pw1")
+        val user2 = UserRepository.create("b@b.com", "user2", "pw2")
         val reviewRequest = ReviewRequest("book123", "Good book", 4, false, LocalDate.parse("2000-01-01"))
 
-        val createdReview = reviewRepository.addReview(user1.id, reviewRequest)
+        val createdReview = ReviewRepository.addReview(user1.id, reviewRequest)
 
-        val updateResult = reviewRepository.updateReview(createdReview.id, user2.id, reviewRequest)
+        val updateResult = ReviewRepository.updateReview(createdReview.id, user2.id, reviewRequest)
         assertFalse(updateResult)
     }
 
     @Test
     fun `test delete review`() = runBlocking {
-        val user = userRepository.create("test@example.com", "testuser", "hashedpassword")
+        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
         val reviewRequest = ReviewRequest("book123", "Good book", 4, false, LocalDate.parse("2000-01-01"))
 
-        val createdReview = reviewRepository.addReview(userId = user.id, review = reviewRequest)
+        val createdReview = ReviewRepository.addReview(userId = user.id, review = reviewRequest)
 
-        val deleteResult = reviewRepository.deleteReview(createdReview.id, user.id)
+        val deleteResult = ReviewRepository.deleteReview(createdReview.id, user.id)
         assertTrue(deleteResult)
 
-        val deletedReview = reviewRepository.review(createdReview.id)
+        val deletedReview = ReviewRepository.review(createdReview.id)
         assertNull(deletedReview)
     }
 
     @Test
     fun `test delete review with invalid ID returns false`() = runBlocking {
-        val user = userRepository.create("test@example.com", "testuser", "hashedpassword")
+        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
 
-        val deleteResult = reviewRepository.deleteReview(-1, user.id)
+        val deleteResult = ReviewRepository.deleteReview(-1, user.id)
         assertFalse(deleteResult)
     }
 
     @Test
     fun `test delete review with wrong user ID returns false`() = runBlocking {
-        val user1 = userRepository.create("a@a.com", "user1", "pw1")
-        val user2 = userRepository.create("b@b.com", "user2", "pw2")
+        val user1 = UserRepository.create("a@a.com", "user1", "pw1")
+        val user2 = UserRepository.create("b@b.com", "user2", "pw2")
         val reviewRequest = ReviewRequest("book123", "Good book", 4, false, LocalDate.parse("2000-01-01"))
 
-        val createdReview = reviewRepository.addReview(user1.id, reviewRequest)
+        val createdReview = ReviewRepository.addReview(user1.id, reviewRequest)
 
-        val deleteResult = reviewRepository.deleteReview(createdReview.id, user2.id)
+        val deleteResult = ReviewRepository.deleteReview(createdReview.id, user2.id)
         assertFalse(deleteResult)
     }
 }

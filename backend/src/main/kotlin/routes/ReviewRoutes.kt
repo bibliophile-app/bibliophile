@@ -12,18 +12,17 @@ import com.bibliophile.models.ReviewRequest
 import com.bibliophile.repositories.ReviewRepository
 
 fun Route.reviewRoutes() {
-    val reviewRepository = ReviewRepository()
 
     route("reviews") {
         
         get {
-            call.respond(HttpStatusCode.OK, reviewRepository.allReviews())
+            call.respond(HttpStatusCode.OK, ReviewRepository.allReviews())
         }
 
         get("/{id}") {
             val id = call.getIntParam() ?: return@get
 
-            val review = reviewRepository.review(id)
+            val review = ReviewRepository.review(id)
             if (review != null) {
                 call.respond(HttpStatusCode.OK, review)
             } else {
@@ -31,17 +30,17 @@ fun Route.reviewRoutes() {
             }
         }
 
-        get("/user/{userId}") {
-            val userId = call.getIntParam("userId") ?: return@get
+        get("/user/{identifier}") {
+            val userId = call.resolveUserIdOrRespondNotFound() ?: return@get
 
-            val reviews = reviewRepository.getReviewsByUserId(userId)
+            val reviews = ReviewRepository.getReviewsByUserId(userId)
             call.respond(HttpStatusCode.OK, reviews)
         }
 
         get("/book/{bookId}") {
             val bookId = call.getParam("bookId") ?: return@get
 
-            val reviews = reviewRepository.getReviewsById(bookId)
+            val reviews = ReviewRepository.getReviewsById(bookId)
             call.respond(HttpStatusCode.OK, reviews)
         }
 
@@ -55,7 +54,7 @@ fun Route.reviewRoutes() {
                     return@post
                 }
             
-                val response = reviewRepository.addReview(session?.userId!!, review)
+                val response = ReviewRepository.addReview(session?.userId!!, review)
                 call.respond(HttpStatusCode.Created, mapOf("message" to "Review created successfully - Review ID: ${response.id}"))           
             }
             
@@ -69,7 +68,7 @@ fun Route.reviewRoutes() {
                     return@put
                 }
                 
-                val status = reviewRepository.updateReview(id, session?.userId!!, review)
+                val status = ReviewRepository.updateReview(id, session?.userId!!, review)
                 if (status) {
                     call.respond(HttpStatusCode.OK, mapOf("message" to "Review updated successfully"))
                 } else {
@@ -81,7 +80,7 @@ fun Route.reviewRoutes() {
                 val id = call.getIntParam() ?: return@delete
                 val session = call.sessions.get<UserSession>()
             
-                val status = reviewRepository.deleteReview(id, session?.userId!!)
+                val status = ReviewRepository.deleteReview(id, session?.userId!!)
                 if (status) {
                     call.respond(HttpStatusCode.OK, mapOf("message" to "Review deleted successfully"))
                 } else {

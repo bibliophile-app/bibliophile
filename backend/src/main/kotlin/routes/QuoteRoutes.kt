@@ -12,13 +12,12 @@ import com.bibliophile.models.QuoteRequest
 import com.bibliophile.repositories.QuoteRepository
 
 fun Route.quoteRoutes() {
-    val quoteRepository = QuoteRepository()
 
     route("quotes") {
 
         get {
             runCatching {
-                quoteRepository.allQuotes()
+                QuoteRepository.allQuotes()
             }.onSuccess {
                 call.respond(HttpStatusCode.OK, it)
             }.onFailure {
@@ -30,7 +29,7 @@ fun Route.quoteRoutes() {
             val id = call.getIntParam() ?: return@get
 
             runCatching {
-                quoteRepository.quote(id)
+                QuoteRepository.quote(id)
             }.onSuccess { quote ->
                 if (quote != null) {
                     call.respond(HttpStatusCode.OK, quote)
@@ -48,7 +47,7 @@ fun Route.quoteRoutes() {
                 val session = call.sessions.get<UserSession>()
 
                 runCatching {
-                    quoteRepository.addQuote(session?.userId!!, quote)
+                    QuoteRepository.addQuote(session?.userId!!, quote)
                 }.onSuccess {
                     call.respond(HttpStatusCode.Created, mapOf("message" to "Quote created successfully"))
                 }.onFailure {
@@ -62,7 +61,7 @@ fun Route.quoteRoutes() {
                 val session = call.sessions.get<UserSession>()
 
                 runCatching {
-                    quoteRepository.editQuote(id, session?.userId!!, updatedQuote)
+                    QuoteRepository.editQuote(id, session?.userId!!, updatedQuote)
                 }.onSuccess { updated ->
                     if (updated) {
                         call.respond(HttpStatusCode.OK, mapOf("message" to "Quote updated successfully"))
@@ -79,7 +78,7 @@ fun Route.quoteRoutes() {
                 val session = call.sessions.get<UserSession>()
 
                 runCatching {
-                    quoteRepository.deleteQuote(id, session?.userId!!)
+                    QuoteRepository.deleteQuote(id, session?.userId!!)
                 }.onSuccess { deleted ->
                     if (deleted) {
                         call.respond(HttpStatusCode.OK, mapOf("message" to "Quote deleted successfully"))

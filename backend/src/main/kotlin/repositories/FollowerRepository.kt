@@ -11,7 +11,7 @@ import com.bibliophile.db.tables.FollowersTable
 import com.bibliophile.db.tables.UsersTable
 import com.bibliophile.db.suspendTransaction
 
-class FollowerRepository {
+object FollowerRepository {
 
     // retorna todas as relações de follow 
     suspend fun getAllFollows(): List<Follow> = suspendTransaction {

@@ -16,7 +16,7 @@ import com.bibliophile.db.tables.BooklistBooksTable
 import com.bibliophile.db.tables.UsersTable
 import com.bibliophile.db.suspendTransaction
 
-class BooklistRepository {
+object BooklistRepository {
 
     /** Retorna todas as booklists */
     suspend fun allBooklists(): List<Booklist> = suspendTransaction {

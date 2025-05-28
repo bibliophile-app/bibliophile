@@ -290,7 +290,7 @@ class ReviewRoutesTest {
         application { setupTestModule() }
 
         val response = client.get("/reviews/user/abc")
-        assertEquals(HttpStatusCode.BadRequest, response.status)
+        assertEquals(HttpStatusCode.NotFound, response.status)
     }
 
     @Test
