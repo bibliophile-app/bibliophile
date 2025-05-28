@@ -7,9 +7,10 @@ import CustomContainer from './atoms/CustomContainer';
 import { AuthProvider } from "./utils/AuthContext";
 
 import Home from './pages/Home';
-import Profile from './pages/Profile';
 import DiaryPage from './pages/Diary';
 import BookPage from './pages/BookPage';
+import ReviewsPage from './pages/Reviews';
+import Profile from './pages/Profile';
 import SearchPage from './pages/SearchPage';
 import Register from './components/Register';
 import NavBar from './components/navigation/NavBar';
@@ -50,6 +51,7 @@ function App() {
 								<Route path="/profile" element={<Profile />} />
 								<Route path="/signin" element={<Register />} />
 								<Route path="/diary" element={<DiaryPage />} />
+								<Route path=":user/reviews" element={<ReviewsPage />} />
 								<Route path="/book/:olid" element={<BookPage />} /> 
 								<Route path="/search/:query" element={<SearchPage />} /> 
 								<Route path="/test/quotes" element={<QuoteManager />} />

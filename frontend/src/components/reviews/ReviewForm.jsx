@@ -71,9 +71,9 @@ function ReviewForm({ book, open, onClose, onSubmit, reviewId = null}) {
   }, [reviewId, open]);
 
   const handleExit = () => {
+    setIsFavorite(false);
     setContent('');
     setRating(0);
-    setIsFavorite(false);
     onClose();
   };
 
@@ -213,7 +213,7 @@ function ReviewForm({ book, open, onClose, onSubmit, reviewId = null}) {
                     <Typography variant="h5" fontSize="0.9em">Rating</Typography>
                     <Typography variant="body2">{rating} / 5</Typography>
                   </Box>
-                  <StyledRating value={rating} precision={0.5} onChange={(e, newValue) => setRating(newValue)} />
+                  <StyledRating value={rating} precision={0.5} onChange={(e, newValue) => !!newValue && setRating(newValue)} />
                 </Box>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

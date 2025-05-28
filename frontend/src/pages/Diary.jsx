@@ -1,76 +1,33 @@
-import { useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import { Box, Card, CardMedia, Typography, Rating, IconButton } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography } from '@mui/material';
 
 import { useAuth } from '../utils/AuthContext';
 import { searchByUser } from '../components/reviews/utils';
-import useOpenLibrary  from '../utils/useOpenLibrary';
+import ReviewCard from '../components/reviews/ReviewCard';
+import Divider from '../atoms/Divider'
 
-const StyledRating = styled(Rating)(({ theme }) => ({
-  '& .MuiRating-iconFilled': {
-    color: theme.palette.purple.secondary,
-  },
-  '& .MuiRating-iconHover': {
-    color: theme.palette.purple.main,
-  },
-}));
-
-const StyledFavorite = styled(IconButton, {
-  shouldForwardProp: (prop) => prop !== 'isFavorite',
-})(({ isFavorite }) => ({
-  padding: 0,
-  color: isFavorite ? '#ff6d75' : 'rgba(255,255,255,0.3)',
-  '&:hover': {
-    color: '#ff3d47',
-  },
-  transition: 'color 0.2s',
-}));
-
-function DiaryEntryCard({ entry }) {
+function DiaryReviewCard({ entry }) {
   const day = new Date(entry.reviewedAt).getDate();
-  const year = new Date(entry.reviewedAt).getFullYear();
-  const [book, setBook] = useState(null);
-  
-  const { fetchResults, loading } = useOpenLibrary({
-    onResults: setBook,
-    onError: null,
-  });
-
-  useEffect(() => {
-    fetchResults(null, entry.bookId);
-  }, [entry]);
-
-  if (loading) return;
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-      {/* Dia em destaque */}
-      <Box sx={{ width: 40, textAlign: 'center' }}>
-        <Typography variant="h6">{day}</Typography>
+    <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1 }}>
+      <Box
+        sx={{ width: 60, height: 90, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+      >
+        <Typography variant="h3" sx={{ userSelect: 'none' }}>
+          {day}
+        </Typography>
       </Box>
 
-      <Card sx={{ display: 'flex', alignItems: 'center', flex: 1, p: 1 }}>
-        <CardMedia
-          component="img"
-          image={book?.coverUrl}
-          alt={book?.title}
-          sx={{ width: 50, height: 75, borderRadius: 1 }}
+      <Box sx={{ flex: 1 }}>
+        <ReviewCard
+          review={entry}
+          displayDate={false}
+          displayOwner={false}
+          displayContent={false}
+          displayBookDetails={true}
         />
-
-        <Box sx={{ ml: 2, flex: 1 }}>
-          <Typography variant="body1" fontWeight="bold">
-            {book?.title} ({year})
-          </Typography>
-
-          <StyledRating value={entry.rate / 2} precision={0.5} readOnly sx={{ fontSize: '1rem' }} />
-
-          <StyledFavorite isFavorite={entry.favorite}>
-            {entry.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-          </StyledFavorite>
-        </Box>
-      </Card>
+      </Box>
     </Box>
   );
 }
@@ -94,7 +51,7 @@ function DiaryPage() {
         };
 
         fetchReviews();
-    }, []);
+    }, [user]);
 
 
     function groupEntriesByMonth(entries) {
@@ -108,18 +65,31 @@ function DiaryPage() {
     }
 
     const groupedByMonth = groupEntriesByMonth(entries);
+    
+    Object.values(groupedByMonth).forEach(monthEntries => {
+      monthEntries.sort((a, b) => new Date(b.reviewedAt) - new Date(a.reviewedAt));
+    });
+
+    const sortedMonths = Object.keys(groupedByMonth).sort((a, b) => {
+      const dateA = new Date(`${a} 1`);
+      const dateB = new Date(`${b} 1`);
+      return dateB - dateA;
+    });
 
     return (
-        <Box>
-            {Object.entries(groupedByMonth).map(([month, entries]) => (
-            <div key={month}>
-                <Typography variant="h6">{month}</Typography>
-                {entries.map(entry => (
-                <DiaryEntryCard key={entry.id} entry={entry} />
-                ))}
-            </div>
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        {sortedMonths.map((month) => (
+          <div key={month}>
+            <Typography variant="h6">{month}</Typography>
+            {groupedByMonth[month].map((entry, author_name) => (
+              <React.Fragment key={entry.id}>
+                <Divider sx={{ opacity: 0.5, my: 1 }} />
+                <DiaryReviewCard entry={entry} />
+              </React.Fragment>
             ))}
-        </Box>
+          </div>
+        ))}
+      </Box>
     );
 }
 

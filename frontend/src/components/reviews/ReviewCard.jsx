@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Typography, Stack } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom'; 
+import { Link as RouterLink } from 'react-router-dom';
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 
 import { useAuth } from '../../utils/AuthContext';
-import { searchById } from './utils'; 
+import { searchById } from './utils';
 import useOpenLibrary from '../../utils/useOpenLibrary';
 
 import Rating from '../../atoms/Rating';
 import Favorite from '../../atoms/Favorite';
 import ReviewForm from './ReviewForm';
 import UserAvatar from '../../atoms/UserAvatar';
+import BookImage from '../../atoms/BookImage';
 
-const ReviewCard = ({ review, displayDate = false }) => {
+const ReviewCard = ({ review, displayDate = false, displayOwner = true, displayBookDetails = false, displayContent = true }) => {
   const { user } = useAuth();
   const [currentReview, setCurrentReview] = useState(review);
   const [book, setBook] = useState(null);
@@ -23,10 +25,10 @@ const ReviewCard = ({ review, displayDate = false }) => {
   });
 
   useEffect(() => {
-    if (currentReview?.bookId) {
+    if (currentReview?.bookId && displayBookDetails) {
       fetchResults(null, currentReview.bookId);
     }
-  }, [currentReview]);
+  }, [currentReview, displayBookDetails]);
 
   const handleOpen = () => {
     if (user?.username === currentReview.username) {
@@ -39,7 +41,7 @@ const ReviewCard = ({ review, displayDate = false }) => {
   };
 
   const handleReviewUpdated = async () => {
-    const updated = await searchById(currentReview.id); // buscar nova review da API
+    const updated = await searchById(currentReview.id);
     setCurrentReview(updated);
   };
 
@@ -48,42 +50,73 @@ const ReviewCard = ({ review, displayDate = false }) => {
   const { username, content, rate, favorite, reviewedAt } = currentReview;
 
   return (
-    <React.Fragment>
-      <Box sx={{ display: 'flex', gap: 1.5, p: 1, mb: 2 }} onClick={handleOpen}>
-        <UserAvatar username={username} />
+    <>
+      <Box sx={{ display: 'flex', gap: 1.5, p: 1 }} onClick={handleOpen}>
+        {displayBookDetails && book ? (
+          <BookImage
+            src={book.coverUrl}
+            alt={`Cover of ${book.title}`}
+            sx={{ width: 60, height: 90 }}
+          />
+        ) : (
+          <UserAvatar username={username} />
+        )}
 
         <Box sx={{ flex: 1 }}>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography variant="body2" sx={{ color: '#9da5b4' }}>
-              Review by
-            </Typography>
-            <Typography
-              variant="body2"
-              fontWeight="bold"
-              component={RouterLink}
-              to={`/profile/${username}`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {username}
-            </Typography>
+          <Stack spacing={0.5}>
+            {displayBookDetails && book && (
+              <Typography
+                variant="h6"
+                fontSize=".9rem"
+                fontWeight="bold"
+                component={RouterLink}
+                to={`/book/${currentReview.bookId}`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {book.title}
+                {book.first_publish_year && ` (${book.first_publish_year})`}
+              </Typography>
+            )}
 
-            <Rating value={rate / 2} readOnly size="small" sx={{ color: '#00e676' }} precision={0.5}/>
-            {favorite && <Favorite selected={true} sx={{ fontSize: '1rem', color: 'background.muted' }} />}
+            <Stack direction="row" alignItems="center" spacing={1}>
+              {displayOwner && (
+                <>
+                  <Typography variant="body" sx={{ color: '#9da5b4', fontSize: '0.8rem' }}>
+                    Review by
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    fontWeight="bold"
+                    component={RouterLink}
+                    to={`/profile/${username}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {username}
+                  </Typography>
+                </>
+              )}
+              <Rating value={rate / 2} readOnly size="small" precision={0.5}/>
+              {favorite && <Favorite selected={true} sx={{ fontSize: '1rem', color: 'background.muted' }} />}
+            </Stack>
+
+            {displayContent ? (
+              <Typography variant="body"  sx={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                {content}
+              </Typography>
+            ) : content && (
+              <FormatAlignJustifyIcon sx={{ pt: .5, fontSize: '1rem', color: 'background.muted' }}/>
+            )}
+
+            {displayDate && 
+              <Typography variant="caption" sx={{ mt: 1, display: 'block', color: '#9da5b4' }}>
+                {new Date(reviewedAt + 'T00:00:00').toLocaleDateString('en-US', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                })}
+              </Typography>
+            }
           </Stack>
-
-          <Typography variant="body1" sx={{ mt: 1 }}>
-            {content}
-          </Typography>
-
-          {displayDate && 
-            <Typography variant="caption" sx={{ mt: 1, display: 'block', color: '#9da5b4' }}>
-              {new Date(reviewedAt + 'T00:00:00').toLocaleDateString('en-US', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-              })}
-            </Typography>
-          }
         </Box>
       </Box>
 
@@ -94,7 +127,7 @@ const ReviewCard = ({ review, displayDate = false }) => {
         reviewId={currentReview.id}
         onSubmit={handleReviewUpdated}
       />
-    </React.Fragment>
+    </>
   );
 };
 
