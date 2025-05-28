@@ -13,6 +13,8 @@ const ReviewHistogram = ({ reviews }) => {
   };
 
   const groupRatings = (reviews) => {
+    if (!reviews || reviews.length === 0) return [];
+    // Create bins for ratings from 0.0 to 5.0 in increments of 0.5
     const bins = Array.from({ length: 11 }, (_, i) => (i * 0.5).toFixed(1));
     const counts = Object.fromEntries(bins.map(bin => [bin, 0]));
 
@@ -28,7 +30,7 @@ const ReviewHistogram = ({ reviews }) => {
 
   const data = groupRatings(reviews);
 
-  const average = reviews.length
+  const average = reviews && reviews.length
     ? (reviews.reduce((acc, review) => acc + normalizeRating(review.rate), 0) / reviews.length).toFixed(2)
     : 0;
 

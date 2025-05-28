@@ -15,10 +15,10 @@ const StyledFavorite = styled(IconButton, {
   transition: 'color 0.2s',
 }));
 
-function Favorite({ selected, onClick }) {
+function Favorite({ selected, onClick, ...props }) {
     return (
         <StyledFavorite onClick={onClick} isFavorite={selected}>
-            {selected ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            {selected ? <FavoriteIcon {...props}/> : <FavoriteBorderIcon {...props}/>}
         </StyledFavorite>
     )
 }

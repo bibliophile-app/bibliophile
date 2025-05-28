@@ -2,43 +2,47 @@ import { alpha } from '@mui/material/styles';
 import { Stack, Button } from '@mui/material';
 import { PlaylistAdd } from '@mui/icons-material';
 import Divider from '../atoms/Divider';
+import { useAuth } from '../utils/AuthContext';
 
 function ActionsMenu({ handleReview }) {
+  const { user } = useAuth();
+
   return (
     <Stack 
-      spacing={1} 
       sx={{
-        py: 1,
-        mb: 2,
         width: '100%',
-        bgcolor: (theme) => alpha(theme.palette.background.contrast, 0.8),  // escurece
+        borderRadius: '5px',
+        bgcolor: (theme) => alpha(theme.palette.background.contrast, 0.8),
         backdropFilter: 'blur(4px)',
         boxShadow: '0 2px 8px rgba(0,0,0,0.2)', 
       }}
     >
-      <Button startIcon={<PlaylistAdd />} fullWidth variant="text" color="inherit">
-        Read Next
-      </Button>
+      {user ? (
+        <>
+          <Button startIcon={<PlaylistAdd />} fullWidth variant="text" color="inherit">
+            Read Next
+          </Button>
 
-      <Divider sx={{ my: 1 }} />
+          <Divider />
 
-      <Button fullWidth variant="text" color="inherit" onClick={handleReview}>
-        Show your activity
-      </Button>
+          <Button fullWidth variant="text" color="inherit" onClick={handleReview}>
+            Review or log again...
+          </Button>
+            
+          <Divider />
 
-      <Divider sx={{ my: 1 }} />
+          <Button fullWidth variant="text" color="inherit">
+            Add to lists...
+          </Button>
+        </>
 
-      <Button fullWidth variant="text" color="inherit" onClick={handleReview}>
-        Review or log again...
-      </Button>
-        
-      <Divider sx={{ my: 1 }} />
+      ) : (
+          <Button fullWidth variant="text" color="inherit">
+            Sign in to log, rate or review
+          </Button>
+      )}
 
-      <Button fullWidth variant="text" color="inherit">
-        Add to lists...
-      </Button>
-      
-      <Divider sx={{ my: 1 }} />
+      <Divider />
 
       <Button fullWidth variant="text" color="inherit">
         Share
