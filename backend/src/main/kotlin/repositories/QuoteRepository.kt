@@ -25,11 +25,11 @@ object QuoteRepository {
     }
 
     /** Adiciona uma nova quote e retorna a criada */
-    suspend fun addQuote(userId: Int, quote: QuoteRequest): Unit = suspendTransaction {
+    suspend fun addQuote(userId: Int, quote: QuoteRequest): Quote = suspendTransaction {
         QuoteDAO.new {
             this.userId = EntityID(userId, UsersTable)
             this.content = quote.content
-        }
+        }.let(::daoToModel)
     }
 
     /** Atualiza uma quote existente */
