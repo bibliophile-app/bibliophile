@@ -15,18 +15,18 @@ function ActionsMenu({ handleReview }) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Check this out!',
+          title: 'Veja isso!',
           url: currentUrl,
         });
       } catch (err) {
-        console.error('Share failed:', err);
+        console.error('Falha ao compartilhar:', err);
       }
     } else {
       try {
         await navigator.clipboard.writeText(currentUrl);
         setSnackbarOpen(true);
       } catch (err) {
-        console.error('Copy failed:', err);
+        console.error('Falha ao copiar:', err);
       }
     }
   };
@@ -45,31 +45,31 @@ function ActionsMenu({ handleReview }) {
         {user ? (
           <>
             <Button startIcon={<PlaylistAdd />} fullWidth variant="text" color="inherit">
-              Read Next
+              Quero ler
             </Button>
 
             <Divider />
 
             <Button fullWidth variant="text" color="inherit" onClick={handleReview}>
-              Review or log again...
+              Avaliar ou registrar novamente...
             </Button>
 
             <Divider />
 
             <Button fullWidth variant="text" color="inherit">
-              Add to lists...
+              Adicionar às listas...
             </Button>
           </>
         ) : (
           <Button fullWidth variant="text" color="inherit" onClick={handleSignin}>
-            Sign in to log, rate or review
+            Faça login para registrar, avaliar ou comentar
           </Button>
         )}
 
         <Divider />
 
         <Button fullWidth variant="text" color="inherit" onClick={handleShare}>
-          Share
+          Compartilhar
         </Button>
       </Stack>
 
@@ -80,7 +80,7 @@ function ActionsMenu({ handleReview }) {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
-          Link copied to clipboard!
+          Link copiado para a área de transferência!
         </Alert>
       </Snackbar>
     </>

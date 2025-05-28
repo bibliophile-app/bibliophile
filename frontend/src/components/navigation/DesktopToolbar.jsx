@@ -24,7 +24,7 @@ function DesktopToolbar({ options, user }) {
 						size="small"
 						onClick={handleSignin}
 					>
-						Sign In
+						Login
 					</Button>
 
 					<Button 
@@ -33,7 +33,7 @@ function DesktopToolbar({ options, user }) {
 						size="small" 
 						onClick={handleSignup}
 					> 
-						Create Account 
+						Criar Conta 
 					</Button>
 
 				</React.Fragment>
@@ -48,14 +48,16 @@ function DesktopToolbar({ options, user }) {
 			<SearchBar />
 
 			{user && (
-				<Button 
-					color="primary" size="small" variant="contained" 
-				  	sx={{ display: 'flex', justifyContent: 'center' }}
+				<Button
+					color="primary"
+					size="small"
+					variant="contained"
+					startIcon={<LogoutIcon fontSize="small" />}
 					onClick={() => {
-        				logout().then(() => navigate('/'))}}
+					logout().then(() => navigate('/'));
+					}}
+					sx={{ textTransform: 'none', fontWeight: 500 }}
 				>
-					
-					<LogoutIcon fontSize="small" /> 
 					Logout
 				</Button>
 			)}

@@ -54,9 +54,9 @@ function MobileToolbar({ user, options }) {
 					
 					{!user && (
 						<React.Fragment>
-							<StyledMenuItem onClick={handleSignin}> Sign In </StyledMenuItem>
+							<StyledMenuItem onClick={handleSignin}> Login </StyledMenuItem>
 							<Divider />
-							<StyledMenuItem onClick={handleSignup}> Create Account </StyledMenuItem>
+							<StyledMenuItem onClick={handleSignup}> Criar Conta </StyledMenuItem>
 							<Divider />
 						</React.Fragment>
 					)}
@@ -75,6 +75,7 @@ function MobileToolbar({ user, options }) {
 						<Button 
 							color="primary" size="small" variant="contained" fullWidth
 							sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}
+							startIcon={<LogoutIcon fontSize="small" />}
 							onClick={() => {
 								logout().then(() => {
 									navigate('/');
@@ -82,8 +83,6 @@ function MobileToolbar({ user, options }) {
 								});
 							}}
 						>
-							
-							<LogoutIcon fontSize="small" /> 
 							Logout
 						</Button>
 					)}

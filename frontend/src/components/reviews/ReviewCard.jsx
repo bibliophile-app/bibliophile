@@ -13,11 +13,19 @@ import ReviewForm from './ReviewForm';
 import UserAvatar from '../../atoms/UserAvatar';
 import BookImage from '../../atoms/BookImage';
 
-const ReviewCard = ({ review, displayDate = false, displayOwner = true, displayBookDetails = false, displayContent = true }) => {
+function ReviewCard ({
+  review,
+  displayDate = false,
+  displayOwner = true,
+  displayBookDetails = false,
+  displayContent = true
+}) {
   const { user } = useAuth();
-  const [currentReview, setCurrentReview] = useState(review);
   const [book, setBook] = useState(null);
+  const [currentReview, setCurrentReview] = useState(review);
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
+
+  const owner = user?.username === currentReview.username;
 
   const { fetchResults } = useOpenLibrary({
     onResults: setBook,
@@ -25,15 +33,13 @@ const ReviewCard = ({ review, displayDate = false, displayOwner = true, displayB
   });
 
   useEffect(() => {
-    if (currentReview?.bookId && displayBookDetails) {
+    if (currentReview?.bookId) {
       fetchResults(null, currentReview.bookId);
     }
-  }, [currentReview, displayBookDetails]);
+  }, [currentReview]);
 
   const handleOpen = () => {
-    if (user?.username === currentReview.username) {
-      setReviewFormOpen(true);
-    }
+    if (owner) setReviewFormOpen(true);
   };
 
   const handleClose = () => {
@@ -51,11 +57,11 @@ const ReviewCard = ({ review, displayDate = false, displayOwner = true, displayB
 
   return (
     <>
-      <Box sx={{ display: 'flex', gap: 1.5, p: 1 }} onClick={handleOpen}>
+      <Box sx={{ display: 'flex', cursor: owner ? 'pointer' : 'default', gap: 1.5, p: 1 }} onClick={handleOpen}>
         {displayBookDetails && book ? (
           <BookImage
             src={book.coverUrl}
-            alt={`Cover of ${book.title}`}
+            alt={`Capa de ${book.title}`}
             sx={{ width: 60, height: 90 }}
           />
         ) : (
@@ -78,15 +84,16 @@ const ReviewCard = ({ review, displayDate = false, displayOwner = true, displayB
               </Typography>
             )}
 
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack direction="row" alignItems="center" spacing={.5}>
               {displayOwner && (
                 <>
-                  <Typography variant="body" sx={{ color: '#9da5b4', fontSize: '0.8rem' }}>
-                    Review by
+                  <Typography variant="body2" sx={{ color: '#9da5b4', fontSize: '0.8rem' }}>
+                    Avaliado por
                   </Typography>
                   <Typography
                     variant="body2"
                     fontWeight="bold"
+                    sx={{ cursor: 'pointer' }}
                     component={RouterLink}
                     to={`/profile/${username}`}
                     onClick={(e) => e.stopPropagation()}
@@ -95,27 +102,39 @@ const ReviewCard = ({ review, displayDate = false, displayOwner = true, displayB
                   </Typography>
                 </>
               )}
-              <Rating value={rate / 2} readOnly size="small" precision={0.5}/>
-              {favorite && <Favorite selected={true} sx={{ fontSize: '1rem', color: 'background.muted' }} />}
+              <Rating value={rate / 2} readOnly size="small" precision={0.5} />
+              {favorite && (
+                <Favorite selected={true} sx={{ cursor: owner ? 'pointer' : 'default', fontSize: '1rem', color: 'background.muted' }} />
+              )}
             </Stack>
 
             {displayContent ? (
-              <Typography variant="body"  sx={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+              <Typography
+                variant="body2"
+                sx={{ color: 'neutral.main', wordBreak: 'break-word', overflowWrap: 'break-word' }}
+              >
                 {content}
               </Typography>
-            ) : content && (
-              <FormatAlignJustifyIcon sx={{ pt: .5, fontSize: '1rem', color: 'background.muted' }}/>
+            ) : (
+              content && (
+                <FormatAlignJustifyIcon
+                  sx={{ pt: 0.5, fontSize: '1rem', color: 'background.muted' }}
+                />
+              )
             )}
 
-            {displayDate && 
-              <Typography variant="caption" sx={{ mt: 1, display: 'block', color: '#9da5b4' }}>
-                {new Date(reviewedAt + 'T00:00:00').toLocaleDateString('en-US', {
+            {displayDate && (
+              <Typography
+                variant="caption"
+                sx={{ mt: 1, display: 'block', color: '#9da5b4' }}
+              >
+                {new Date(reviewedAt + 'T00:00:00').toLocaleDateString('pt-BR', {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric'
                 })}
               </Typography>
-            }
+            )}
           </Stack>
         </Box>
       </Box>

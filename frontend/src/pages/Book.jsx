@@ -55,7 +55,7 @@ function BookPage() {
   if (error || !book) {
     return (
       <Typography mt={4}>
-        Book not found!
+        Livro não encontrado!
       </Typography>
     );
   }
@@ -68,14 +68,14 @@ function BookPage() {
   const BookCover = ({ width = 180, height = '100%' }) => (
     <BookImage
       src={book.coverUrl}
-      alt={`Cover of ${book.title}`}
+      alt={`Capa de ${book.title}`}
       sx={{ width, height }}
     />
   );
 
   return (
     <>
-      <Box sx={{ minHeight: '100vh', justifyContent: 'center', px: { xs: 3, lg: 0 } }}>
+      <Box sx={{ minHeight: '100vh', justifyContent: 'center', pb: 5, px: { xs: 3, lg: 0 } }}>
         <Stack spacing={4} direction="row">
           
           {isMdUp && <BookCover />}
@@ -98,7 +98,7 @@ function BookPage() {
               </Box>
               {book.author_name?.length > 0 && (
                 <Typography sx={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                  Written by {book.author_name.join(', ')}
+                  Escrito por {book.author_name.join(', ')}
                 </Typography>
               )}
             </Stack>
@@ -109,12 +109,12 @@ function BookPage() {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {user && (
                 <ReviewSection
-                  title="Your reviews"
+                  title="Suas avaliações"
                   reviews={filteredReviews.user}
                 />
               )}
               <ReviewSection
-                title="Recent reviews"
+                title="Avaliações recentes"
                 reviews={filteredReviews.others}
               />
             </Box>
@@ -134,7 +134,7 @@ function BookPage() {
 
             <Box>
               <Typography variant="h5" gutterBottom>
-                Ratings
+                Avaliações
               </Typography>
               <Divider sx={{ width: '100%', mb: 2 }} />
               <ReviewHistogram reviews={reviews} />

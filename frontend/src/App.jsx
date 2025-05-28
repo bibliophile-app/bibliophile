@@ -1,14 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { styled, ThemeProvider } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
-import theme from './styles/MUITheme'; 
-import CustomContainer from './atoms/CustomContainer';
-import { AuthProvider } from "./utils/AuthContext";
+import Container from './atoms/Container';
+import { NotificationProvider } from './utils/NotificationContext';
 
 import Home from './pages/Home';
+import BookPage from './pages/Book';
 import DiaryPage from './pages/Diary';
-import BookPage from './pages/BookPage';
 import ReviewsPage from './pages/Reviews';
 import Profile from './pages/Profile';
 import SearchPage from './pages/SearchPage';
@@ -38,29 +37,27 @@ const PageWrapper = styled(Box, {
 
 function App() {
 	return (
-    	<ThemeProvider theme={theme}>
-        	<AuthProvider>
-				<BrowserRouter>
-          			<PageWrapper disabledGutters>
-            			<NavBar />
-            			<CustomContainer maxWidth="lg" sx={{ mt: 4 }}>
-              				<Routes>
-								<Route path="/" element={<Home />} />
-								<Route path="/diary" element={<DiaryPage />} />
-								<Route path=":username/profile" element={<Profile />} />
-								<Route path=":username/reviews" element={<ReviewsPage />} />
-								<Route path="/book/:olid" element={<BookPage />} /> 
-								<Route path="/search/:query" element={<SearchPage />} /> 
-								<Route path="/test/quotes" element={<QuoteManager />} />
-								<Route path="/test/booklists" element={<BooklistManager />} />
-								<Route path="/test/followers" element={<FollowerManager/>}/>
-							</Routes>
-            			</CustomContainer>
-          			</PageWrapper>
-        		</BrowserRouter>
-			</AuthProvider>
-      	</ThemeProvider>
-  	);
+		<BrowserRouter>
+			<PageWrapper disabledGutters>
+				<NavBar />
+				<Container maxWidth="lg" sx={{ mt: 4 }}>
+					<NotificationProvider>
+					<Routes>
+						<Route path="/" element={<Home />} />
+						<Route path=":username/diary" element={<DiaryPage />} />
+						<Route path=":username/profile" element={<Profile />} />
+						<Route path=":username/reviews" element={<ReviewsPage />} />
+						<Route path="/book/:olid" element={<BookPage />} /> 
+						<Route path="/search/:query" element={<SearchPage />} /> 
+						<Route path="/test/quotes" element={<QuoteManager />} />
+						<Route path="/test/booklists" element={<BooklistManager />} />
+						<Route path="/test/followers" element={<FollowerManager/>}/>
+					</Routes>
+					</NotificationProvider>
+				</Container>
+			</PageWrapper>
+		</BrowserRouter>
+	);
 }
 
 export default App;

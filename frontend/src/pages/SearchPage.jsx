@@ -28,7 +28,7 @@ function SearchPage() {
   const [page, setPage] = useState(1);
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
-  const [category, setCategory] = useState('Books');
+  const [category, setCategory] = useState('Livros');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -67,7 +67,7 @@ function SearchPage() {
       <Stack spacing={4} direction="row">
         <Stack sx={{ width: { xs: "100%", md: "70%" } }}>
           <Typography variant="body" fontSize={"0.8rem"} gutterBottom>
-            SHOWING RESULTS FOR “{query.toUpperCase()}”
+            MOSTRANDO RESULTADOS PARA “{query.toUpperCase()}”
           </Typography>
           <Divider sx={{ my: 2, bgcolor: "background.muted" }} />
           

@@ -5,7 +5,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import ReviewCard from './ReviewCard';
 import Divider from '../../atoms/Divider';
 
-const ReviewSection = ({ title, reviews = [] }) => {
+function ReviewSection({ 
+  title, 
+  reviews = [] 
+}) {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -24,7 +27,7 @@ const ReviewSection = ({ title, reviews = [] }) => {
             onClick={handleOpen}
             sx={{ fontSize: '0.8rem', textTransform: 'none' }}
           >
-            More
+            Ver mais
           </Button>
         )}
       </Box>
@@ -32,20 +35,20 @@ const ReviewSection = ({ title, reviews = [] }) => {
 
       {reviews.length === 0 ? (
         <Typography variant="body2" sx={{ color: '#9da5b4' }}>
-          No reviews yet!
+          Nenhuma avaliação!
         </Typography>
       ) : (
         <Stack spacing={2}>
           {visibleReviews && visibleReviews.map((review, index) => (
             <React.Fragment key={review.id}>
-              {index !== 0 && <Divider sx={{ opacity: 0.5 }}/>}
+              {index !== 0 && <Divider sx={{ opacity: 0.5 }} />}
               <ReviewCard review={review} />
             </React.Fragment>
           ))}
         </Stack>
       )}
 
-      {/* Dialog fullscreen */}
+      {/* Diálogo em tela cheia */}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -72,7 +75,7 @@ const ReviewSection = ({ title, reviews = [] }) => {
           <Stack spacing={2}>
             {reviews.map((review, index) => (
               <React.Fragment key={review.id}>
-                {index !== 0 && <Divider sx={{ opacity: 0.5 }}/>}
+                {index !== 0 && <Divider sx={{ opacity: 0.5 }} />}
                 <ReviewCard key={review.id} review={review} displayDate={true} />
               </React.Fragment>
             ))}

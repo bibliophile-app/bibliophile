@@ -1,12 +1,12 @@
 import { Box, Button, Divider, List, ListItem, Typography } from '@mui/material';
 
-const CATEGORIES = ['Books', 'Lists', 'Users'];
+const CATEGORIES = ['Livros', 'Listas', 'Usuários'];
 
 function Categories({ selected, onSelect }) {
   return (
     <Box>
       <Typography variant="body" fontSize={"0.8rem"} gutterBottom> 
-          SHOW RESULTS FOR
+          FILTRAR RESULTADOS POR
       </Typography>
 
       <Divider sx={{ mt: 2, bgcolor: "background.muted" }} />

@@ -4,7 +4,7 @@ const BASE_REQUEST_URL = 'https://openlibrary.org';
 const BASE_COVER_URL = 'https://covers.openlibrary.org'
 
 // Hook para gerenciar requisições à OpenLibrary
-const useOpenLibrary = ({ language = 'en', onResults, onError }) => {
+const useOpenLibrary = ({ language = 'pt-br', onResults, onError }) => {
   const [loading, setLoading] = useState(false);
 
   // Função para buscar detalhes de um único livro por OLID

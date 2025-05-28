@@ -34,14 +34,13 @@ const ToolbarContent = styled(Box)(({ theme }) => ({
 function NavBar() {
 	const { user } = useAuth();
 	
-	const publicOptions = [{ name: 'Books', path: '/books' }];
+	const publicOptions = [];
 	const privateOptions = [
-		{ name: 'Profile', path: `${user?.username}/profile` },
-		{ name: 'Books', path: '/books' },
-		{ name: 'Reviews', path: `${user?.username}/reviews` },
-		{ name: 'Diary', path: '/diary' },
-		{ name: 'Read Next', path: '/read-next' },
-		{ name: 'Lists', path: '/lists' },
+		{ name: 'Perfil', path: `${user?.username}/profile` },
+		{ name: 'Resenhas', path: `${user?.username}/reviews` },
+		{ name: 'Diário', path: `${user?.username}/diary` },
+		{ name: 'Quero Ler', path: '/read-next' },
+		{ name: 'Listas', path: '/lists' },
 	];
 
 	return (

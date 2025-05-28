@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
+import { useParams, Link as RouterLink } from 'react-router-dom';
+import { useNotification } from '../utils/NotificationContext';
+import { useSafeNavigate } from '../utils/useSafeNavigate';
 
-import { useAuth } from '../utils/AuthContext';
 import { searchByUser } from '../components/reviews/utils';
 import ReviewCard from '../components/reviews/ReviewCard';
-import Divider from '../atoms/Divider'
+import LoadingBox from '../atoms/LoadingBox';
+import Divider from '../atoms/Divider';
 
 function DiaryReviewCard({ entry }) {
-  const day = new Date(entry.reviewedAt).getDate();
+  const day = new Date(entry.reviewedAt + 'T00:00:00').getDate();
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1 }}>
-      <Box
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+      <Box 
         sx={{ width: 60, height: 90, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
       >
         <Typography variant="h3" sx={{ userSelect: 'none' }}>
@@ -33,64 +36,121 @@ function DiaryReviewCard({ entry }) {
 }
 
 function DiaryPage() {
-    const { user } = useAuth();
-    const [ entries, setEntries ] =  useState([]);
+  const safeBack = useSafeNavigate();
+  const { username } = useParams();
+  const { notify } = useNotification();
 
-    useEffect(() => {
-        // setIsLoading(true);
-
-        const fetchReviews = async () => {
-        try {
-            const reviews = await searchByUser(user.id);
-            setEntries(reviews);
-        } catch (error) {
-            // feedback visual de erro
-        } finally {
-            // setIsLoading(false);
-        }
-        };
-
-        fetchReviews();
-    }, [user]);
-
-
-    function groupEntriesByMonth(entries) {
-        return entries.reduce((acc, entry) => {
-            const date = new Date(entry.reviewedAt);
-            const monthKey = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-            acc[monthKey] = acc[monthKey] || [];
-            acc[monthKey].push(entry);
-            return acc;
-        }, {});
+  const [entries, setEntries] = useState([]);
+  const [loading, setIsLoading] = useState(true);
+ 
+  useEffect(() => {
+    if (!isNaN(Number(username)) || !username) {
+      notify({
+        message: 'Nome de usuário inválido!',
+        severity: 'error'
+      });
+      
+      setTimeout(() => safeBack(), 1500);
+      return;
     }
 
-    const groupedByMonth = groupEntriesByMonth(entries);
-    
-    Object.values(groupedByMonth).forEach(monthEntries => {
-      monthEntries.sort((a, b) => new Date(b.reviewedAt) - new Date(a.reviewedAt));
-    });
+    setIsLoading(true);
 
-    const sortedMonths = Object.keys(groupedByMonth).sort((a, b) => {
-      const dateA = new Date(`${a} 1`);
-      const dateB = new Date(`${b} 1`);
-      return dateB - dateA;
-    });
+    const fetchReviews = async () => {
+      try {
+        const reviews = await searchByUser(username);
+        setEntries(reviews);
+        setIsLoading(false);
+      } catch (error) {
+        notify({
+          message: 'Erro ao carregar avaliações ou usuário não encontrado!',
+          severity: 'error'
+        });
+        setTimeout(() => {setIsLoading(false); safeBack()}, 1500);
+      }
+    };
 
-    return (
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        {sortedMonths.map((month) => (
+    fetchReviews();
+  }, [username, notify]);
+
+  function groupEntriesByMonth(entries) {
+    return entries?.reduce((acc, entry) => {
+      const date = new Date(entry.reviewedAt);
+
+
+      const year = date.getFullYear();
+      const monthNum = String(date.getMonth() + 1).padStart(2, '0');
+      const sortKey = `${year}-${monthNum}`;
+      const monthLabel = `${date.toLocaleString('pt-BR', { month: 'long' })} ${year}`;
+      
+      if (!acc[monthLabel]) {
+        acc[monthLabel] = { entries: [], sortKey };
+      }
+
+      acc[monthLabel].entries.push(entry);
+      return acc;
+    }, {});
+  }
+
+  const groupedByMonth = groupEntriesByMonth(entries);
+
+  Object.values(groupedByMonth || []).forEach(({ entries }) => {
+    entries.sort((a, b) => new Date(b.reviewedAt) - new Date(a.reviewedAt));
+  });
+
+  const sortedMonths = Object.entries(groupedByMonth || {})
+    .sort(([, a], [, b]) => new Date(b.sortKey + '-01') - new Date(a.sortKey + '-01'))
+    .map(([monthLabel]) => monthLabel);
+
+  sortedMonths.forEach(monthLabel => {
+    console.log(monthLabel, groupedByMonth[monthLabel].entries);
+  });
+
+  if (loading)
+    return <LoadingBox />;
+  else return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', px: { xs: 3, lg: 0 } }}>
+      <Box sx={{ display: 'flex', gap: 0.5 }}>
+            <Typography variant='span'>
+                diário de
+            </Typography>
+
+            <Typography
+                variant="span"
+                color="neutral.main"
+                fontWeight="bold"
+                component={RouterLink}
+                to={`${username}/profile/`}
+                onClick={(e) => e.stopPropagation()}
+            >
+              {username}
+            </Typography>
+      </Box> 
+
+      <Divider sx={{ my: 1 }}/>
+
+      {entries && entries.length > 0 ? (
+        sortedMonths.map((month) => (
           <div key={month}>
-            <Typography variant="h6">{month}</Typography>
-            {groupedByMonth[month].map((entry, author_name) => (
+            <Typography variant="h4" sx={{ p: 1, my: 1, bgcolor: 'background.muted'}}>
+              {month}
+            </Typography>
+            
+            {groupedByMonth[month].entries.map((entry, index) => (
               <React.Fragment key={entry.id}>
-                <Divider sx={{ opacity: 0.5, my: 1 }} />
+                {index !== 0 && <Divider sx={{ opacity: 0.5, my: 1 }} />}
                 <DiaryReviewCard entry={entry} />
               </React.Fragment>
             ))}
           </div>
-        ))}
-      </Box>
-    );
+        ))
+      ) : ( 
+        <Typography variant="p" sx={{ mb: 2 }}>
+          Parece que ainda não há registros no diário de {username}...
+        </Typography>
+      )}
+    </Box>
+  );
 }
 
 export default DiaryPage;
