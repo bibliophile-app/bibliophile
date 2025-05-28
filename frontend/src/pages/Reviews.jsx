@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import { useAuth } from '../utils/AuthContext';
 import { searchByUser } from '../components/reviews/utils';
 import ReviewCard from '../components/reviews/ReviewCard';
 import Divider from '../atoms/Divider'
 import LoadingBox from '../atoms/LoadingBox';
 
 function ReviewsPage() {
-    const { user } = useAuth();
+    const { username } = useParams();
     const [ entries, setEntries ] =  useState([]);
     const [ loading, setIsLoading ] = useState(true);
 
@@ -18,7 +18,7 @@ function ReviewsPage() {
 
         const fetchReviews = async () => {
         try {
-            const reviews = await searchByUser(user.id);
+            const reviews = await searchByUser(username);
             setEntries(reviews);
         } catch (error) {
             // feedback visual de erro
@@ -28,7 +28,7 @@ function ReviewsPage() {
         };
 
         fetchReviews();
-    }, [user]);
+    }, [username]);
 
     if (loading)
         return <LoadingBox />
@@ -43,10 +43,10 @@ function ReviewsPage() {
                 variant="body2"
                 fontWeight="bold"
                 component={RouterLink}
-                to={`/profile/${user?.username}`}
+                to={`${username}/profile/`}
                 onClick={(e) => e.stopPropagation()}
             >
-                {user?.username}
+                {username}
             </Typography>
         </Box>
         

@@ -12,10 +12,8 @@ import BookPage from './pages/BookPage';
 import ReviewsPage from './pages/Reviews';
 import Profile from './pages/Profile';
 import SearchPage from './pages/SearchPage';
-import Register from './components/Register';
 import NavBar from './components/navigation/NavBar';
 import QuoteManager from './components/QuoteManager';
-import ReviewManager from './components/reviews/ReviewManager';
 import FollowerManager from './components/FollowerManager';
 import BooklistManager from './components/BooklistManager';
 
@@ -40,30 +38,28 @@ const PageWrapper = styled(Box, {
 
 function App() {
 	return (
-    	<AuthProvider>
-      		<ThemeProvider theme={theme}>
-        		<BrowserRouter>
+    	<ThemeProvider theme={theme}>
+        	<AuthProvider>
+				<BrowserRouter>
           			<PageWrapper disabledGutters>
             			<NavBar />
             			<CustomContainer maxWidth="lg" sx={{ mt: 4 }}>
               				<Routes>
 								<Route path="/" element={<Home />} />
-								<Route path="/profile" element={<Profile />} />
-								<Route path="/signin" element={<Register />} />
 								<Route path="/diary" element={<DiaryPage />} />
-								<Route path=":user/reviews" element={<ReviewsPage />} />
+								<Route path=":username/profile" element={<Profile />} />
+								<Route path=":username/reviews" element={<ReviewsPage />} />
 								<Route path="/book/:olid" element={<BookPage />} /> 
 								<Route path="/search/:query" element={<SearchPage />} /> 
 								<Route path="/test/quotes" element={<QuoteManager />} />
 								<Route path="/test/booklists" element={<BooklistManager />} />
-								<Route path="/test/reviews" element={<ReviewManager />} />
 								<Route path="/test/followers" element={<FollowerManager/>}/>
 							</Routes>
             			</CustomContainer>
           			</PageWrapper>
         		</BrowserRouter>
-      		</ThemeProvider>
-    	</AuthProvider>
+			</AuthProvider>
+      	</ThemeProvider>
   	);
 }
 

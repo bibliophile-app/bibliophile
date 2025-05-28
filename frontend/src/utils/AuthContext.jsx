@@ -1,10 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react"
+import Register from "../components/Register"
+import Login from "../components/Login"
 
 const AuthContext = createContext()
 
 function AuthProvider ({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [registerOpen, setRegisterOpen] = useState(false);
+  
 
   async function authUser() {
     const response = await fetch(`/me`, {
@@ -83,8 +88,31 @@ function AuthProvider ({ children }) {
   }, [])
   
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout }}>
+    <AuthContext.Provider 
+      value={{ 
+        user,
+        loading, 
+        register, 
+        login, 
+        logout, 
+        handleSignin: () => setLoginOpen(true), 
+        handleSignup: () => setRegisterOpen(true)
+      }}
+    >
+      
       {children}
+
+      <Login 
+        isOpen={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onSuccess={() => window.location.reload()} 
+      />
+
+      <Register
+        isOpen={registerOpen}
+        onClose={() => setOpenRegister(false)}
+        onSuccess={() => window.location.reload()}
+      />
     </AuthContext.Provider>
   )
 }

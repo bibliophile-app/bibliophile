@@ -1,8 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Modal, Typography, IconButton } from '@mui/material';
+import { Box, Modal, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import Login from '../components/Login';
 
 const style = {
   position: 'absolute',
@@ -24,6 +22,7 @@ export default function PopUp({ open, onClose, children}) {
       onClose={onClose}
       aria-labelledby="login-modal-title"
       aria-describedby="login-modal-description"
+      disablePortal
     >
       <Box sx={style}>
         <IconButton

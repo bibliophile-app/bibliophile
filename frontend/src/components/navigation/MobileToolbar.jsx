@@ -9,9 +9,6 @@ import ListIcon from '@mui/icons-material/List';
 import CloseIcon from '@mui/icons-material/Close';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-import PopUp from '../../atoms/PopUp'
-import Login from '../Login';
-import Register from '../Register';
 import Logo from '../../atoms/Logo';
 import Divider from '../../atoms/Divider';
 import SearchBar from '../search/SearchBar';
@@ -22,20 +19,9 @@ const StyledMenuItem = styled(MenuItem)(({
 
 // Component for rendering drawer content
 function MobileToolbar({ user, options }) {
-	const { logout } = useAuth();
+	const { handleSignin, handleSignup, logout } = useAuth();
 	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
-	const [openLogin, setOpenLogin] = useState(false);
-	const [openRegister, setOpenRegister] = useState(false);
-
-	const handleLoginSuccess = () => {
-		setOpenLogin(false);       
-    	window.location.reload();
-	};
-	const handleRegisterSuccess = () => {
-		setOpenRegister(false);    
-    	window.location.reload();
-	};
 
 	function toggleDrawer(open) {
 		return (event) => {
@@ -68,26 +54,12 @@ function MobileToolbar({ user, options }) {
 					
 					{!user && (
 						<React.Fragment>
-							<StyledMenuItem onClick={() => setOpenLogin(true)}> Log In </StyledMenuItem>
+							<StyledMenuItem onClick={handleSignin}> Sign In </StyledMenuItem>
 							<Divider />
-							<StyledMenuItem onClick={() => setOpenRegister(true)}> Create Account </StyledMenuItem>
+							<StyledMenuItem onClick={handleSignup}> Create Account </StyledMenuItem>
 							<Divider />
 						</React.Fragment>
 					)}
-
-					<PopUp
-						open={openLogin}
-						onClose={() => setOpenLogin(false)}
-					>
-						<Login onSuccess={handleLoginSuccess} />
-					</PopUp>
-
-					<PopUp
-						open={openRegister}
-						onClose={() => setOpenRegister(false)}
-					>
-						<Register onSuccess={handleRegisterSuccess} />
-					</PopUp>
 					
 					{options.map((option, index) => (
 						<React.Fragment key={option.name}>

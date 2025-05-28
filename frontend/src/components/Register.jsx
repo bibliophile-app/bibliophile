@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
 import { useAuth } from "../utils/AuthContext";
 
-import { alpha, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -10,7 +9,7 @@ import InputBase from '@mui/material/InputBase';
 import InputLabel from '@mui/material/InputLabel';
 import Typography from '@mui/material/Typography';   
 import FormControl from '@mui/material/FormControl';
-
+import PopUp from '../atoms/PopUp';
 
 const TextInput  = styled(InputBase)(({ theme }) => ({
   'label + &': {
@@ -59,7 +58,7 @@ const RenderInputField = ({ id, label, value, onChange, type = 'text' }) => (
   </FormControl>
 );
 
-export default function Register({ onSuccess }) {
+export default function Register({ isOpen, onClose, onSuccess }) {
   const { register } = useAuth();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -83,48 +82,53 @@ export default function Register({ onSuccess }) {
   }
 
   return (
-      <Box
-        component="form"
-        onSubmit={handleRegister}
-        sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300 }}
+      <PopUp
+        open={isOpen}
+        onClose={onClose}
       >
-        <RenderInputField
-        id="email"
-        label="Email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        />
-
-        <RenderInputField
-        id="username"
-        label="Username"
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-        />
-
-        <RenderInputField
-          id="password"
-          label="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          type="password"
-        />
-  
-
-        {error && (
-            <Typography color="error" variant="body2">
-              {error}
-            </Typography>
-          )}
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"    
-          fullWidth          
+        <Box
+          component="form"
+          onSubmit={handleRegister}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300 }}
         >
-          Sign Up
-        </Button>
+          <RenderInputField
+            id="email"
+            label="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
 
-      </Box>
+          <RenderInputField
+            id="username"
+            label="Username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+          />
+
+          <RenderInputField
+            id="password"
+            label="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            type="password"
+          />
+    
+          {error && (
+              <Typography color="error" variant="body2">
+                {error}
+              </Typography>
+          )}
+          
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"    
+            fullWidth          
+          >
+            Sign Up
+          </Button>
+
+        </Box>
+      </PopUp>
     );
 }
