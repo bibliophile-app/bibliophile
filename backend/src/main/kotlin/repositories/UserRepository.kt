@@ -28,13 +28,21 @@ object UserRepository {
             .firstOrNull()
     }
 
-    suspend fun getUserProfile(userId: Int): UserProfileResponse? = suspendTransaction {
-        val user = UserDAO.findById(userId) ?: return@suspendTransaction null
-        val booklists = BooklistDAO.find { BooklistsTable.userId eq userId }.map(::daoToModel)
-        val reviews = ReviewDAO.find { ReviewsTable.userId eq userId }.map(::daoToModel)
-        val quotes = QuoteDAO.find { QuotesTable.userId eq userId }.map(::daoToModel)
+    /** Retorna o perfil completo do usuário com suas reviews, booklists e quotes */
+    suspend fun getUserProfile(userId: Int): UserProfileResponse? {
+        val user = suspendTransaction {
+            UserDAO.findById(userId)
+        } ?: return null
 
-        UserProfileResponse(
+        val reviews = ReviewRepository.getReviewsByUserId(userId)
+
+        val (booklists, quotes) = suspendTransaction {
+            val booklists = BooklistDAO.find { BooklistsTable.userId eq userId }.map(::daoToModel)
+            val quotes = QuoteDAO.find { QuotesTable.userId eq userId }.map(::daoToModel)
+            Pair(booklists, quotes)
+        }
+
+        return UserProfileResponse(
             id = user.id.value,
             username = user.username,
             booklists = booklists,

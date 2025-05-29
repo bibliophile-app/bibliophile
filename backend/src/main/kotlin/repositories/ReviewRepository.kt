@@ -1,10 +1,11 @@
 package com.bibliophile.repositories
 
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.dao.id.EntityID
+import java.time.LocalDate
 
-import com.bibliophile.db.daoToModel
 import com.bibliophile.models.Review
 import com.bibliophile.models.ReviewRequest
 import com.bibliophile.db.entities.ReviewDAO
@@ -14,36 +15,136 @@ import com.bibliophile.db.suspendTransaction
 
 object ReviewRepository {
 
-    /** Retorna todas as reviews */
-    suspend fun allReviews(): List<Review> = suspendTransaction {
-        ReviewDAO.all().map(::daoToModel)
-    }
-
-    /** Busca uma review pelo ID */
+    /** Busca uma review pelo ID com informações do usuário */
     suspend fun review(id: Int): Review? = suspendTransaction {
-        ReviewDAO.findById(id)?.let(::daoToModel)
+        (ReviewsTable innerJoin UsersTable)
+            .slice(
+                ReviewsTable.id,
+                ReviewsTable.bookId,
+                UsersTable.username,
+                ReviewsTable.content,
+                ReviewsTable.rate,
+                ReviewsTable.favorite,
+                ReviewsTable.reviewedAt
+            )
+            .select { ReviewsTable.id eq id }
+            .singleOrNull()
+            ?.let { row ->
+                Review(
+                    id = row[ReviewsTable.id].value,
+                    bookId = row[ReviewsTable.bookId],
+                    username = row[UsersTable.username],
+                    content = row[ReviewsTable.content],
+                    rate = row[ReviewsTable.rate],
+                    favorite = row[ReviewsTable.favorite],
+                    reviewedAt = row[ReviewsTable.reviewedAt]
+                )
+            }
     }
 
-    /** Busca reviews por usuário */
+    /** Retorna todas as reviews com informações dos usuários */
+    suspend fun allReviews(): List<Review> = suspendTransaction {
+        (ReviewsTable innerJoin UsersTable)
+            .slice(
+                ReviewsTable.id,
+                ReviewsTable.bookId,
+                UsersTable.username,
+                ReviewsTable.content,
+                ReviewsTable.rate,
+                ReviewsTable.favorite,
+                ReviewsTable.reviewedAt
+            )
+            .selectAll()
+            .map { row ->
+                Review(
+                    id = row[ReviewsTable.id].value,
+                    bookId = row[ReviewsTable.bookId],
+                    username = row[UsersTable.username],
+                    content = row[ReviewsTable.content],
+                    rate = row[ReviewsTable.rate],
+                    favorite = row[ReviewsTable.favorite],
+                    reviewedAt = row[ReviewsTable.reviewedAt]
+                )
+            }
+    }
+
+    /** Busca reviews por usuário com informações do usuário */
     suspend fun getReviewsByUserId(userId: Int): List<Review> = suspendTransaction {
-        ReviewDAO.find { ReviewsTable.userId eq userId }.map(::daoToModel)
+        (ReviewsTable innerJoin UsersTable)
+            .slice(
+                ReviewsTable.id,
+                ReviewsTable.bookId,
+                UsersTable.username,
+                ReviewsTable.content,
+                ReviewsTable.rate,
+                ReviewsTable.favorite,
+                ReviewsTable.reviewedAt
+            )
+            .select { ReviewsTable.userId eq userId }
+            .map { row ->
+                Review(
+                    id = row[ReviewsTable.id].value,
+                    bookId = row[ReviewsTable.bookId],
+                    username = row[UsersTable.username],
+                    content = row[ReviewsTable.content],
+                    rate = row[ReviewsTable.rate],
+                    favorite = row[ReviewsTable.favorite],
+                    reviewedAt = row[ReviewsTable.reviewedAt]
+                )
+            }
     }
 
-    /** Busca reviews por Book ID */
+    /** Busca reviews por Book ID com informações do usuário */
     suspend fun getReviewsById(bookId: String): List<Review> = suspendTransaction {
-        ReviewDAO.find { ReviewsTable.bookId eq bookId }.map(::daoToModel)
+        (ReviewsTable innerJoin UsersTable)
+            .slice(
+                ReviewsTable.id,
+                ReviewsTable.bookId,
+                UsersTable.username,
+                ReviewsTable.content,
+                ReviewsTable.rate,
+                ReviewsTable.favorite,
+                ReviewsTable.reviewedAt
+            )
+            .select { ReviewsTable.bookId eq bookId }
+            .map { row ->
+                Review(
+                    id = row[ReviewsTable.id].value,
+                    bookId = row[ReviewsTable.bookId],
+                    username = row[UsersTable.username],
+                    content = row[ReviewsTable.content],
+                    rate = row[ReviewsTable.rate],
+                    favorite = row[ReviewsTable.favorite],
+                    reviewedAt = row[ReviewsTable.reviewedAt]
+                )
+            }
     }
 
     /** Adiciona uma nova review e retorna a criada */
     suspend fun addReview(userId: Int, review: ReviewRequest): Review = suspendTransaction {
-        ReviewDAO.new {
+        val reviewDAO = ReviewDAO.new {
             this.userId = EntityID(userId, UsersTable)
             this.bookId = review.bookId
             this.content = review.content
             this.rate = review.rate
             this.favorite = review.favorite
-            this.reviewedAt = review.reviewedAt 
-        }.let(::daoToModel)
+            this.reviewedAt = review.reviewedAt
+        }
+
+        val username = (UsersTable)
+            .slice(UsersTable.username)
+            .select { UsersTable.id eq userId }
+            .single()[UsersTable.username]
+
+        Review(
+            id = reviewDAO.id.value,
+            bookId = reviewDAO.bookId,
+            username = username,
+            content = reviewDAO.content,
+            rate = reviewDAO.rate,
+            favorite = reviewDAO.favorite,
+            reviewedAt = reviewDAO.reviewedAt
+        )
     }
 
     /** Atualiza uma review existente */
@@ -73,5 +174,4 @@ object ReviewRepository {
             false
         }
     }
-    
 }

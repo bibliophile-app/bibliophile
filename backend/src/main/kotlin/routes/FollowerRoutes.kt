@@ -43,7 +43,7 @@ fun Route.followerRoutes() {
             val userId = call.resolveUserIdOrRespondNotFound() ?: return@get
 
             runCatching {
-                if (userId < 0) throw IllegalArgumentException("User ID inválido")
+                if (userId < 0) throw IllegalArgumentException("Invalid credentials")
                 FollowerRepository.getFollowersOfUser(userId)
             }.onSuccess { followers ->
                 call.respond(HttpStatusCode.OK, followers)

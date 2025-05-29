@@ -31,16 +31,6 @@ fun daoToModel(dao: QuoteDAO) = Quote (
     content = dao.content
 )
 
-fun daoToModel(dao: ReviewDAO) = Review (
-    id = dao.id.value,
-    bookId = dao.bookId,
-    username = UserDAO.findById(dao.userId.value)?.username ?: "unknown",
-    content = dao.content,
-    rate = dao.rate,
-    favorite = dao.favorite,
-    reviewedAt = dao.reviewedAt
-)
-
 fun daoToModel(dao: FollowerDAO) = Follow (
     id = dao.id.value,
     followerId = dao.followerId.value,
