@@ -114,7 +114,7 @@ class BooklistRepositoryTest {
             listDescription = "A list of my favorite books"
         )
 
-        BooklistRepository.addBooklist(userId = 1, booklist = booklistRequest)
+        BooklistRepository.addBooklist(userId = user.id, booklist = booklistRequest)
         val booklists = BooklistRepository.allBooklists()
         val booklistId = booklists[0].id
 
