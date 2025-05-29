@@ -13,18 +13,17 @@ import com.bibliophile.models.BooklistRequest
 import com.bibliophile.repositories.BooklistRepository
 
 fun Route.booklistRoutes() {
-    val booklistRepository= BooklistRepository()
 
     route("booklists") {
 
         get {
-            call.respond(HttpStatusCode.OK, booklistRepository.allBooklists())
+            call.respond(HttpStatusCode.OK, BooklistRepository.allBooklists())
         }
 
         get("/{id}") {
             val id = call.getIntParam() ?: return@get
 
-            val booklist = booklistRepository.booklist(id)
+            val booklist = BooklistRepository.booklist(id)
             if (booklist == null)
                 call.respond(HttpStatusCode.NotFound, mapOf("message" to "Booklist not found"))
             else
@@ -34,7 +33,7 @@ fun Route.booklistRoutes() {
         get("/{id}/books") {            
             val id = call.getIntParam() ?: return@get
 
-            val booklist = booklistRepository.booklistWithBooks(id)
+            val booklist = BooklistRepository.booklistWithBooks(id)
             if (booklist == null)
                 call.respond(HttpStatusCode.NotFound, mapOf("message" to "Booklist not found"))
             else
@@ -47,7 +46,7 @@ fun Route.booklistRoutes() {
                 val session = call.sessions.get<UserSession>()
                
                 runCatching {
-                    booklistRepository.addBooklist(session?.userId!!, booklist)
+                    BooklistRepository.addBooklist(session?.userId!!, booklist)
                 }.onSuccess {
                     call.respond(HttpStatusCode.Created, mapOf("message" to "Booklist created successfully - Booklist ID: ${it.id}"))
                 }.onFailure {
@@ -62,7 +61,7 @@ fun Route.booklistRoutes() {
                 val book = call.receive<BookRequest>()
                 val session = call.sessions.get<UserSession>()
                 
-                val response = booklistRepository.addBookToBooklist(id, session?.userId!!, book.bookId)
+                val response = BooklistRepository.addBookToBooklist(id, session?.userId!!, book.bookId)
                 if (response)
                     call.respond(HttpStatusCode.Created, mapOf("message" to "Book added to booklist successfully"))
                 else 
@@ -75,7 +74,7 @@ fun Route.booklistRoutes() {
                 val session = call.sessions.get<UserSession>()
 
                 runCatching {
-                    booklistRepository.updateBooklist(id, session?.userId!!, booklist)
+                    BooklistRepository.updateBooklist(id, session?.userId!!, booklist)
                 }.onSuccess {
                     if (it)
                         call.respond(HttpStatusCode.OK, mapOf("message" to "Booklist updated successfully"))
@@ -90,7 +89,7 @@ fun Route.booklistRoutes() {
                 val id = call.getIntParam() ?: return@delete
                 val session = call.sessions.get<UserSession>()
                 
-                val status = booklistRepository.removeBooklist(id, session?.userId!!)
+                val status = BooklistRepository.removeBooklist(id, session?.userId!!)
                 if (status)
                     call.respond(HttpStatusCode.OK, mapOf("message" to "Booklist deleted successfully"))
                 else
@@ -102,7 +101,7 @@ fun Route.booklistRoutes() {
                 val bookId = call.getParam("bookId") ?: return@delete
                 val session = call.sessions.get<UserSession>()
 
-                val status = booklistRepository.removeBookFromBooklist(id, session?.userId!!, bookId)
+                val status = BooklistRepository.removeBookFromBooklist(id, session?.userId!!, bookId)
                 if (status)
                     call.respond(HttpStatusCode.OK, mapOf("message" to "Book deleted from booklist successfully"))
                 else

@@ -12,7 +12,7 @@ import com.bibliophile.db.tables.QuotesTable
 import com.bibliophile.db.tables.UsersTable
 import com.bibliophile.db.suspendTransaction
 
-class QuoteRepository {
+object QuoteRepository {
 
     /** Retorna todas as quotes */
     suspend fun allQuotes(): List<Quote> = suspendTransaction {

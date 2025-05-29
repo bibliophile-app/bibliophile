@@ -8,8 +8,6 @@ import com.bibliophile.utils.TestDatabaseFactory
 
 class UserRepositoryTest {
 
-    private val userRepository = UserRepository()
-
     @BeforeTest
     fun setup() {
         TestDatabaseFactory.init()
@@ -22,7 +20,7 @@ class UserRepositoryTest {
 
     @Test
     fun `test create user`() = runBlocking {
-        val user = userRepository.create("test@example.com", "testuser", "hashedpassword")
+        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
 
         assertNotNull(user)
         assertEquals("test@example.com", user.email)
@@ -31,21 +29,21 @@ class UserRepositoryTest {
 
     @Test
     fun `test get all users`() = runBlocking {
-        userRepository.create("email1", "user1", "password1")
-        userRepository.create("email2", "user2", "password2")
-        val users = userRepository.getAllUsers()
+        UserRepository.create("email1", "user1", "password1")
+        UserRepository.create("email2", "user2", "password2")
+        val users = UserRepository.getAllUsers()
         assertEquals(2, users.size)
     }
 
     @Test
     fun `test find user by ID`() = runBlocking {
-        val createdUser = userRepository.create(
+        val createdUser = UserRepository.create(
             email = "test@example.com",
             username = "testuser",
             passwordHash = "hashedpassword"
         )
 
-        val foundUser = userRepository.findById(createdUser.id!!)
+        val foundUser = UserRepository.findById(createdUser.id!!)
         assertNotNull(foundUser)
         assertEquals(createdUser.id, foundUser.id)
         assertEquals(createdUser.username, foundUser.username)
@@ -53,13 +51,13 @@ class UserRepositoryTest {
 
     @Test
     fun `test find user by username`() = runBlocking {
-        val createdUser = userRepository.create(
+        val createdUser = UserRepository.create(
             email = "test@example.com",
             username = "testuser",
             passwordHash = "hashedpassword"
         )
 
-        val foundUser = userRepository.findByUsername("testuser")
+        val foundUser = UserRepository.findByUsername("testuser")
         assertNotNull(foundUser)
         assertEquals(createdUser.id, foundUser.id)
         assertEquals(createdUser.email, foundUser.email)
@@ -67,24 +65,24 @@ class UserRepositoryTest {
 
     @Test
     fun `test find user by invalid ID`() = runBlocking {
-        val user = userRepository.findById(-1)
+        val user = UserRepository.findById(-1)
         assertNull(user)
     }
 
     @Test
     fun `test update user`() = runBlocking {
-        val createdUser = userRepository.create(
+        val createdUser = UserRepository.create(
             email = "test@example.com",
             username = "testuser",
             passwordHash = "hashedpassword"
         )
 
         val updatedUser = createdUser.copy(username = "updateduser", passwordHash = "newhashedpassword")
-        val updateResult = userRepository.update(updatedUser)
+        val updateResult = UserRepository.update(updatedUser)
 
         assertTrue(updateResult)
 
-        val foundUser = userRepository.findById(createdUser.id!!)
+        val foundUser = UserRepository.findById(createdUser.id!!)
         assertNotNull(foundUser)
         assertEquals("updateduser", foundUser.username)
         assertEquals("newhashedpassword", foundUser.passwordHash)
@@ -93,87 +91,87 @@ class UserRepositoryTest {
     @Test
     fun `test update non-existent user returns false`() = runBlocking {
         val nonExistentUser = User(id = 9999, email = "nope", username = "ghost", passwordHash = "none")
-        val result = userRepository.update(nonExistentUser)
+        val result = UserRepository.update(nonExistentUser)
         assertFalse(result)
     }
 
     @Test
     fun `test delete user by ID`() = runBlocking {
-        val createdUser = userRepository.create(
+        val createdUser = UserRepository.create(
             email = "test@example.com",
             username = "testuser",
             passwordHash = "hashedpassword"
         )
 
-        val deleteResult = userRepository.delete(createdUser.id!!)
+        val deleteResult = UserRepository.delete(createdUser.id!!)
         assertTrue(deleteResult)
 
-        val foundUser = userRepository.findById(createdUser.id!!)
+        val foundUser = UserRepository.findById(createdUser.id!!)
         assertNull(foundUser)
     }
 
     @Test
     fun `test delete user by username`() = runBlocking {
-        val createdUser = userRepository.create(
+        val createdUser = UserRepository.create(
             email = "test@example.com",
             username = "testuser",
             passwordHash = "hashedpassword"
         )
 
-        val deleteResult = userRepository.delete("testuser")
+        val deleteResult = UserRepository.delete("testuser")
         assertTrue(deleteResult)
 
-        val foundUser = userRepository.findByUsername("testuser")
+        val foundUser = UserRepository.findByUsername("testuser")
         assertNull(foundUser)
     }
 
     @Test
     fun `test delete user by invalid ID returns false`() = runBlocking {
-        val result = userRepository.delete(-1)
+        val result = UserRepository.delete(-1)
         assertFalse(result)
     }
 
     @Test
     fun `test delete user by invalid username returns false`() = runBlocking {
-        val result = userRepository.delete("ghostuser")
+        val result = UserRepository.delete("ghostuser")
         assertFalse(result)
     }
 
     @Test
     fun `test authenticate user with valid credentials`() = runBlocking {
-        val createdUser = userRepository.create(
+        val createdUser = UserRepository.create(
             email = "test@example.com",
             username = "testuser",
             passwordHash = "hashedpassword"
         )
 
-        val authenticatedUser = userRepository.authenticate("testuser", "hashedpassword")
+        val authenticatedUser = UserRepository.authenticate("testuser", "hashedpassword")
         assertNotNull(authenticatedUser)
         assertEquals(createdUser.id, authenticatedUser.id)
     }
 
     @Test
     fun `test authenticate user with invalid credentials`() = runBlocking {
-        userRepository.create(
+        UserRepository.create(
             email = "test@example.com",
             username = "testuser",
             passwordHash = "hashedpassword"
         )
 
-        val authenticatedUser = userRepository.authenticate("testuser", "wrongpassword")
+        val authenticatedUser = UserRepository.authenticate("testuser", "wrongpassword")
         assertNull(authenticatedUser)
     }
 
     @Test
     fun `test authenticate non-existent user returns null`() = runBlocking {
-        val authenticatedUser = userRepository.authenticate("testuser", "wrongpassword")
+        val authenticatedUser = UserRepository.authenticate("testuser", "wrongpassword")
         assertNull(authenticatedUser)
     }
 
     @Test
     fun `test get user profile`() = runBlocking {
-        val user = userRepository.create("testemail", "testuser", "hashedpassword")
-        val profile = userRepository.getUserProfile(user.id!!)
+        val user = UserRepository.create("testemail", "testuser", "hashedpassword")
+        val profile = UserRepository.getUserProfile(user.id!!)
         assertNotNull(profile)
         assertEquals("testuser", profile.username)
         assertTrue(profile.booklists.isEmpty())
@@ -183,7 +181,7 @@ class UserRepositoryTest {
 
     @Test
     fun `test get user profile with invalid ID returns null`() = runBlocking {
-        val profile = userRepository.getUserProfile(-1)
+        val profile = UserRepository.getUserProfile(-1)
         assertNull(profile)
     }
 }

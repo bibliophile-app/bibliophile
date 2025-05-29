@@ -17,8 +17,6 @@ import com.bibliophile.repositories.UserRepository
 
 fun Route.authRoutes() {
 
-    val UserRepository = UserRepository()
-
     post("/register") {
         val data = call.receive<RegisterRequest>()
         if (UserRepository.findByUsername(data.username) != null) {

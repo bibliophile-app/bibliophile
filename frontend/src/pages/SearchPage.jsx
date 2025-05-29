@@ -1,8 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Divider, Pagination, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Box, Divider, Pagination, Stack, Typography, useMediaQuery } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 
+import LoadingBox from '../atoms/LoadingBox';
 import useOpenLibrary from '../utils/useOpenLibrary';
 import Categories from '../components/search/Categories';
 import ResultBooks from '../components/search/ResultBooks';
@@ -27,7 +28,7 @@ function SearchPage() {
   const [page, setPage] = useState(1);
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
-  const [category, setCategory] = useState('Books');
+  const [category, setCategory] = useState('Livros');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -50,11 +51,7 @@ function SearchPage() {
   );
 
   if (loading) {
-    return (
-      <Box textAlign="center" mt={6}>
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingBox />
   }
 
   if (error) {
@@ -70,19 +67,21 @@ function SearchPage() {
       <Stack spacing={4} direction="row">
         <Stack sx={{ width: { xs: "100%", md: "70%" } }}>
           <Typography variant="body" fontSize={"0.8rem"} gutterBottom>
-            SHOWING RESULTS FOR “{query.toUpperCase()}”
+            MOSTRANDO RESULTADOS PARA “{query.toUpperCase()}”
           </Typography>
           <Divider sx={{ my: 2, bgcolor: "background.muted" }} />
           
           <ResultBooks books={results} paginatedBooks={paginatedResults}/>
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-            <StyledPagination
-              count={Math.ceil(results.length / ITEMS_PER_PAGE)}
-              page={page}
-              onChange={(_, val) => setPage(val)}
-            />
-          </Box>
+          {results.length > 0 &&
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+              <StyledPagination
+                count={Math.ceil(results.length / ITEMS_PER_PAGE)}
+                page={page}
+                onChange={(_, val) => setPage(val)}
+              />
+            </Box>
+          }
         </Stack>
 
         {!isMobile && (

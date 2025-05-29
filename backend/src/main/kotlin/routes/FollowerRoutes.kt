@@ -13,13 +13,11 @@ import com.bibliophile.repositories.FollowerRepository
 
 
 fun Route.followerRoutes() {
-    val followerRepository = FollowerRepository()
 
     route("followers") {
-        // retorna todos os follows
         get {
             runCatching {
-                followerRepository.getAllFollows()
+                FollowerRepository.getAllFollows()
             }.onSuccess { list ->
                 call.respond(HttpStatusCode.OK, list)
             }.onFailure {
@@ -27,12 +25,12 @@ fun Route.followerRoutes() {
             }
         }
 
-        // retorna quem o usuário segue
-        get("/{userId}/following") {
-            val userId = call.getIntParam("userId") ?: return@get
+        get("/{identifier}/following") {
+            val userId = call.resolveUserIdOrRespondNotFound() ?: return@get
+
             runCatching {
                 if (userId < 0) throw IllegalArgumentException("User ID inválido")
-                followerRepository.getFollowingUsers(userId)
+                FollowerRepository.getFollowingUsers(userId)
             }.onSuccess { follows ->
                 call.respond(HttpStatusCode.OK, follows)
             }.onFailure {
@@ -41,11 +39,12 @@ fun Route.followerRoutes() {
         }
 
         // retorna seguidores de um usuário
-        get("/{userId}/followers") {
-            val userId = call.getIntParam("userId") ?: return@get
+        get("/{identifier}/followers") {
+            val userId = call.resolveUserIdOrRespondNotFound() ?: return@get
+
             runCatching {
-                if (userId < 0) throw IllegalArgumentException("User ID inválido")
-                followerRepository.getFollowersOfUser(userId)
+                if (userId < 0) throw IllegalArgumentException("Invalid credentials")
+                FollowerRepository.getFollowersOfUser(userId)
             }.onSuccess { followers ->
                 call.respond(HttpStatusCode.OK, followers)
             }.onFailure {
@@ -64,7 +63,7 @@ fun Route.followerRoutes() {
             }
         
             runCatching {
-                followerRepository.isFollowing(followerId, followeeId)
+                FollowerRepository.isFollowing(followerId, followeeId)
             }.onSuccess { isFollowing ->
                 call.respond(HttpStatusCode.OK, mapOf("isFollowing" to isFollowing))
             }.onFailure {
@@ -85,11 +84,11 @@ fun Route.followerRoutes() {
                         return@runCatching
                     }
                     
-                    if (followerRepository.isFollowing(userId, follow.followeeId)) {
+                    if (FollowerRepository.isFollowing(userId, follow.followeeId)) {
                         call.respond(HttpStatusCode.Conflict, mapOf("message" to "User is already following this person"))
                         return@runCatching
                     }
-                    followerRepository.addFollow(userId, follow)
+                    FollowerRepository.addFollow(userId, follow)
                 }.onSuccess{
                     call.respond(HttpStatusCode.Created, mapOf("message" to "Follow created successfully"))
                 }.onFailure {
@@ -103,7 +102,7 @@ fun Route.followerRoutes() {
                 val follow = call.receive<FollowRequest>()
 
                 runCatching {
-                    followerRepository.deleteFollow(userId, follow)
+                    FollowerRepository.deleteFollow(userId, follow)
                 }.onSuccess {
                     call.respond(HttpStatusCode.OK, mapOf("message" to "Follow deleted successfully"))
                 }.onFailure {

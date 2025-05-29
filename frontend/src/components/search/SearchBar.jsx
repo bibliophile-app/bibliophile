@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
@@ -17,7 +17,7 @@ const SearchContainer = styled('div', {
   flexDirection: 'row-reverse',
   color: theme.palette.neutral.main,
   backgroundColor: isOpen ? 'rgba(255, 255, 255, 0.25)' : 'transparent',
-  width: isOpen ? '120px' : '40px',
+  width: isOpen ? '150px' : '40px',
   padding: isOpen ? theme.spacing(0.5, 1) : 0,
   overflow: 'hidden',
 
@@ -55,9 +55,15 @@ const StyledInputBase = styled(InputBase, {
   },
 }));
 
-const StyledIconButton = styled(IconButton)(({
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
   color: 'inherit',
-  padding: '1px',
+  padding: 4,
+  minWidth: 0,
+  width: '24px',
+  height: '24px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 }));
 
 function SearchBar() {
@@ -69,9 +75,9 @@ function SearchBar() {
   function onSearch() {
     if (query && query.trim()) {
       navigate(`/search/${encodeURIComponent(query.trim())}`);
+      setQuery("");
     }
   };
-
 
   function handleToggle() {
     setOpen((prev) => !prev);

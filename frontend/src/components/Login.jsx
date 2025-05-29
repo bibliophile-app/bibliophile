@@ -1,15 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../utils/AuthContext';
 
-import { alpha, styled } from '@mui/material/styles';
-
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import InputBase from '@mui/material/InputBase';
-import InputLabel from '@mui/material/InputLabel';
-import Typography from '@mui/material/Typography'; 
-import FormControl from '@mui/material/FormControl';
-
+import { styled } from '@mui/material/styles';
+import { Box, Button, InputBase, InputLabel, Typography, FormControl } from '@mui/material'
+import PopUp from '../atoms/PopUp';
 
 const TextInput  = styled(InputBase)(({ theme }) => ({
   'label + &': {
@@ -36,8 +30,6 @@ const RenderInputField = ({ id, label, value, onChange, type = 'text' }) => (
     id={id}
     variant="standard"
     fullWidth
-    value={value}
-    onChange={onChange}
   >
     <InputLabel
       shrink
@@ -53,18 +45,21 @@ const RenderInputField = ({ id, label, value, onChange, type = 'text' }) => (
     >
       {label}
     </InputLabel>
-    <TextInput id={`${id}-input`} type={type} />
+    <TextInput 
+      id={`${id}-input`} 
+      type={type}
+      value={value}
+      onChange={onChange}
+   />
   </FormControl>
 );
 
 
-export default function Login({ onSuccess }) {
+export default function Login({ isOpen, onClose, onSuccess }) {
   const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
-  const handleMouseDownPassword = (e) => e.preventDefault();
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -80,41 +75,46 @@ export default function Login({ onSuccess }) {
   }
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleLogin}
-      sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300 }}      
+    <PopUp
+      open={isOpen}
+      onClose={onClose}
     >
-      <RenderInputField
-        id="username"
-        label="Username"
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-      />
-
-      <RenderInputField
-        id="password"
-        label="Password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        type="password"
-      />
-    
-      {error && (
-          <Typography color="error" variant="body2">
-            {error}
-          </Typography>
-      )}
-
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"    
-        fullWidth          
+      <Box
+        component="form"
+        onSubmit={handleLogin}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300 }}      
       >
-        Sign In
-      </Button>
+        <RenderInputField
+          id="username"
+          label="Username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+        />
 
-    </Box>
+        <RenderInputField
+          id="password"
+          label="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          type="password"
+        />
+      
+        {error && (
+            <Typography color="error" variant="body2">
+              {error}
+            </Typography>
+        )}
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"    
+          fullWidth          
+        >
+          Sign In
+        </Button>
+
+      </Box>
+    </PopUp>
   );
 }
