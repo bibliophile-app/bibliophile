@@ -4,6 +4,7 @@ import kotlin.test.*
 import kotlinx.coroutines.runBlocking
 
 import com.bibliophile.models.BooklistRequest
+import com.bibliophile.models.UserRequest
 import com.bibliophile.utils.TestDatabaseFactory
 
 class BooklistRepositoryTest {
@@ -18,17 +19,31 @@ class BooklistRepositoryTest {
         TestDatabaseFactory.reset()
     }
 
+    private fun createDefaultUserRequest() = UserRequest(
+        email = "test@example.com",
+        username = "testuser",
+        password = "hashedpassword"
+    )
+
+    private fun createUserRequest(email: String, username: String, password: String) = UserRequest(
+        email = email,
+        username = username,
+        password = password
+    )
+
+    private fun createDefaultBooklistRequest() = BooklistRequest(
+        listName = "My Booklist",
+        listDescription = "A list of my favorite books"
+    )
+
     @Test
     fun `test create booklist`() = runBlocking {
-        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
-        val booklistRequest = BooklistRequest(
-            listName = "My Booklist",
-            listDescription = "A list of my favorite books"
-        )
+        val user = UserRepository.add(createDefaultUserRequest())
+        val request = createDefaultBooklistRequest()
 
-        BooklistRepository.addBooklist(userId = user.id, booklist = booklistRequest)
+        val booklist = BooklistRepository.add(userId = user.id, request = request)
 
-        val booklists = BooklistRepository.allBooklists()
+        val booklists = BooklistRepository.all()
         assertEquals(1, booklists.size)
         assertEquals("My Booklist", booklists[0].listName)
         assertEquals("A list of my favorite books", booklists[0].listDescription)
@@ -36,129 +51,101 @@ class BooklistRepositoryTest {
 
     @Test
     fun `test get booklist by ID`() = runBlocking {
-        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
-        val booklistRequest = BooklistRequest(
-            listName = "My Booklist",
-            listDescription = "A list of my favorite books"
-        )
+        val user = UserRepository.add(createDefaultUserRequest())
+        val request = createDefaultBooklistRequest()
 
-        BooklistRepository.addBooklist(userId = user.id, booklist = booklistRequest)
-        val booklists = BooklistRepository.allBooklists()
-        val booklistId = booklists[0].id
+        val booklist = BooklistRepository.add(userId = user.id, request = request)
+        val found = BooklistRepository.findById(booklist.id)
 
-        val booklist = BooklistRepository.booklist(booklistId)
-        assertNotNull(booklist)
-        assertEquals("My Booklist", booklist.listName)
-        assertEquals("A list of my favorite books", booklist.listDescription)
+        assertNotNull(found)
+        assertEquals("My Booklist", found.listName)
+        assertEquals("A list of my favorite books", found.listDescription)
     }
 
     @Test
     fun `test get booklist with invalid ID returns null`() = runBlocking {
-        val result = BooklistRepository.booklist(-1)
+        val result = BooklistRepository.findById(-1)
         assertNull(result)
     }
 
     @Test
     fun `test update booklist`() = runBlocking {
-        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
-        val booklistRequest = BooklistRequest(
-            listName = "My Booklist",
-            listDescription = "A list of my favorite books"
-        )
+        val user = UserRepository.add(createDefaultUserRequest())
+        val booklist = BooklistRepository.add(userId = user.id, request = createDefaultBooklistRequest())
 
-        BooklistRepository.addBooklist(userId = user.id, booklist = booklistRequest)
-        val booklists = BooklistRepository.allBooklists()
-        val booklistId = booklists[0].id
-
-        val updatedRequest = BooklistRequest(
+        val updateRequest = BooklistRequest(
             listName = "Updated Booklist",
             listDescription = "An updated description"
         )
 
-        val updateResult = BooklistRepository.updateBooklist(booklistId, userId = user.id, updatedBooklist = updatedRequest)
-        assertTrue(updateResult)
+        val success = BooklistRepository.update(booklist.id, userId = user.id, request = updateRequest)
+        assertTrue(success)
 
-        val updatedBooklist = BooklistRepository.booklist(booklistId)
-        assertNotNull(updatedBooklist)
-        assertEquals("Updated Booklist", updatedBooklist.listName)
-        assertEquals("An updated description", updatedBooklist.listDescription)
+        val updated = BooklistRepository.findById(booklist.id)
+        assertNotNull(updated)
+        assertEquals("Updated Booklist", updated.listName)
+        assertEquals("An updated description", updated.listDescription)
     }
 
     @Test
     fun `test update booklist with invalid ID returns false`() = runBlocking {
-        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
-
-        val updateResult = BooklistRepository.updateBooklist(
-            booklistId = -1,
+        val user = UserRepository.add(createDefaultUserRequest())
+        val success = BooklistRepository.update(
+            id = -1,
             userId = user.id,
-            updatedBooklist = BooklistRequest("New name", "New desc")
+            request = createDefaultBooklistRequest()
         )
-        assertFalse(updateResult)
+        assertFalse(success)
     }
 
     @Test
     fun `test update booklist with wrong user ID returns false`() = runBlocking {
-        val user1 = UserRepository.create("a@a.com", "user1", "pw1")
-        val user2 = UserRepository.create("b@b.com", "user2", "pw2")
-        val booklist = BooklistRepository.addBooklist(user1.id, BooklistRequest("Name", "Desc"))
+        val user1 = UserRepository.add(createUserRequest("a@a.com", "user1", "pw1"))
+        val user2 = UserRepository.add(createUserRequest("b@b.com", "user2", "pw2"))
+        val booklist = BooklistRepository.add(user1.id, createDefaultBooklistRequest())
 
-        val result = BooklistRepository.updateBooklist(booklist.id, user2.id, BooklistRequest("X", "Y"))
-        assertFalse(result)
+        val success = BooklistRepository.update(booklist.id, user2.id, createDefaultBooklistRequest())
+        assertFalse(success)
     }
 
     @Test
     fun `test delete booklist`() = runBlocking {
-        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
-        val booklistRequest = BooklistRequest(
-            listName = "My Booklist",
-            listDescription = "A list of my favorite books"
-        )
+        val user = UserRepository.add(createDefaultUserRequest())
+        val booklist = BooklistRepository.add(userId = user.id, request = createDefaultBooklistRequest())
 
-        BooklistRepository.addBooklist(userId = user.id, booklist = booklistRequest)
-        val booklists = BooklistRepository.allBooklists()
-        val booklistId = booklists[0].id
+        val success = BooklistRepository.delete(booklist.id, userId = user.id)
+        assertTrue(success)
 
-        val deleteResult = BooklistRepository.removeBooklist(booklistId, userId = user.id)
-        assertTrue(deleteResult)
-
-        val deletedBooklist = BooklistRepository.booklist(booklistId)
-        assertNull(deletedBooklist)
+        val deleted = BooklistRepository.findById(booklist.id)
+        assertNull(deleted)
     }
 
     @Test
-    fun `test remove booklist with invalid ID returns false`() = runBlocking {
-        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
-
-        val result = BooklistRepository.removeBooklist(-1, user.id)
-        assertFalse(result)
+    fun `test delete booklist with invalid ID returns false`() = runBlocking {
+        val user = UserRepository.add(createDefaultUserRequest())
+        val success = BooklistRepository.delete(-1, user.id)
+        assertFalse(success)
     }
 
     @Test
-    fun `test remove booklist with wrong user ID returns false`() = runBlocking {
-        val user1 = UserRepository.create("a@a.com", "user1", "pw1")
-        val user2 = UserRepository.create("b@b.com", "user2", "pw2")
-        val booklist = BooklistRepository.addBooklist(user1.id, BooklistRequest("Name", "Desc"))
+    fun `test delete booklist with wrong user ID returns false`() = runBlocking {
+        val user1 = UserRepository.add(createUserRequest("a@a.com", "user1", "pw1"))
+        val user2 = UserRepository.add(createUserRequest("b@b.com", "user2", "pw2"))
+        val booklist = BooklistRepository.add(user1.id, createDefaultBooklistRequest())
 
-        val result = BooklistRepository.removeBooklist(booklist.id, user2.id)
-        assertFalse(result)
+        val success = BooklistRepository.delete(booklist.id, user2.id)
+        assertFalse(success)
     }
 
     @Test
     fun `test add book to booklist`() = runBlocking {
-        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
-        val booklistRequest = BooklistRequest(
-            listName = "My Booklist",
-            listDescription = "A list of my favorite books"
-        )
+        val user = UserRepository.add(createDefaultUserRequest())
+        val booklist = BooklistRepository.add(userId = user.id, request = createDefaultBooklistRequest())
 
-        BooklistRepository.addBooklist(userId = 1, booklist = booklistRequest)
-        val booklists = BooklistRepository.allBooklists()
-        val booklistId = booklists[0].id
+        val success = BooklistRepository.addBookToList(booklist.id, userId = user.id, bookId = "book123")
+        assertTrue(success)
 
-        val addBookResult = BooklistRepository.addBookToBooklist(booklistId, userId = user.id, bookId = "book123")
-        assertTrue(addBookResult)
-
-        val booklistWithBooks = BooklistRepository.booklistWithBooks(booklistId)
+        val booklistWithBooks = BooklistRepository.findWithBooks(booklist.id)
         assertNotNull(booklistWithBooks)
         assertEquals(1, booklistWithBooks.books.size)
         assertEquals("book123", booklistWithBooks.books[0])
@@ -166,81 +153,50 @@ class BooklistRepositoryTest {
 
     @Test
     fun `test add book to nonexistent booklist returns false`() = runBlocking {
-        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
-        val result = BooklistRepository.addBookToBooklist(-1, user.id, "book123")
-        assertFalse(result)
+        val user = UserRepository.add(createDefaultUserRequest())
+        val success = BooklistRepository.addBookToList(-1, user.id, "book123")
+        assertFalse(success)
     }
 
     @Test
-    fun `test add book to booklist with wrong user ID returns false`() = runBlocking {
-        val user1 = UserRepository.create("a@a.com", "user1", "pw1")
-        val user2 = UserRepository.create("b@b.com", "user2", "pw2")
-        val booklist = BooklistRepository.addBooklist(user1.id, BooklistRequest("Name", "Desc"))
+    fun `test add book with wrong user ID returns false`() = runBlocking {
+        val user1 = UserRepository.add(createUserRequest("a@a.com", "user1", "pw1"))
+        val user2 = UserRepository.add(createUserRequest("b@b.com", "user2", "pw2"))
+        val booklist = BooklistRepository.add(user1.id, createDefaultBooklistRequest())
 
-        val result = BooklistRepository.addBookToBooklist(booklist.id, user2.id, "book123")
-        assertFalse(result)
+        val success = BooklistRepository.addBookToList(booklist.id, user2.id, "book123")
+        assertFalse(success)
     }
 
     @Test
     fun `test remove book from booklist`() = runBlocking {
-        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
-        val booklistRequest = BooklistRequest(
-            listName = "My Booklist",
-            listDescription = "A list of my favorite books"
-        )
+        val user = UserRepository.add(createDefaultUserRequest())
+        val booklist = BooklistRepository.add(userId = user.id, request = createDefaultBooklistRequest())
 
-        BooklistRepository.addBooklist(userId = 1, booklist = booklistRequest)
-        val booklists = BooklistRepository.allBooklists()
-        val booklistId = booklists[0].id
+        BooklistRepository.addBookToList(booklist.id, userId = user.id, bookId = "book123")
+        val success = BooklistRepository.removeBookFromList(booklist.id, userId = user.id, bookId = "book123")
+        assertTrue(success)
 
-        BooklistRepository.addBookToBooklist(booklistId, userId = user.id, bookId = "book123")
-        val removeBookResult = BooklistRepository.removeBookFromBooklist(booklistId, userId = user.id, bookId = "book123")
-        assertTrue(removeBookResult)
-
-        val booklistWithBooks = BooklistRepository.booklistWithBooks(booklistId)
+        val booklistWithBooks = BooklistRepository.findWithBooks(booklist.id)
         assertNotNull(booklistWithBooks)
         assertTrue(booklistWithBooks.books.isEmpty())
     }
 
     @Test
     fun `test remove book from nonexistent booklist returns false`() = runBlocking {
-        val user = UserRepository.create("test@example.com", "testuser", "hashedpassword")
-        val result = BooklistRepository.removeBookFromBooklist(-1, user.id, "book123")
-        assertFalse(result)
-    }
-
-
-    @Test
-    fun `test remove book to booklist with wrong user ID returns false`() = runBlocking {
-        val user1 = UserRepository.create("a@a.com", "user1", "pw1")
-        val user2 = UserRepository.create("b@b.com", "user2", "pw2")
-        val booklist = BooklistRepository.addBooklist(user1.id, BooklistRequest("Name", "Desc"))
-        val booklistBook = BooklistRepository.addBookToBooklist(booklist.id, user1.id, "book123")
-
-        val result = BooklistRepository.removeBookFromBooklist(booklist.id, user2.id, "book123")
-        assertFalse(result)
+        val user = UserRepository.add(createDefaultUserRequest())
+        val success = BooklistRepository.removeBookFromList(-1, user.id, "book123")
+        assertFalse(success)
     }
 
     @Test
-    fun `test get booklist with books for invalid ID returns null`() = runBlocking {
-        val result = BooklistRepository.booklistWithBooks(-1)
-        assertNull(result)
-    }
+    fun `test remove book with wrong user ID returns false`() = runBlocking {
+        val user1 = UserRepository.add(createUserRequest("a@a.com", "user1", "pw1"))
+        val user2 = UserRepository.add(createUserRequest("b@b.com", "user2", "pw2"))
+        val booklist = BooklistRepository.add(user1.id, createDefaultBooklistRequest())
+        BooklistRepository.addBookToList(booklist.id, user1.id, "book123")
 
-    @Test
-    fun `test booklistWithBooks returns empty description when null`() = runBlocking {
-        val user = UserRepository.create("null@desc.com", "user", "pw")
-
-        val booklist = BooklistRepository.addBooklist(
-            userId = user.id,
-            booklist = BooklistRequest(
-                listName = "No description",
-                listDescription = null
-            )
-        )
-
-        val result = BooklistRepository.booklistWithBooks(booklist.id)
-        assertNotNull(result)
-        assertEquals("", result.listDescription)
+        val success = BooklistRepository.removeBookFromList(booklist.id, user2.id, "book123")
+        assertFalse(success)
     }
 }

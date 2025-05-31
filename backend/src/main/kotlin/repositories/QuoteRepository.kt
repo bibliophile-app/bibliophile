@@ -1,7 +1,6 @@
 package com.bibliophile.repositories
 
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.dao.id.EntityID
 
 import com.bibliophile.db.daoToModel
@@ -13,47 +12,47 @@ import com.bibliophile.db.tables.UsersTable
 import com.bibliophile.db.suspendTransaction
 
 object QuoteRepository {
-
     /** Retorna todas as quotes */
-    suspend fun allQuotes(): List<Quote> = suspendTransaction {
+    suspend fun all(): List<Quote> = suspendTransaction {
         QuoteDAO.all().map(::daoToModel)
     }
 
     /** Busca uma quote pelo ID */
-    suspend fun quote(quoteId: Int): Quote? = suspendTransaction {
-        QuoteDAO.findById(quoteId)?.let(::daoToModel)
+    suspend fun findById(id: Int): Quote? = suspendTransaction {
+        QuoteDAO.findById(id)?.let(::daoToModel)
     }
 
-    /** Adiciona uma nova quote e retorna a criada */
-    suspend fun addQuote(userId: Int, quote: QuoteRequest): Unit = suspendTransaction {
+    /** Busca quotes por usuário */
+    suspend fun findByUserId(userId: Int): List<Quote> = suspendTransaction {
+        QuoteDAO.find { QuotesTable.userId eq userId }
+            .map(::daoToModel)
+    }
+
+    /** Adiciona uma nova quote */
+    suspend fun add(userId: Int, request: QuoteRequest): Quote = suspendTransaction {
         QuoteDAO.new {
             this.userId = EntityID(userId, UsersTable)
-            this.content = quote.content
-        }
+            this.content = request.content
+        }.let(::daoToModel)
     }
 
     /** Atualiza uma quote existente */
-    suspend fun editQuote(quoteId: Int, userId: Int, quote: QuoteRequest): Boolean = suspendTransaction {
-        val quoteDAO = QuoteDAO.findById(quoteId)
+    suspend fun update(id: Int, userId: Int, request: QuoteRequest): Boolean = suspendTransaction {
+        val quoteDAO = QuoteDAO.findById(id)
         if (quoteDAO != null && quoteDAO.userId.value == userId) {
             quoteDAO.apply {
-                this.content = quote.content
+                content = request.content
             }
             true
-        } else {
-            false
-        }
+        } else false
     }
 
-     /** Deleta uma quote pelo ID e ID do usuário */
-    suspend fun deleteQuote(quoteId: Int, userId: Int): Boolean = suspendTransaction {
-        val quoteDAO = QuoteDAO.findById(quoteId)
+    /** Remove uma quote */
+    suspend fun delete(id: Int, userId: Int): Boolean = suspendTransaction {
+        val quoteDAO = QuoteDAO.findById(id)
         if (quoteDAO != null && quoteDAO.userId.value == userId) {
             quoteDAO.delete()
             true
-        } else {
-            false
-        }
+        } else false
     }
-
 }

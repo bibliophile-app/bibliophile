@@ -13,11 +13,19 @@ data class User(
 @Serializable
 data class UserSession(val userId: Int?)
 
-@Serializable
-data class RegisterRequest(val email: String, val username: String, val password: String)
 
 @Serializable
-data class LoginRequest(val username: String, val password: String)
+data class UserRequest(
+    val email: String,
+    val username: String,
+    val password: String
+) 
+
+@Serializable
+data class LoginRequest(
+    val username: String, 
+    val password: String
+)
 
 @Serializable
 data class UserProfileResponse(

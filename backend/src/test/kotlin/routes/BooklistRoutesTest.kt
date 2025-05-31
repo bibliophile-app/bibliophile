@@ -186,6 +186,19 @@ class BooklistRoutesTest {
     }
 
     @Test
+    fun `test get booklist by userID`() = testApplication {
+        application { setupTestModule() }
+
+        val sessionCookie = client.registerAndLoginUser("test@example.com", "testuser", "password123")
+        val createResponse = client.createBooklist(sessionCookie, "Booklist 1", "Description 1")
+        
+        val response = client.get("/booklists/user/testuser")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertTrue(response.bodyAsText().contains("Booklist 1"))
+    }
+
+    @Test
     fun `test get non-existent booklist`() = testApplication {
         application { setupTestModule() }
 
@@ -235,7 +248,7 @@ class BooklistRoutesTest {
         val sessionCookie = client.registerAndLoginUser("test@example.com", "testuser", "password123")
 
         val response = client.addBookToBooklist(sessionCookie, 999, "book123")
-        assertEquals(HttpStatusCode.Conflict, response.status)
+        assertEquals(HttpStatusCode.Forbidden, response.status)
     }
 
     @Test

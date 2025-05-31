@@ -37,15 +37,6 @@ suspend fun ApplicationCall.getIntParam(param: String = "id"): Int? {
 }
 
 /**
- * Extension function to respond with a server error.
- * 
- * @param message The error message to include in the response
- */
-suspend fun ApplicationCall.respondServerError(message: String) {
-    respond(HttpStatusCode.InternalServerError, mapOf("message" to message))
-}
-
-/**
  * Extension function to handle SQL exceptions and respond with appropriate error messages.
  * 
  * @param ex The throwable to handle

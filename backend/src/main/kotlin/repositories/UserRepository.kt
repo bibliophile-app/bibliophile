@@ -2,17 +2,19 @@ package com.bibliophile.repositories
 
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
+
 import com.bibliophile.db.daoToModel
-import com.bibliophile.db.suspendTransaction
 import com.bibliophile.models.User
+import com.bibliophile.models.UserRequest
 import com.bibliophile.models.UserProfileResponse
 import com.bibliophile.db.entities.*
 import com.bibliophile.db.tables.*
+import com.bibliophile.db.suspendTransaction
+import com.bibliophile.utils.*
 
 object UserRepository {
-
-    /** Retorna todos os usuários do banco */
-    suspend fun getAllUsers(): List<User> = suspendTransaction {
+    /** Retorna todos os usuários */
+    suspend fun all(): List<User> = suspendTransaction {
         UserDAO.all().map(::daoToModel)
     }
 
@@ -28,64 +30,52 @@ object UserRepository {
             .firstOrNull()
     }
 
-    /** Retorna o perfil completo do usuário com suas reviews, booklists e quotes */
-    suspend fun getUserProfile(userId: Int): UserProfileResponse? {
-        val user = suspendTransaction {
-            UserDAO.findById(userId)
-        } ?: return null
-
-        val reviews = ReviewRepository.getReviewsByUserId(userId)
-
-        val (booklists, quotes) = suspendTransaction {
-            val booklists = BooklistDAO.find { BooklistsTable.userId eq userId }.map(::daoToModel)
-            val quotes = QuoteDAO.find { QuotesTable.userId eq userId }.map(::daoToModel)
-            Pair(booklists, quotes)
-        }
-
+    /** Busca perfil completo do usuário */
+    suspend fun findProfileById(id: Int): UserProfileResponse? {
+        val user = findById(id) ?: return null
+        
         return UserProfileResponse(
-            id = user.id.value,
+            id = user.id,
             username = user.username,
-            booklists = booklists,
-            quotes = quotes,
-            reviews = reviews
+            reviews = ReviewRepository.findByUserId(id),
+            booklists = BooklistRepository.findByUserId(id),
+            quotes = QuoteRepository.findByUserId(id)
         )
     }
 
-    suspend fun authenticate(username: String, passwordHash: String): User? {
-        val user = findByUsername(username)
-        return if (user != null && user.passwordHash == passwordHash) user else null
-    }
-
-    /** Adiciona um novo usuário e retorna o usuário criado */
-    suspend fun create(email: String, username: String, passwordHash: String): User = suspendTransaction {
-        UserDAO.new {
-            this.email = email
-            this.username = username
-            this.passwordHash = passwordHash
-        }.let(::daoToModel)
-    }
-
-    /** Atualiza um usuário pelo ID */
-    suspend fun update(user: User): Boolean = suspendTransaction {
-        val userDAO = UserDAO.findById(user.id!!)
-        if (userDAO != null) {
-            userDAO.username = user.username
-            userDAO.passwordHash = user.passwordHash
-            true
-        } else {
-            false
+    /** Adiciona um novo usuário */
+    suspend fun add(request: UserRequest): User {
+        val user = suspendTransaction {
+            UserDAO.new {
+                email = request.email
+                username = request.username
+                passwordHash = hashPassword(request.password)
+            }.let(::daoToModel)
         }
+
+        return user
     }
 
-    /** Deleta um usuário pelo ID */
+    /** Atualiza um usuário existente */
+    suspend fun update(id: Int, request: UserRequest): Boolean = suspendTransaction {
+        val userDAO = UserDAO.findById(id)
+        if (userDAO != null) {
+            userDAO.apply {
+                username = request.username
+                passwordHash = request.password
+            }
+            true
+        } else false
+    }
+
+    /** Remove um usuário */
     suspend fun delete(id: Int): Boolean = suspendTransaction {
-        val deletedRows = UsersTable.deleteWhere { UsersTable.id eq id }
-        deletedRows > 0
+        UsersTable.deleteWhere { UsersTable.id eq id } > 0
     }
 
-    /** Deleta um usuário pelo username */
-    suspend fun delete(username: String): Boolean = suspendTransaction {
-        val deletedRows = UsersTable.deleteWhere { UsersTable.username eq username }
-        deletedRows > 0
+    /** Autentica um usuário */
+    suspend fun authenticate(username: String, password: String): User? {
+        val user = findByUsername(username)
+        return if (user != null && verifyPassword(password, user.passwordHash)) user else null
     }
 }

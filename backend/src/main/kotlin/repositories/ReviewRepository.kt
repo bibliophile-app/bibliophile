@@ -14,9 +14,34 @@ import com.bibliophile.db.tables.UsersTable
 import com.bibliophile.db.suspendTransaction
 
 object ReviewRepository {
+    /** Retorna todas as reviews com informações dos usuários */
+    suspend fun all(): List<Review> = suspendTransaction {
+        (ReviewsTable innerJoin UsersTable)
+            .slice(
+                ReviewsTable.id,
+                ReviewsTable.bookId,
+                UsersTable.username,
+                ReviewsTable.content,
+                ReviewsTable.rate,
+                ReviewsTable.favorite,
+                ReviewsTable.reviewedAt
+            )
+            .selectAll()
+            .map { row ->
+                Review(
+                    id = row[ReviewsTable.id].value,
+                    bookId = row[ReviewsTable.bookId],
+                    username = row[UsersTable.username],
+                    content = row[ReviewsTable.content],
+                    rate = row[ReviewsTable.rate],
+                    favorite = row[ReviewsTable.favorite],
+                    reviewedAt = row[ReviewsTable.reviewedAt]
+                )
+            }
+    }
 
     /** Busca uma review pelo ID com informações do usuário */
-    suspend fun review(id: Int): Review? = suspendTransaction {
+    suspend fun findById(id: Int): Review? = suspendTransaction {
         (ReviewsTable innerJoin UsersTable)
             .slice(
                 ReviewsTable.id,
@@ -42,34 +67,8 @@ object ReviewRepository {
             }
     }
 
-    /** Retorna todas as reviews com informações dos usuários */
-    suspend fun allReviews(): List<Review> = suspendTransaction {
-        (ReviewsTable innerJoin UsersTable)
-            .slice(
-                ReviewsTable.id,
-                ReviewsTable.bookId,
-                UsersTable.username,
-                ReviewsTable.content,
-                ReviewsTable.rate,
-                ReviewsTable.favorite,
-                ReviewsTable.reviewedAt
-            )
-            .selectAll()
-            .map { row ->
-                Review(
-                    id = row[ReviewsTable.id].value,
-                    bookId = row[ReviewsTable.bookId],
-                    username = row[UsersTable.username],
-                    content = row[ReviewsTable.content],
-                    rate = row[ReviewsTable.rate],
-                    favorite = row[ReviewsTable.favorite],
-                    reviewedAt = row[ReviewsTable.reviewedAt]
-                )
-            }
-    }
-
     /** Busca reviews por usuário com informações do usuário */
-    suspend fun getReviewsByUserId(userId: Int): List<Review> = suspendTransaction {
+    suspend fun findByUserId(userId: Int): List<Review> = suspendTransaction {
         (ReviewsTable innerJoin UsersTable)
             .slice(
                 ReviewsTable.id,
@@ -94,8 +93,8 @@ object ReviewRepository {
             }
     }
 
-    /** Busca reviews por Book ID com informações do usuário */
-    suspend fun getReviewsById(bookId: String): List<Review> = suspendTransaction {
+    /** Busca reviews por livro com informações do usuário */
+    suspend fun findByBookId(bookId: String): List<Review> = suspendTransaction {
         (ReviewsTable innerJoin UsersTable)
             .slice(
                 ReviewsTable.id,
@@ -120,15 +119,15 @@ object ReviewRepository {
             }
     }
 
-    /** Adiciona uma nova review e retorna a criada */
-    suspend fun addReview(userId: Int, review: ReviewRequest): Review = suspendTransaction {
+    /** Adiciona uma nova review */
+    suspend fun add(userId: Int, request: ReviewRequest): Review = suspendTransaction {
         val reviewDAO = ReviewDAO.new {
             this.userId = EntityID(userId, UsersTable)
-            this.bookId = review.bookId
-            this.content = review.content
-            this.rate = review.rate
-            this.favorite = review.favorite
-            this.reviewedAt = review.reviewedAt
+            this.bookId = request.bookId
+            this.content = request.content
+            this.rate = request.rate
+            this.favorite = request.favorite
+            this.reviewedAt = request.reviewedAt
         }
 
         val username = (UsersTable)
@@ -148,30 +147,26 @@ object ReviewRepository {
     }
 
     /** Atualiza uma review existente */
-    suspend fun updateReview(reviewId: Int, userId: Int, review: ReviewRequest): Boolean = suspendTransaction {
-        val reviewDAO = ReviewDAO.findById(reviewId)
+    suspend fun update(id: Int, userId: Int, request: ReviewRequest): Boolean = suspendTransaction {
+        val reviewDAO = ReviewDAO.findById(id)
         if (reviewDAO != null && reviewDAO.userId.value == userId) {
             reviewDAO.apply {
-                bookId = review.bookId
-                content = review.content
-                rate = review.rate
-                favorite = review.favorite
-                reviewedAt = review.reviewedAt
+                bookId = request.bookId
+                content = request.content
+                rate = request.rate
+                favorite = request.favorite
+                reviewedAt = request.reviewedAt
             }
             true
-        } else {
-            false
-        }
+        } else false
     }
         
-    /** Deleta uma review pelo ID e ID do usuário */
-    suspend fun deleteReview(reviewId: Int, userId: Int): Boolean = suspendTransaction {
-        val reviewDAO = ReviewDAO.findById(reviewId)
+    /** Deleta uma review */
+    suspend fun delete(id: Int, userId: Int): Boolean = suspendTransaction {
+        val reviewDAO = ReviewDAO.findById(id)
         if (reviewDAO != null && reviewDAO.userId.value == userId) {
             reviewDAO.delete()
             true
-        } else {
-            false
-        }
+        } else false
     }
 }
