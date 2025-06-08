@@ -230,7 +230,7 @@ class ReviewRoutesTest {
         application { setupTestModule() }
 
         val sessionCookie = client.registerAndLoginUser("test@example.com", "testuser", "password123")
-        val createResponse = client.createReview(
+        client.createReview(
             sessionCookie,
             bookId = "book123",
             content = "Good book",
@@ -250,7 +250,7 @@ class ReviewRoutesTest {
         application { setupTestModule() }
 
         val sessionCookie = client.registerAndLoginUser("test@example.com", "testuser", "password123")
-        val createResponse = client.createReview(
+        client.createReview(
             sessionCookie,
             bookId = "book123",
             content = "Good book",
@@ -265,6 +265,7 @@ class ReviewRoutesTest {
 
         assertEquals(HttpStatusCode.OK, response.status)
         assertTrue(response.bodyAsText().contains("Good book"))
+        assertTrue(response.bodyAsText().contains("others") || response.bodyAsText().contains("friends"))
     }
 
     @Test
@@ -291,6 +292,57 @@ class ReviewRoutesTest {
 
         val response = client.get("/reviews/user/abc")
         assertEquals(HttpStatusCode.NotFound, response.status)
+    }
+
+    @Test
+    fun `test get popular reviews from friends`() = testApplication {
+        application { setupTestModule() }
+
+        val sessionCookie = client.registerAndLoginUser("friend@example.com", "friend", "password123")
+
+        val response = client.get("/reviews/popular/friends") {
+            header(HttpHeaders.Cookie, sessionCookie)
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
+
+    @Test
+    fun `test get popular reviews from friends unauthorized`() = testApplication {
+        application { setupTestModule() }
+
+        val response = client.get("/reviews/popular/friends")
+        assertEquals(HttpStatusCode.Unauthorized, response.status)
+    }
+
+    @Test
+    fun `test get popular books this week`() = testApplication {
+        application { setupTestModule() }
+
+        val response = client.get("/reviews/popular/week")
+        assertEquals(HttpStatusCode.OK, response.status)
+        val responseBody = response.bodyAsText()
+        assertTrue(responseBody.contains("[]"))
+    }
+
+    @Test
+    fun `test get popular books this week with limit`() = testApplication {
+        application { setupTestModule() }
+
+        val sessionCookie = client.registerAndLoginUser("test@example.com", "testuser", "password123")
+        client.createReview(
+            sessionCookie,
+            bookId = "book123",
+            content = "Good book",
+            rate = 4,
+            favorite = false,
+            reviewedAt = "1900-05-11"
+        )
+
+        val response = client.get("/reviews/popular/week?limit=5")
+        assertEquals(HttpStatusCode.OK, response.status)
+        val responseBody = response.bodyAsText()
+        assertTrue(responseBody.contains("[]"))
     }
 
     @Test

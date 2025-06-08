@@ -69,6 +69,39 @@ class BooklistRepositoryTest {
     }
 
     @Test
+    fun `test all booklists with and without description`() = runBlocking {
+        val user = UserRepository.add(
+            UserRequest(
+                email = "test@example.com",
+                username = "testuser",
+                password = "password123"
+            )
+        )
+
+        BooklistRepository.add(
+            userId = user.id,
+            BooklistRequest(listName = "Favorites", listDescription = "Loved")
+        )
+
+        BooklistRepository.add(
+            userId = user.id,
+            BooklistRequest(listName = "No desc", listDescription = null)
+        )
+
+        val booklists = BooklistRepository.all()
+        assertEquals(2, booklists.size)
+
+        val withDescription = booklists.find { it.listName == "Favorites" }
+        val withoutDescription = booklists.find { it.listName == "No desc" }
+
+        assertNotNull(withDescription)
+        assertEquals("Loved", withDescription.listDescription)
+
+        assertNotNull(withoutDescription)
+        assertEquals("", withoutDescription.listDescription)
+    }
+
+    @Test
     fun `test update booklist`() = runBlocking {
         val user = UserRepository.add(createDefaultUserRequest())
         val booklist = BooklistRepository.add(userId = user.id, request = createDefaultBooklistRequest())

@@ -1,11 +1,9 @@
 package com.bibliophile.repositories
 
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-import com.bibliophile.db.daoToModel
 import com.bibliophile.models.Booklist
 import com.bibliophile.models.BooklistRequest
 import com.bibliophile.models.BooklistWithBooks
@@ -19,18 +17,45 @@ import com.bibliophile.db.suspendTransaction
 object BooklistRepository {
     /** Retorna todas as booklists */
     suspend fun all(): List<Booklist> = suspendTransaction {
-        BooklistDAO.all().map(::daoToModel)
+        (BooklistsTable innerJoin UsersTable)
+            .selectAll()
+            .map { row ->
+                Booklist(
+                    id = row[BooklistsTable.id].value,
+                    username = row[UsersTable.username],
+                    listName = row[BooklistsTable.listName],
+                    listDescription = row[BooklistsTable.listDescription] ?: "",
+                )
+            }
     }
 
     /** Busca uma booklist pelo ID */
     suspend fun findById(id: Int): Booklist? = suspendTransaction {
-        BooklistDAO.findById(id)?.let(::daoToModel)
+        (BooklistsTable innerJoin UsersTable)
+            .select { BooklistsTable.id eq id }
+            .singleOrNull()
+            ?.let { row ->
+                Booklist(
+                    id = row[BooklistsTable.id].value,
+                    username = row[UsersTable.username],
+                    listName = row[BooklistsTable.listName],
+                    listDescription = row[BooklistsTable.listDescription] ?: "",
+                )
+            }
     }
 
     /** Busca booklists por usuário */
     suspend fun findByUserId(userId: Int): List<Booklist> = suspendTransaction {
-        BooklistDAO.find { BooklistsTable.userId eq userId }
-            .map(::daoToModel)
+        (BooklistsTable innerJoin UsersTable)
+            .select { BooklistsTable.userId eq userId }
+            .map { row ->
+                Booklist(
+                    id = row[BooklistsTable.id].value,
+                    username = row[UsersTable.username],
+                    listName = row[BooklistsTable.listName],
+                    listDescription = row[BooklistsTable.listDescription] ?: "",
+                )
+            }
     }
 
     /** Retorna uma booklist com seus livros */
@@ -39,9 +64,13 @@ object BooklistRepository {
         val books = BooklistBookDAO.find { BooklistBooksTable.booklistId eq booklistDAO.id }
             .map { it.bookId }
 
+        val username = UsersTable
+            .select { UsersTable.id eq booklistDAO.userId.value }
+            .single()[UsersTable.username]
+
         BooklistWithBooks(
             id = booklistDAO.id.value,
-            userId = booklistDAO.userId.value,
+            username = username,
             listName = booklistDAO.listName,
             listDescription = booklistDAO.listDescription ?: "",
             books = books
@@ -50,11 +79,22 @@ object BooklistRepository {
 
     /** Adiciona uma nova booklist */
     suspend fun add(userId: Int, request: BooklistRequest): Booklist = suspendTransaction {
-        BooklistDAO.new {
+        val booklistDAO = BooklistDAO.new {
             this.userId = EntityID(userId, UsersTable) 
             listName = request.listName
             listDescription = request.listDescription
-        }.let(::daoToModel)
+        }
+
+        val username = UsersTable
+            .select { UsersTable.id eq userId }
+            .single()[UsersTable.username]
+
+        Booklist(
+            id = booklistDAO.id.value,
+            username = username,
+            listName = booklistDAO.listName,
+            listDescription = booklistDAO.listDescription ?: "",
+        )
     }
 
     /** Atualiza uma booklist existente */

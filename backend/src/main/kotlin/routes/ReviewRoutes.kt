@@ -38,11 +38,47 @@ fun Route.reviewRoutes() {
 
         get("/book/{bookId}") {
             val bookId = call.getParam("bookId") ?: return@get
+            val session = call.sessions.get<UserSession>()
+
             val reviews = ReviewRepository.findByBookId(bookId)
-            call.respond(HttpStatusCode.OK, reviews)
+
+            if (session?.userId != null) {
+                val userReviews = ReviewRepository.findMyReviewsForBook(session.userId!!, bookId)
+                val friendReviews = ReviewRepository.findFriendReviewsForBook(session.userId!!, bookId)
+
+                val excludedIds = buildSet {
+                    userReviews.forEach { add(it.id) }
+                    friendReviews.forEach { add(it.id) }
+                }
+                
+                val filtered = reviews.filterNot { it.id in excludedIds }
+
+                call.respond(HttpStatusCode.OK, mapOf(
+                    "user" to userReviews,
+                    "friends" to friendReviews,
+                    "others" to filtered
+                ))
+            } else {
+                call.respond(HttpStatusCode.OK, mapOf(
+                    "others" to reviews
+                ))
+            }
+        }
+
+        get("/popular/week") {
+            val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
+            val popularBooks = ReviewRepository.findPopularBooksThisWeek(limit)
+            call.respond(HttpStatusCode.OK, popularBooks)
         }
 
         authenticate("auth-session") {
+            get("/popular/friends") {
+                val session = call.sessions.get<UserSession>()
+                val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 10
+                val reviews = ReviewRepository.findRecentReviewsFromFriends(session?.userId!!, limit)
+                call.respond(HttpStatusCode.OK, reviews)
+            }
+
             post {
                 val request = call.receive<ReviewRequest>()
                 val session = call.sessions.get<UserSession>()
