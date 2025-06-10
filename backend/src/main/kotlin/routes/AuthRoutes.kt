@@ -12,6 +12,7 @@ import com.bibliophile.models.UserSession
 import com.bibliophile.models.UserRequest
 import com.bibliophile.models.LoginRequest
 import com.bibliophile.repositories.UserRepository
+import com.bibliophile.repositories.BooklistRepository
 
 fun Route.authRoutes() {
     post("/register") {
@@ -25,6 +26,8 @@ fun Route.authRoutes() {
         }
 
         val user = UserRepository.add(request)
+        BooklistRepository.addDefault(user.id)
+
         call.sessions.set(UserSession(user.id))
         call.respond(HttpStatusCode.Created, mapOf(
             "message" to "User registered successfully - User ID: ${user.id}"

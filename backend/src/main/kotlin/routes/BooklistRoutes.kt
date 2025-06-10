@@ -48,6 +48,17 @@ fun Route.booklistRoutes() {
             call.respond(HttpStatusCode.OK, booklists)
         }
 
+        get("/user/{identifier}/default") {
+            val userId = call.resolveUserIdOrRespondNotFound() ?: return@get
+            val default = BooklistRepository.findDefault(userId)
+
+            if (default != null) {
+                call.respond(HttpStatusCode.OK, default)
+            } else {
+                call.respond(HttpStatusCode.NotFound, mapOf("message" to "User's default list not found"))
+            }
+        }
+
         authenticate("auth-session") { 
             post {
                 val request = call.receive<BooklistRequest>()

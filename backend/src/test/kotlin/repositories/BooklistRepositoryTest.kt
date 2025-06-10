@@ -232,4 +232,35 @@ class BooklistRepositoryTest {
         val success = BooklistRepository.removeBookFromList(booklist.id, user2.id, "book123")
         assertFalse(success)
     }
+
+    @Test
+    fun `test cannot update default list`() = runBlocking {
+        val user = UserRepository.add(createDefaultUserRequest())
+        BooklistRepository.addDefault(user.id)
+        val defaultList = BooklistRepository.findDefault(user.id)
+        
+        assertNotNull(defaultList)
+        val success = BooklistRepository.update(
+            defaultList.id,
+            user.id,
+            BooklistRequest("New Name", "New Description")
+        )
+        
+        assertFalse(success)
+        val unchanged = BooklistRepository.findById(defaultList.id)
+        assertEquals("___DEFAULT___", unchanged?.listName)
+    }
+
+    @Test
+    fun `test cannot delete default list`() = runBlocking {
+        val user = UserRepository.add(createDefaultUserRequest())
+        BooklistRepository.addDefault(user.id)
+        val defaultList = BooklistRepository.findDefault(user.id)
+    
+        assertNotNull(defaultList)
+        val success = BooklistRepository.delete(defaultList.id, user.id)
+
+        assertFalse(success)
+    }
+
 }

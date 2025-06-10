@@ -100,7 +100,9 @@ object BooklistRepository {
     /** Atualiza uma booklist existente */
     suspend fun update(id: Int, userId: Int, request: BooklistRequest): Boolean = suspendTransaction {
         val booklistDAO = BooklistDAO.findById(id)
-        if (booklistDAO != null && booklistDAO.userId.value == userId) {
+        if (booklistDAO != null && 
+            booklistDAO.userId.value == userId && 
+            booklistDAO.listName != "___DEFAULT___") {
             booklistDAO.apply {
                 listName = request.listName
                 listDescription = request.listDescription
@@ -112,7 +114,9 @@ object BooklistRepository {
     /** Deleta uma booklist */
     suspend fun delete(id: Int, userId: Int): Boolean = suspendTransaction {
         val booklistDAO = BooklistDAO.findById(id)
-        if (booklistDAO != null && booklistDAO.userId.value == userId) {
+        if (booklistDAO != null && 
+            booklistDAO.userId.value == userId && 
+            booklistDAO.listName != "___DEFAULT___") {
             booklistDAO.delete()
             true
         } else false
@@ -139,5 +143,45 @@ object BooklistRepository {
                 (BooklistBooksTable.bookId eq bookId)
             } > 0
         } else false
+    }
+
+
+    /* Busca lista default com livros */
+    suspend fun findDefault(userId: Int): BooklistWithBooks? = suspendTransaction {
+        val booklistDAO = BooklistDAO.find {
+            (BooklistsTable.userId eq userId) and
+            (BooklistsTable.listName eq "___DEFAULT___")
+        }.firstOrNull() ?: return@suspendTransaction null
+
+        val books = BooklistBookDAO.find { BooklistBooksTable.booklistId eq booklistDAO.id }
+            .map { it.bookId }
+
+        val username = UsersTable
+            .select { UsersTable.id eq booklistDAO.userId.value }
+            .single()[UsersTable.username]
+
+        BooklistWithBooks(
+            id = booklistDAO.id.value,
+            username = username,
+            listName = booklistDAO.listName,
+            listDescription = booklistDAO.listDescription ?: "",
+            books = books
+        )
+    }
+
+    /* Adiciona lista default */
+    suspend fun addDefault(userId: Int) = suspendTransaction {
+        val alreadyExists = BooklistDAO.find {
+            (BooklistsTable.userId eq userId) and
+            (BooklistsTable.listName eq "___DEFAULT___")
+        }.empty().not()
+
+        if (!alreadyExists) {
+            BooklistDAO.new {
+                this.userId = EntityID(userId, UsersTable)
+                this.listName = "___DEFAULT___"
+                this.listDescription = ""
+            }
+        }
     }
 }

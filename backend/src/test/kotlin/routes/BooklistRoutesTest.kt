@@ -374,4 +374,31 @@ class BooklistRoutesTest {
         assertEquals(HttpStatusCode.Forbidden, updateResponse.status)
         assertTrue(updateResponse.bodyAsText().contains("don't own this booklist"))
     }
+
+    @Test
+    fun `test get default booklist for user`() = testApplication {
+        application { setupTestModule() }
+
+        val sessionCookie = client.registerAndLoginUser("user@example.com", "testuser", "pass123")
+       
+        val response = client.get("booklists/user/testuser/default") {
+            header(HttpHeaders.Cookie, sessionCookie)
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val responseBody = response.bodyAsText()
+        assertTrue(responseBody.contains("___DEFAULT___"))
+    }
+
+    @Test
+    fun `test get default booklist for user not found`() = testApplication {
+        application { setupTestModule() }
+
+        client.registerAndLoginUser("other@example.com", "otheruser", "pass123")
+
+        val response = client.get("booklists/user/nouser/default")
+
+        assertEquals(HttpStatusCode.NotFound, response.status)
+    }
+
 }
