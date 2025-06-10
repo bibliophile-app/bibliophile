@@ -13,6 +13,8 @@ const useOpenLibrary = ({ language = 'pt-br', onResults, onError }) => {
     try {
       // 1. Buscar edição
       const bookRes = await fetch(`${BASE_REQUEST_URL}/books/${olid}.json`);
+      if (!bookRes.ok) throw new Error('Livro não encontrado.');
+
       const bookData = await bookRes.json();
 
       // 2. Pegar work ID da edição
@@ -44,11 +46,11 @@ const useOpenLibrary = ({ language = 'pt-br', onResults, onError }) => {
       // 6. Montar objeto final
       const book = {
         olid,
-        title: bookData.title || workData.title || 'Título não disponível',
+        title: bookData.title || workData.title || 'Título não disponível.',
         description:
           bookData.description ||
           workData.description ||
-          'No description available.',
+          'Descrição não disponível.',
         coverUrl,
         first_publish_year:
           bookData.publish_date || workData.first_publish_date || null,

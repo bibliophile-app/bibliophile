@@ -1,42 +1,83 @@
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { Box, Stack, Typography, useMediaQuery } from '@mui/material';
+import { PlaylistAdd } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import { useAuth } from '../utils/AuthContext';
 import useOpenLibrary from '../utils/useOpenLibrary';
+import { useAuth } from '../utils/AuthContext';
 import { searchByBook } from '../components/reviews/utils';
+import { useSafeNavigate } from '../utils/useSafeNavigate';
+import { useNotification } from '../utils/NotificationContext';
 
 import Divider from '../atoms/Divider';
 import BookImage from '../atoms/BookImage';
 import LoadingBox from '../atoms/LoadingBox';
-import ActionsMenu from '../components/ActionsMenu';
-import DescriptionText from '../components/DescriptionText';
+import BookHeader from '../components/BookHeader';
+import ActionsBase from '../components/ActionsBase';
+import ExpandableText from '../components/ExpandableText';
 import ReviewForm from '../components/reviews/ReviewForm';
 import ReviewSection from '../components/reviews/ReviewSection';
 import ReviewHistogram from '../components/reviews/ReviewHistogram';
 
+function ActionsMenu({ handleReview }) {
+  const { user, handleSignin } = useAuth();
+
+  const actions = user
+    ? [
+        {
+          label: 'Quero ler',
+          icon: <PlaylistAdd />,
+          onClick: () => console.log('Adicionar à lista de leitura'),
+        },
+        {
+          label: 'Avaliar ou registrar novamente...',
+          onClick: handleReview,
+        },
+        {
+          label: 'Adicionar às listas...',
+          onClick: () => console.log('Abrir listas'),
+        },
+      ]
+    : [
+        {
+          label: 'Faça login para registrar, avaliar ou comentar',
+          onClick: handleSignin,
+        },
+      ];
+
+  return <ActionsBase actions={actions} />;
+}
+
 function BookPage() {
   const { user } = useAuth();
   const { olid } = useParams();
-  
-  const [book, setBook] = useState(null);
-  const [error, setError] = useState(null);
-  const [reviews, setReviews] = useState([]);
-  const [reviewFormOpen, setReviewFormOpen] = useState(false);
+  const { notify } = useNotification();
+  const safeBack = useSafeNavigate();
 
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
 
+  const [book, setBook] = useState(null);
+  const [reviews, setReviews] = useState({});
+  const [formOpen, setFormOpen] = useState(false);
+
   const { fetchResults, loading } = useOpenLibrary({
     onResults: setBook,
-    onError: setError,
+    onError: () => {
+        notify({ message: 'Erro ao carregar os dados do livro!', severity: 'error' })
+        setTimeout(() => safeBack(), 1500);
+    },
   });
 
   const fetchReviews = async () => {
     if (!olid) return;
-    const results = await searchByBook(olid);
-    setReviews(results || []);
+    try {
+      const results = await searchByBook(olid);
+      setReviews(results || {});
+    } catch (err) {
+      notify({ message: 'Erro ao buscar avaliações!', severity: 'alert' });
+    }
   };
 
   useEffect(() => {
@@ -47,76 +88,48 @@ function BookPage() {
 
   const handleReviewSubmit = () => {
     fetchReviews();
-    setReviewFormOpen(false);
+    setFormOpen(false);
   };
 
-  if (loading) return <LoadingBox />;
-
-  if (error || !book) {
-    return (
-      <Typography mt={4}>
-        Livro não encontrado!
-      </Typography>
-    );
-  }
-
-  const filteredReviews = {
-    user: reviews.filter(r => r.username === user?.username && r.content),
-    others: reviews.filter(r => r.username !== user?.username && r.content),
-  };
-
-  const BookCover = ({ width = 180, height = '100%' }) => (
-    <BookImage
-      src={book.coverUrl}
-      alt={`Capa de ${book.title}`}
-      sx={{ width, height }}
-    />
-  );
-
+  if (loading || !book) return <LoadingBox />;
+  
   return (
-    <>
+    <React.Fragment>
       <Box sx={{ minHeight: '100vh', justifyContent: 'center', pb: 5, px: { xs: 3, lg: 0 } }}>
         <Stack spacing={4} direction="row">
-          
-          {isMdUp && <BookCover />}
+          {isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: '100%' }} /> }
 
           <Stack spacing={2} sx={{ flex: 1 }}>
-            <Stack spacing={1}>
-              <Box sx={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap', gap: 1 }}>
-                <Typography variant="h4" fontWeight="bold">
-                  {book.title}
-                </Typography>
-                {book.first_publish_year && (
-                  <Typography
-                    variant="h5"
-                    component="span"
-                    sx={{ fontWeight: 400, fontSize: '1.2rem', opacity: 0.8 }}
-                  >
-                    ({book.first_publish_year})
-                  </Typography>
-                )}
-              </Box>
-              {book.author_name?.length > 0 && (
-                <Typography sx={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                  Escrito por {book.author_name.join(', ')}
-                </Typography>
-              )}
-            </Stack>
+            <BookHeader
+              title={book.title}
+              year={book.first_publish_year}
+              authors={book.author_name}
+            />
 
             <Divider />
-            <DescriptionText description={book.description} />
+            <ExpandableText text={book.description} />
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {user && (
+              {user && reviews.user?.length > 0 && (
                 <ReviewSection
-                  title="Suas avaliações"
-                  reviews={filteredReviews.user}
+                  title="Minhas avaliações"
+                  reviews={reviews.user.filter(e => !!e.content?.trim())}
                 />
               )}
-              <ReviewSection
-                title="Avaliações recentes"
-                reviews={filteredReviews.others}
-              />
+
+              {user && reviews.friends?.length > 0 && (
+                <ReviewSection
+                  title="Avaliações de amigos"
+                  reviews={reviews.friends.filter(e => !!e.content?.trim())}
+                />
+              )}
+
+              {reviews.others?.length > 0 && (
+                <ReviewSection
+                  title="Avaliações"
+                  reviews={reviews.others.filter(e => !!e.content?.trim())}
+                />
+              )}
             </Box>
           </Stack>
 
@@ -128,16 +141,16 @@ function BookPage() {
               width: { xs: 'auto', sm: 180, md: 240 },
             }}
           >
-            {!isMdUp && <BookCover width={180} height={270} />}
+            {!isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: 270 }} /> }
 
-            <ActionsMenu handleReview={() => setReviewFormOpen(true)} />
+            <ActionsMenu handleReview={() => setFormOpen(true)} />
 
             <Box>
               <Typography variant="h5" gutterBottom>
                 Avaliações
               </Typography>
               <Divider sx={{ width: '100%', mb: 2 }} />
-              <ReviewHistogram reviews={reviews} />
+              <ReviewHistogram reviewsData={reviews} />
             </Box>
           </Box>
         </Stack>
@@ -145,11 +158,11 @@ function BookPage() {
 
       <ReviewForm
         book={book}
-        open={reviewFormOpen}
-        onClose={() => setReviewFormOpen(false)}
+        open={formOpen}
+        onClose={() => setFormOpen(false)}
         onSubmit={handleReviewSubmit}
       />
-    </>
+    </React.Fragment>
   );
 }
 

@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, CartesianGrid } fro
 
 import StyledRating from '../../atoms/Rating';
 
-const ReviewHistogram = ({ reviews }) => {
+const ReviewHistogram = ({ reviewsData }) => {
   const normalizeRating = (rate) => rate / 2;
   const formatCount = (num) => {
     if (num >= 1000) {
@@ -12,9 +12,19 @@ const ReviewHistogram = ({ reviews }) => {
     return num;
   };
 
+  const getReviews = (reviewsData) => {
+    if (!reviewsData) return [];
+    const reviews = [
+      ...(reviewsData.user || []),
+      ...(reviewsData.friends || []),
+      ...(reviewsData.others || [])
+    ];
+    return reviews;
+  };
+
   const groupRatings = (reviews) => {
-    if (!reviews || reviews.length === 0) return [];
-    // Create bins for ratings from 0.0 to 5.0 in increments of 0.5
+    if (reviews.length === 0) return [];
+    // Cria bins para ratings de 0.0 a 5.0 com incrementos de 0.5
     const bins = Array.from({ length: 11 }, (_, i) => (i * 0.5).toFixed(1));
     const counts = Object.fromEntries(bins.map(bin => [bin, 0]));
 
@@ -28,6 +38,7 @@ const ReviewHistogram = ({ reviews }) => {
     return bins.map(bin => ({ rating: parseFloat(bin), count: counts[bin] }));
   };
 
+  const reviews = getReviews(reviewsData);
   const data = groupRatings(reviews);
 
   const average = reviews && reviews.length
@@ -90,7 +101,7 @@ const ReviewHistogram = ({ reviews }) => {
         </Stack>
       ) : (
         <Typography variant="h5" sx={{ fontSize: '0.8rem' }}>
-          Not enough ratings!
+          Ainda há poucas avaliações!
         </Typography>
       )}
     </Paper>

@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       allowedHosts: ['localhost', ...allowedHosts],
       proxy: {
-        '^/(me|login|logout|register|booklists|quotes|reviews|auth)(/.*)?$': {
+        '^/(me|login|logout|register|booklists|quotes|reviews|auth|followers)(/.*)?$': {
           target: backendTarget,
           changeOrigin: true,
           secure: false,
