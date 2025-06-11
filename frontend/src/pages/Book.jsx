@@ -95,66 +95,62 @@ function BookPage() {
   
   return (
     <React.Fragment>
-      <Box sx={{ minHeight: '100vh', justifyContent: 'center', pb: 5, px: { xs: 3, lg: 0 } }}>
-        <Stack spacing={4} direction="row">
-          {isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: '100%' }} /> }
+      <Stack spacing={4} direction="row">
+        {isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: '100%' }} /> }
 
-          <Stack spacing={2} sx={{ flex: 1 }}>
-            <BookHeader
-              title={book.title}
-              year={book.first_publish_year}
-              authors={book.author_name}
+        <Stack spacing={2} sx={{ flex: 1 }}>
+          <BookHeader
+            title={book.title}
+            year={book.first_publish_year}
+            authors={book.author_name}
+          />
+
+          <Divider />
+          <ExpandableText text={book.description} />
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {user && (
+              <ReviewSection
+                title="Minhas avaliações"
+                reviews={reviews.user.filter(e => !!e.content?.trim())}
+              />
+            )}
+
+            {user && reviews.friends?.length > 0 && (
+              <ReviewSection
+                title="Avaliações de amigos"
+                reviews={reviews.friends.filter(e => !!e.content?.trim())}
+              />
+            )}
+
+            <ReviewSection
+              title="Avaliações"
+              reviews={reviews.others.filter(e => !!e.content?.trim())}
             />
-
-            <Divider />
-            <ExpandableText text={book.description} />
-
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {user && reviews.user?.length > 0 && (
-                <ReviewSection
-                  title="Minhas avaliações"
-                  reviews={reviews.user.filter(e => !!e.content?.trim())}
-                />
-              )}
-
-              {user && reviews.friends?.length > 0 && (
-                <ReviewSection
-                  title="Avaliações de amigos"
-                  reviews={reviews.friends.filter(e => !!e.content?.trim())}
-                />
-              )}
-
-              {reviews.others?.length > 0 && (
-                <ReviewSection
-                  title="Avaliações"
-                  reviews={reviews.others.filter(e => !!e.content?.trim())}
-                />
-              )}
-            </Box>
-          </Stack>
-
-          <Box
-            sx={{
-              gap: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              width: { xs: 'auto', sm: 180, md: 240 },
-            }}
-          >
-            {!isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: 270 }} /> }
-
-            <ActionsMenu handleReview={() => setFormOpen(true)} />
-
-            <Box>
-              <Typography variant="h5" gutterBottom>
-                Avaliações
-              </Typography>
-              <Divider sx={{ width: '100%', mb: 2 }} />
-              <ReviewHistogram reviewsData={reviews} />
-            </Box>
           </Box>
         </Stack>
-      </Box>
+
+        <Box
+          sx={{
+            gap: 2,
+            display: 'flex',
+            flexDirection: 'column',
+            width: { xs: 'auto', sm: 180, md: 240 },
+          }}
+        >
+          {!isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: 270 }} /> }
+
+          <ActionsMenu handleReview={() => setFormOpen(true)} />
+
+          <Box>
+            <Typography variant="h5" gutterBottom>
+              Avaliações
+            </Typography>
+            <Divider sx={{ width: '100%', mb: 2 }} />
+            <ReviewHistogram reviewsData={reviews} />
+          </Box>
+        </Box>
+      </Stack>
 
       <ReviewForm
         book={book}

@@ -3,7 +3,6 @@ import { styled } from '@mui/material/styles';
 import {
   Box,
   Button,
-  TextField,
   Typography,
   IconButton,
 } from '@mui/material';
@@ -16,6 +15,8 @@ import BookImage from '../../atoms/BookImage';
 import LoadingBox from '../../atoms/LoadingBox';
 import Favorite from '../../atoms/Favorite';
 import StyledRating from '../../atoms/Rating';
+import TextArea from '../../atoms/TextArea';
+
 import { addReview, updateReview, deleteReview, searchById } from './utils';
 
 const StyledDate = styled('input')(({ theme }) => ({
@@ -179,36 +180,16 @@ function ReviewForm({
                   />
                 </Box>
 
-                <Box>
-                  <TextField
-                    placeholder="Escreva sua avaliação..."
-                    multiline
-                    fullWidth
-                    minRows={4}
-                    maxRows={12}
-                    value={content}
-                    onChange={(e) => {
-                      if (e.target.value.length > maxLength) return;
-                      setContent(e.target.value);
-                    }}
-                    sx={{
-                      backgroundColor: '#ecf0f1',
-                      borderRadius: 1,
-                      '& .MuiInputBase-root': {
-                        fontSize: '0.875rem',
-                        padding: 1,
-                      },
-                    }}
-                  />
-
-                  <Typography
-                    variant="caption"
-                    align="right"
-                    sx={{ display: 'block', mt: 0.5, fontSize: '0.75rem' }}
-                  >
-                    {content.length} / {maxLength}
-                  </Typography>
-                </Box>
+                <TextArea
+                  placeholder="Escreva sua avaliação..."
+                  multiline
+                  minRows={4}
+                  maxRows={12}
+                  maxLength={maxLength}
+                  value={content}
+                  onChange={setContent}
+                  sx={{ backgroundColor: '#ecf0f1', color: '#000', fontSize: '0.875rem'  }}
+                />
 
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-start' }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column' }}>

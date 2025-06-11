@@ -109,7 +109,7 @@ function DiaryPage() {
   if (loading)
     return <LoadingBox />;
   else return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', px: { xs: 3, lg: 0 } }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', gap: 0.5 }}>
             <Typography variant='span'>
                 diário de

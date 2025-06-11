@@ -55,7 +55,6 @@ export default function FollowerManager() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          followerId: parseInt(userId),
           followeeId: parseInt(followedId),
         }),
       });
@@ -75,7 +74,6 @@ export default function FollowerManager() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          followerId: parseInt(userId),
           followeeId: parseInt(followedId),
         }),
       });

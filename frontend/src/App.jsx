@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { Box, Container } from '@mui/material';
 
 import Container from './atoms/Container';
 import { NotificationProvider } from './utils/NotificationContext';
@@ -40,7 +40,7 @@ function App() {
 		<BrowserRouter>
 			<PageWrapper disabledGutters>
 				<NavBar />
-				<Container maxWidth="lg" sx={{ mt: 4 }}>
+				<Container maxWidth='lg' minWidth='100vh' sx={{ mt: 4, pb: 4, px: 3 }}>
 					<NotificationProvider>
 					<Routes>
 						<Route path="/" element={<Home />} />
