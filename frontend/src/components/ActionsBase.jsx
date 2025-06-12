@@ -7,7 +7,7 @@ import { useNotification } from '../utils/NotificationContext';
 function ActionsBase({ actions = [] }) {
   const { notify } = useNotification();
 
-  const handleShare = async () => {
+  async function handleShare() {
     const currentUrl = window.location.href;
 
     if (navigator.share) {

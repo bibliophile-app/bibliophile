@@ -19,7 +19,7 @@ function BookHeader({ title, year, authors }) {
       </Box>
       {authors?.length > 0 && (
         <Typography sx={{ fontSize: '0.8rem', opacity: 0.8 }}>
-          Escrito por {authors.join(', ')}
+          Escrito por {authors}
         </Typography>
       )}
     </Stack>

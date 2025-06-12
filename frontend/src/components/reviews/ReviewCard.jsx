@@ -28,25 +28,27 @@ function ReviewCard ({
   const owner = user?.username === currentReview.username;
 
   const { fetchResults } = useOpenLibrary({
-    onResults: setBook,
-    onError: null,
+    onError: null
   });
 
   useEffect(() => {
-    if (currentReview?.bookId) {
-      fetchResults(null, currentReview.bookId);
+    async function fetchBook() {
+      const book = await fetchResults(null, currentReview.bookId);
+      setBook(book); 
     }
+    
+    if (currentReview?.bookId) fetchBook();
   }, [currentReview]);
 
-  const handleOpen = () => {
+  function handleOpen() {
     if (owner) setReviewFormOpen(true);
   };
 
-  const handleClose = () => {
+  function handleClose() {
     setReviewFormOpen(false);
   };
 
-  const handleReviewUpdated = async () => {
+  async function handleReviewUpdated() {
     const updated = await searchById(currentReview.id);
     setCurrentReview(updated);
   };

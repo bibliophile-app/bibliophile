@@ -4,15 +4,18 @@ import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, CartesianGrid } fro
 import StyledRating from '../../atoms/Rating';
 
 const ReviewHistogram = ({ reviewsData }) => {
-  const normalizeRating = (rate) => rate / 2;
-  const formatCount = (num) => {
+  function normalizeRating(rate) {
+    return rate / 2;
+  }
+  
+  function formatCount(num) {
     if (num >= 1000) {
       return (num / 1000).toFixed(num >= 10000 ? 0 : 1) + 'K';
     }
     return num;
   };
 
-  const getReviews = (reviewsData) => {
+  function getReviews(reviewsData) {
     if (!reviewsData) return [];
     const reviews = [
       ...(reviewsData.user || []),
@@ -22,7 +25,7 @@ const ReviewHistogram = ({ reviewsData }) => {
     return reviews;
   };
 
-  const groupRatings = (reviews) => {
+  function groupRatings(reviews) {
     if (reviews.length === 0) return [];
     // Cria bins para ratings de 0.0 a 5.0 com incrementos de 0.5
     const bins = Array.from({ length: 11 }, (_, i) => (i * 0.5).toFixed(1));

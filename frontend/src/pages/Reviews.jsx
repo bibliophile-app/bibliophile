@@ -69,26 +69,26 @@ function ReviewsPage() {
         
         <Divider sx={{ my: 1 }}/>
 
-    {entries && entries.filter(e => e.content).length > 0 ? (
-        entries
-            .filter(e => e.content)
-            .map((entry, index) => (
-                <React.Fragment key={entry.id}>
-                    {index !== 0 && <Divider sx={{ opacity: 0.5, my: 1 }} />}
-                    <ReviewCard
-                        review={entry}
-                        displayDate={true}
-                        displayOwner={false}
-                        displayContent={true}
-                        displayBookDetails={true}
-                    />
+        {entries && entries.filter(e => e.content).length > 0 ? (
+            entries
+                .filter(e => e.content)
+                .map((entry, index) => (
+                    <React.Fragment key={entry.id}>
+                        {index !== 0 && <Divider sx={{ opacity: 0.5, my: 1 }} />}
+                        <ReviewCard
+                            review={entry}
+                            displayDate={true}
+                            displayOwner={false}
+                            displayContent={true}
+                            displayBookDetails={true}
+                        />
                 </React.Fragment>
             ))
-    ) : ( 
-        <Typography variant="p" sx={{ mb: 2 }}>
-            Parece que ainda não há resenhas escritas por {username}...
-        </Typography>
-    )}
+        ) : ( 
+            <Typography variant="p" sx={{ mb: 2 }}>
+                Parece que ainda não há resenhas escritas por {username}...
+            </Typography>
+        )}
       </Box>
     );
 }

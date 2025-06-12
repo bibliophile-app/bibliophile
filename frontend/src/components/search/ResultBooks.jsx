@@ -30,7 +30,7 @@ function ResultBooks({ books, paginatedBooks }) {
         </Typography>           
     ) : ( 
         paginatedBooks.map((book, _) => (
-            <StyledItem key={book.olid} elevation={1} onClick={() => onSelect(book.olid)}>
+            <StyledItem key={book.id} elevation={1} onClick={() => onSelect(book.id)}>
                 <BookImage
                   src={book.coverUrl}
                   alt={book.title}

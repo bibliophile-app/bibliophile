@@ -61,7 +61,7 @@ function ReviewForm({
     setMode('edit');
     setIsLoading(true);
 
-    const fetchReview = async () => {
+    async function fetchReview() {
       try {
         const review = await searchById(reviewId);
         setReadDate(review.reviewedAt || today);
@@ -78,16 +78,16 @@ function ReviewForm({
     fetchReview();
   }, [reviewId, open]);
 
-  const handleExit = () => {
+  function handleExit() {
     setIsFavorite(false);
     setContent('');
     setRating(0);
     onClose();
   };
 
-  const handleSave = async () => {
+  async function handleSave()  {
     const reviewData = {
-      bookId: book.olid,
+      bookId: book.id,
       reviewedAt: readDate,
       content: content,
       rate: rating * 2,
@@ -100,30 +100,30 @@ function ReviewForm({
     handleExit();
   };
 
-  const handleAttemptClose = () => {
+  function handleAttemptClose() {
     setActionToConfirm('close');
     setConfirmOpen(true);
   };
 
-  const handleAttemptDelete = () => {
+  function handleAttemptDelete() {
     setActionToConfirm('delete');
     setConfirmOpen(true);
   };
 
-  const handleConfirm = () => {
+  async function handleConfirm() {
     setConfirmOpen(false);
 
     if (actionToConfirm === 'close') {
       handleExit();
     } else if (actionToConfirm === 'delete') {
-      deleteReview(reviewId);
+      await deleteReview(reviewId);
       handleExit();
     }
 
     setActionToConfirm(null);
   };
 
-  const handleCancel = () => {
+  function handleCancel() {
     setConfirmOpen(false);
     setActionToConfirm(null);
   };

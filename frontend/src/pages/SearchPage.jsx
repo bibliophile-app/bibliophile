@@ -34,15 +34,19 @@ function SearchPage() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const { fetchResults, loading } = useOpenLibrary({
-    onResults: setResults,
     onError: setError,
   });
 
   useEffect(() => {
-    if (query) {
+    if (!query) return;
+    
+    async function getResults() {
       setPage(1);
-      fetchResults(query);
+      const results = await fetchResults(query);
+      setResults(results) 
     }
+
+    getResults();
   }, [query]);
 
   const paginatedResults = results.slice(

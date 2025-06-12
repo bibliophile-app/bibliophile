@@ -56,7 +56,7 @@ function DiaryPage() {
 
     setIsLoading(true);
 
-    const fetchReviews = async () => {
+    async function fetchReviews() {
       try {
         const reviews = await searchByUser(username);
         setEntries(reviews);

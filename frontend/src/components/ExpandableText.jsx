@@ -13,7 +13,7 @@ const ExpandableText = ({ text }) => {
   const isLong = descText.length > MAX_LENGTH;
   const visibleText = expanded ? descText : descText.slice(0, MAX_LENGTH);
 
-  const toggleExpanded = (e) => {
+  function toggleExpanded(e) {
     e.stopPropagation();
     setExpanded((prev) => !prev);
   };

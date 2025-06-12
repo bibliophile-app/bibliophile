@@ -1,38 +1,36 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 const BASE_REQUEST_URL = 'https://openlibrary.org';
-const BASE_COVER_URL = 'https://covers.openlibrary.org'
+const BASE_COVER_URL = 'https://covers.openlibrary.org';
 
-// Hook para gerenciar requisições à OpenLibrary
-const useOpenLibrary = ({ language = 'pt-br', onResults, onError }) => {
+const useOpenLibrary = ({ language = 'pt-br', onError }) => {
   const [loading, setLoading] = useState(false);
+  const olidCache = useRef(new Map());
 
-  // Função para buscar detalhes de um único livro por OLID
   async function fetchBookByOLID(olid) {
+    if (olidCache.current.has(olid)) {
+      return olidCache.current.get(olid);
+    }
+
     setLoading(true);
     try {
-      // 1. Buscar edição
       const bookRes = await fetch(`${BASE_REQUEST_URL}/books/${olid}.json`);
       if (!bookRes.ok) throw new Error('Livro não encontrado.');
 
       const bookData = await bookRes.json();
-
-      // 2. Pegar work ID da edição
-      const workKey = bookData.works?.[0]?.key; // ex: "/works/OL27448W"
+      const workKey = bookData.works?.[0]?.key;
       const workId = workKey?.split('/').pop();
 
-      // 3. Buscar dados da obra (opcionalmente mais ricos)
       let workData = {};
       if (workId) {
         const workRes = await fetch(`${BASE_REQUEST_URL}${workKey}.json`);
         workData = await workRes.json();
       }
 
-      // 4. Buscar autor(es)
-      let authorNames = [];
+      let authorNames = [bookData?.by_statement];
       if (bookData.authors?.length) {
         const authorFetches = bookData.authors.map(async (author) => {
-          const authorKey = author.key; // ex: "/authors/OL26320A"
+          const authorKey = author.key;
           const authorRes = await fetch(`${BASE_REQUEST_URL}${authorKey}.json`);
           const authorData = await authorRes.json();
           return authorData.name;
@@ -40,32 +38,31 @@ const useOpenLibrary = ({ language = 'pt-br', onResults, onError }) => {
         authorNames = await Promise.all(authorFetches);
       }
 
-      // 5. Gerar URL da capa
       const coverUrl = `${BASE_COVER_URL}/b/olid/${olid}-M.jpg`;
 
-      // 6. Montar objeto final
       const book = {
-        olid,
+        id: olid,
         title: bookData.title || workData.title || 'Título não disponível.',
         description:
           bookData.description ||
           workData.description ||
           'Descrição não disponível.',
         coverUrl,
-        first_publish_year:
+        publish_year:
           bookData.publish_date || workData.first_publish_date || null,
-        author_name: authorNames,
+        authors: authorNames.join(', '),
       };
 
-      onResults(book);
+      olidCache.current.set(olid, book);
+      return book;
     } catch (error) {
-      onError(error);
+      onError?.(error);
+      return null;
     } finally {
       setLoading(false);
     }
   }
 
-  // Função para buscar livros com base em uma query
   async function fetchBooks(query) {
     setLoading(true);
     try {
@@ -80,26 +77,26 @@ const useOpenLibrary = ({ language = 'pt-br', onResults, onError }) => {
           book.cover_edition_key
         )
         .map((book) => ({
+          id: book.cover_edition_key,
           title: book.title,
-          author: book.author_name.join(', '),
-          olid: book.cover_edition_key,
+          authors: book.author_name.join(', '),
           coverUrl: `${BASE_COVER_URL}/b/olid/${book.cover_edition_key}-M.jpg`,
-      }));
+        }));
 
-      onResults(books);
+      return books;
     } catch (error) {
-      onError(error);
+      onError?.(error);
+      return [];
     } finally {
       setLoading(false);
     }
   }
 
-  // Função principal que decide qual requisição fazer
   async function fetchResults(query, olid = null) {
     if (olid) {
-      await fetchBookByOLID(olid);
+      return await fetchBookByOLID(olid);
     } else {
-      await fetchBooks(query);
+      return await fetchBooks(query);
     }
   }
 

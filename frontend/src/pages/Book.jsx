@@ -51,7 +51,7 @@ function ActionsMenu({ handleReview }) {
 
 function BookPage() {
   const { user } = useAuth();
-  const { olid } = useParams();
+  const { bookId } = useParams();
   const { notify } = useNotification();
   const safeBack = useSafeNavigate();
 
@@ -63,17 +63,16 @@ function BookPage() {
   const [formOpen, setFormOpen] = useState(false);
 
   const { fetchResults, loading } = useOpenLibrary({
-    onResults: setBook,
     onError: () => {
         notify({ message: 'Erro ao carregar os dados do livro!', severity: 'error' })
         setTimeout(() => safeBack(), 1500);
     },
   });
 
-  const fetchReviews = async () => {
-    if (!olid) return;
+  async function fetchReviews() {
+    if (!bookId) return;
     try {
-      const results = await searchByBook(olid);
+      const results = await searchByBook(bookId);
       setReviews(results || {});
     } catch (err) {
       notify({ message: 'Erro ao buscar avaliações!', severity: 'alert' });
@@ -81,12 +80,18 @@ function BookPage() {
   };
 
   useEffect(() => {
-    if (!olid) return;
-    fetchResults(null, olid);
-    fetchReviews();
-  }, [olid]);
+    if (!bookId) return;
 
-  const handleReviewSubmit = () => {
+    async function fetchBook() {
+      const book = await fetchResults(null, bookId);
+      setBook(book);
+    }
+
+    fetchBook();
+    fetchReviews();
+  }, [bookId]);
+
+  function handleReviewSubmit() {
     fetchReviews();
     setFormOpen(false);
   };
@@ -101,8 +106,8 @@ function BookPage() {
         <Stack spacing={2} sx={{ flex: 1 }}>
           <BookHeader
             title={book.title}
-            year={book.first_publish_year}
-            authors={book.author_name}
+            year={book.publish_year}
+            authors={book.authors}
           />
 
           <Divider />
