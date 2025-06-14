@@ -19,11 +19,11 @@ const theme = createTheme({
       secondary: '#F0F4F8',         // branco azulado para contraste
     },
 
-    error:   { main: '#FF4C4C' },
-    warning: { main: '#FFB347' },
-    success: { main: '#00B021' },
-    info:    { main: '#40bcf4' },
-
+    error:   { main: '#D0202A' },  // vermelho vivo, saturado
+    warning: { main: '#E67E00' },  // laranja escuro intenso
+    success: { main: '#00B021' },  // verde escuro intenso
+    info:    { main: '#0078D4' },   // azul forte e saturado
+    
     white:  { main: '#FFFFFF' },
     black:  { main: '#000000' },
     red:    { main: '#FF4C4C' },

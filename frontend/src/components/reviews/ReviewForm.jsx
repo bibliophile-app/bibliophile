@@ -8,16 +8,16 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-import Modal from '../../atoms/Modal';
-import Divider from '../../atoms/Divider';
-import Dialog from '../../atoms/Dialog';
-import BookImage from '../../atoms/BookImage';
-import LoadingBox from '../../atoms/LoadingBox';
-import Favorite from '../../atoms/Favorite';
-import StyledRating from '../../atoms/Rating';
-import TextArea from '../../atoms/TextArea';
+import Modal from '@/atoms/Modal';
+import Rating from '@/atoms/Rating';
+import Divider from '@/atoms/Divider';
+import TextArea from '@/atoms/TextArea';
+import Favorite from '@/atoms/Favorite';
+import BookImage from '@/atoms/BookImage';
+import LoadingBox from '@/atoms/LoadingBox';
 
-import { addReview, updateReview, deleteReview, searchById } from './utils';
+import { useNotification } from '@/utils/NotificationContext';
+import { addReview, updateReview, deleteReview, searchById } from '@/utils/reviews';
 
 const StyledDate = styled('input')(({ theme }) => ({
   backgroundColor: `${theme.palette.background.default}66`,
@@ -45,38 +45,14 @@ function ReviewForm({
   const today = new Date().toISOString().slice(0, 10);
   const maxLength = 255;
 
+  const { notify, confirm } = useNotification();
   const [readDate, setReadDate] = useState(today);
   const [content, setContent] = useState('');
   const [rating, setRating] = useState(0);
   const [favorite, setIsFavorite] = useState(false);
 
-  const [mode, setMode] = useState('create'); // 'create' ou 'edit'
+  const [mode, setMode] = useState('create');
   const [loading, setIsLoading] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [actionToConfirm, setActionToConfirm] = useState(null); // 'delete' ou 'close'
-
-  useEffect(() => {
-    if (!reviewId || !open) return;
-
-    setMode('edit');
-    setIsLoading(true);
-
-    async function fetchReview() {
-      try {
-        const review = await searchById(reviewId);
-        setReadDate(review.reviewedAt || today);
-        setContent(review.content || '');
-        setRating(review.rate / 2 || 0);
-        setIsFavorite(review.favorite || false);
-      } catch (error) {
-        // feedback visual de erro (pode adicionar um Snackbar ou Toast)
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchReview();
-  }, [reviewId, open]);
 
   function handleExit() {
     setIsFavorite(false);
@@ -100,143 +76,145 @@ function ReviewForm({
     handleExit();
   };
 
+  async function handleConfirm(action, reviewId, beforeUnmount) {
+    if (action === 'close') beforeUnmount();
+    else if (action === 'delete') {
+      await deleteReview(reviewId);
+      beforeUnmount();
+    }
+  }
+
   function handleAttemptClose() {
-    setActionToConfirm('close');
-    setConfirmOpen(true);
+    confirm({
+      title: 'Descartar alterações?',
+      description: 'As alterações serão perdidas. Deseja continuar?',
+      confirmText: 'Descartar', 
+      onConfirm: async () => handleConfirm('close', reviewId, handleExit)
+    });
   };
 
   function handleAttemptDelete() {
-    setActionToConfirm('delete');
-    setConfirmOpen(true);
-  };
-
-  async function handleConfirm() {
-    setConfirmOpen(false);
-
-    if (actionToConfirm === 'close') {
-      handleExit();
-    } else if (actionToConfirm === 'delete') {
-      await deleteReview(reviewId);
-      handleExit();
-    }
-
-    setActionToConfirm(null);
-  };
-
-  function handleCancel() {
-    setConfirmOpen(false);
-    setActionToConfirm(null);
-  };
-
-  const dialogProps = {
-    close: {
-      title: 'Descartar alterações?',
-      description: 'As alterações serão perdidas. Deseja continuar?',
-      confirmText: 'Descartar',
-    },
-    delete: {
+    confirm({
       title: 'Remover avaliação?',
       description: 'Tem certeza que deseja remover esta avaliação? Esta ação não pode ser desfeita.',
       confirmText: 'Remover',
-    },
-  }[actionToConfirm || 'close'];
+      onConfirm: async () => handleConfirm('delete', reviewId, handleExit)
+    });
+  };
+
+
+  useEffect(() => {
+    if (!reviewId || !open) return;
+
+    setMode('edit');
+    setIsLoading(true);
+
+    async function fetchReview() {
+      try {
+        const review = await searchById(reviewId);
+        setReadDate(review.reviewedAt || today);
+        setContent(review.content || '');
+        setRating(review.rate / 2 || 0);
+        setIsFavorite(review.favorite || false);
+      } catch (error) {
+        notify({ message: 'Erro ao carregar review!', severity: 'error' })
+        setTimeout(() => handleExit(), 1500);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchReview();
+  }, [reviewId, open]);
 
   if (!book) return;
 
   return (
-    <React.Fragment>
-      <Modal open={open} onClose={onClose} sx={{ width: { xs: '100%', md: '50%' } }}>
-        {loading ? <LoadingBox /> : (
-          <React.Fragment>
-            <Box sx={{ px: 2, py: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="h4">
-                Eu li...
+    <Modal 
+      open={open} 
+      onClose={handleAttemptClose} 
+      sx={{ width: { xs: '100%', md: '50%' } }}
+    >  
+      {loading ? <LoadingBox /> : (
+        <React.Fragment>
+          <Box sx={{ px: 2, py: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h4">
+              Eu li...
+            </Typography>
+            <IconButton onClick={handleAttemptClose}>
+              <CloseIcon sx={{ color: '#fefefe' }} />
+            </IconButton>
+          </Box>
+
+          <Divider />
+
+          <Box sx={{ p: 2, display: 'flex', flexDirection: 'row', alignItems: 'top', gap: 3 }}>
+            <BookImage
+              src={book.coverUrl}
+              alt={book.title}
+              sx={{ width: 180, height: 240, display: { xs: 'none', md: 'block' } }}
+            />
+
+            <Box sx={{ width: '100%' }}>
+              <Typography variant="h5" gutterBottom>
+                {book.title}
               </Typography>
-              <IconButton onClick={handleAttemptClose}>
-                <CloseIcon sx={{ color: '#fefefe' }} />
-              </IconButton>
-            </Box>
 
-            <Divider />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                <Typography variant="body1">Lido em</Typography>
+                <StyledDate
+                  type="date"
+                  value={readDate}
+                  onChange={(e) => setReadDate(e.target.value)}
+                />
+              </Box>
 
-            <Box sx={{ p: 2, display: 'flex', flexDirection: 'row', alignItems: 'top', gap: 3 }}>
-              <BookImage
-                src={book.coverUrl}
-                alt={book.title}
-                sx={{ width: 180, height: 240, display: { xs: 'none', md: 'block' } }}
+              <TextArea
+                placeholder="Escreva sua avaliação..."
+                multiline
+                minRows={4}
+                maxRows={12}
+                maxLength={maxLength}
+                value={content}
+                onChange={setContent}
+                sx={{ backgroundColor: '#ecf0f1', color: '#000', fontSize: '0.875rem'  }}
               />
 
-              <Box sx={{ width: '100%' }}>
-                <Typography variant="h5" gutterBottom>
-                  {book.title}
-                </Typography>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                  <Typography variant="body1">Lido em</Typography>
-                  <StyledDate
-                    type="date"
-                    value={readDate}
-                    onChange={(e) => setReadDate(e.target.value)}
-                  />
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-start' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Box
+                    sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', width: '100%' }}
+                  >
+                    <Typography variant="h5" fontSize="0.9em">Nota</Typography>
+                    <Typography variant="body2">{rating} / 5</Typography>
+                  </Box>
+                  <Rating value={rating} precision={0.5} onChange={(e, newValue) => !!newValue && setRating(newValue)} />
                 </Box>
 
-                <TextArea
-                  placeholder="Escreva sua avaliação..."
-                  multiline
-                  minRows={4}
-                  maxRows={12}
-                  maxLength={maxLength}
-                  value={content}
-                  onChange={setContent}
-                  sx={{ backgroundColor: '#ecf0f1', color: '#000', fontSize: '0.875rem'  }}
-                />
-
-                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-start' }}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Box
-                      sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', width: '100%' }}
-                    >
-                      <Typography variant="h5" fontSize="0.9em">Nota</Typography>
-                      <Typography variant="body2">{rating} / 5</Typography>
-                    </Box>
-                    <StyledRating value={rating} precision={0.5} onChange={(e, newValue) => !!newValue && setRating(newValue)} />
-                  </Box>
-
-                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Typography variant="h5" fontSize="0.9em">Favorito</Typography>
-                    <Favorite onClick={() => setIsFavorite((prev) => !prev)} selected={favorite} />
-                  </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <Typography variant="h5" fontSize="0.9em">Favorito</Typography>
+                  <Favorite onClick={() => setIsFavorite((prev) => !prev)} selected={favorite} />
                 </Box>
               </Box>
             </Box>
+          </Box>
 
-            <Divider />
+          <Divider />
 
-            <Box sx={{ px: 2, py: 1, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              {mode === 'edit' && (
-                <Button color="error" variant="contained" sx={{ color: '#fefefe' }} onClick={handleAttemptDelete}>
-                  REMOVER
-                </Button>
-              )}
-
-              <Button variant="contained" color="success" sx={{ color: '#fefefe' }} onClick={handleSave}>
-                {mode === 'edit' ? 'SALVAR ALTERAÇÕES' : 'SALVAR'}
+          <Box sx={{ px: 2, py: 1, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+            {mode === 'edit' && (
+              <Button color="error" variant="contained" sx={{ color: '#fefefe' }} onClick={handleAttemptDelete}>
+                REMOVER
               </Button>
-            </Box>
-          </React.Fragment>
-        )}
-      </Modal>
+            )}
 
-      <Dialog
-        open={confirmOpen}
-        title={dialogProps.title}
-        description={dialogProps.description}
-        confirmText={dialogProps.confirmText}
-        cancelText="Cancelar"
-        onConfirm={handleConfirm}
-        onCancel={handleCancel}
-      />
-    </React.Fragment>
+            <Button variant="contained" color="success" sx={{ color: '#fefefe' }} onClick={handleSave}>
+              {mode === 'edit' ? 'SALVAR ALTERAÇÕES' : 'SALVAR'}
+            </Button>
+          </Box>
+        </React.Fragment>
+      )}
+    </Modal>
   );
 }
 

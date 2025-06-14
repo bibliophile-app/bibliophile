@@ -3,7 +3,7 @@ import { Box, Typography, Stack, Button, Dialog, DialogTitle, DialogContent, Ico
 import CloseIcon from '@mui/icons-material/Close';
 
 import ReviewCard from './ReviewCard';
-import Divider from '../../atoms/Divider';
+import Divider from '@/atoms/Divider';
 
 function ReviewSection({ 
   title, 

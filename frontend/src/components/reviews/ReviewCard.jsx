@@ -3,15 +3,15 @@ import { Box, Typography, Stack } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 
-import { useAuth } from '../../utils/AuthContext';
-import { searchById } from './utils';
-import useOpenLibrary from '../../utils/useOpenLibrary';
+import { useAuth } from '@/utils/AuthContext';
+import { searchById } from '@/utils/reviews';
+import useOpenLibrary from '@/utils/useOpenLibrary';
 
-import Rating from '../../atoms/Rating';
-import Favorite from '../../atoms/Favorite';
+import Rating from '@/atoms/Rating';
+import Favorite from '@/atoms/Favorite';
+import BookImage from '@/atoms/BookImage';
+import UserAvatar from '@/atoms/UserAvatar';
 import ReviewForm from './ReviewForm';
-import UserAvatar from '../../atoms/UserAvatar';
-import BookImage from '../../atoms/BookImage';
 
 function ReviewCard ({
   review,

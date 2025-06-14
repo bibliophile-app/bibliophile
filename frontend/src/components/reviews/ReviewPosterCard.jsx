@@ -1,17 +1,19 @@
 import { Box, Typography, Stack } from '@mui/material';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 
-import Rating from '../../atoms/Rating';
-import UserAvatar from '../../atoms/UserAvatar';
+import Rating from '@/atoms/Rating';
+import UserAvatar from '@/atoms/UserAvatar';
 import PosterCard from '../PosterCard';
 
-function ReviewPosterCard({ review }) {
+function ReviewPosterCard({ review, height, width }) {
   const { username, rate, content, reviewedAt, bookId } = review;
 
   return (
-    <Box sx={{ width: 160 }}>
+    <Box sx={{ width }}>
       <PosterCard
         bookId={bookId}
+        height={height}
+        width={width}
         overlay={
           <Stack direction="row" alignItems="center" spacing={0.5}>
             <UserAvatar username={username} sx={{ width: '1rem', height: '1rem', fontSize: '.6rem' }}/>

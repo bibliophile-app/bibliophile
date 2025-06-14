@@ -2,19 +2,20 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { Box, Container } from '@mui/material';
 
-import Container from './atoms/Container';
 import { NotificationProvider } from './utils/NotificationContext';
 
 import Home from './pages/Home';
+import Profile from './pages/Profile';
+import ListPage from './pages/List';
 import BookPage from './pages/Book';
 import DiaryPage from './pages/Diary';
 import ReviewsPage from './pages/Reviews';
-import Profile from './pages/Profile';
 import SearchPage from './pages/SearchPage';
+import ListEditor from './pages/ListEditor';
 import NavBar from './components/navigation/NavBar';
 import QuoteManager from './components/QuoteManager';
 import FollowerManager from './components/FollowerManager';
-import BooklistManager from './components/BooklistManager';
+import BooklistManager from './components/lists/BooklistManager';
 
 const PageWrapper = styled(Box, {
 	shouldForwardProp: (prop) => prop !== 'disabledGutters'
@@ -40,17 +41,19 @@ function App() {
 		<BrowserRouter>
 			<PageWrapper disabledGutters>
 				<NavBar />
-				<Container maxWidth='lg' minWidth='100vh' sx={{ mt: 4, pb: 4, px: 3 }}>
+				<Container sx={{ mt: 4, pb: 4, px: 3, minWidth: '100vh', maxWidth: 'lg' }}>
 					<NotificationProvider>
 					<Routes>
 						<Route path="/" element={<Home />} />
 						<Route path=":username/diary" element={<DiaryPage />} />
 						<Route path=":username/profile" element={<Profile />} />
 						<Route path=":username/reviews" element={<ReviewsPage />} />
-						<Route path="/book/:olid" element={<BookPage />} /> 
+						<Route path="/book/:bookId" element={<BookPage />} /> 
+						<Route path=":id/list" element={<ListPage />} />
+						<Route path="/list/new" element={<ListEditor />} />
+						<Route path="/:id/list/edit" element={<ListEditor />} />
 						<Route path="/search/:query" element={<SearchPage />} /> 
 						<Route path="/test/quotes" element={<QuoteManager />} />
-						<Route path="/test/booklists" element={<BooklistManager />} />
 						<Route path="/test/followers" element={<FollowerManager/>}/>
 					</Routes>
 					</NotificationProvider>

@@ -3,15 +3,15 @@ import { Box, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
-import { searchByUser } from '../components/reviews/utils';
-import { useSafeNavigate } from '../utils/useSafeNavigate';
-import { useNotification } from '../utils/NotificationContext';
-import ReviewCard from '../components/reviews/ReviewCard';
-import Divider from '../atoms/Divider'
-import LoadingBox from '../atoms/LoadingBox';
+import Divider from '@/atoms/Divider'
+import LoadingBox from '@/atoms/LoadingBox';
+import { searchByUser } from '@/utils/reviews';
+import { handleSafeNavigation } from '@/utils/handlers';
+import { useNotification } from '@/utils/NotificationContext';
+import ReviewCard from '@/components/reviews/ReviewCard';
 
 function ReviewsPage() {
-    const safeBack = useSafeNavigate();
+    const safeBack = handleSafeNavigation();
     const { username } = useParams();
     const { notify } = useNotification();
     const [ entries, setEntries ] =  useState([]);

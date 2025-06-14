@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 const BASE_REQUEST_URL = 'https://openlibrary.org';
 const BASE_COVER_URL = 'https://covers.openlibrary.org';
 
-const useOpenLibrary = ({ language = 'pt-br', onError }) => {
+function useOpenLibrary({ language = 'pt-br', onError }) {
   const [loading, setLoading] = useState(false);
   const olidCache = useRef(new Map());
 

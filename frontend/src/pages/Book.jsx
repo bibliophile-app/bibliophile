@@ -4,31 +4,51 @@ import { Box, Stack, Typography, useMediaQuery } from '@mui/material';
 import { PlaylistAdd } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import useOpenLibrary from '../utils/useOpenLibrary';
-import { useAuth } from '../utils/AuthContext';
-import { searchByBook } from '../components/reviews/utils';
-import { useSafeNavigate } from '../utils/useSafeNavigate';
-import { useNotification } from '../utils/NotificationContext';
+import useOpenLibrary from '@/utils/useOpenLibrary';
+import { useAuth } from '@/utils/AuthContext';
+import { searchByBook } from '@/utils/reviews';
+import { searchByUser, addBook } from '@/utils/lists';
+import { handleSafeNavigation } from '@/utils/handlers';
+import { useNotification } from '@/utils/NotificationContext';
 
-import Divider from '../atoms/Divider';
-import BookImage from '../atoms/BookImage';
-import LoadingBox from '../atoms/LoadingBox';
-import BookHeader from '../components/BookHeader';
-import ActionsBase from '../components/ActionsBase';
-import ExpandableText from '../components/ExpandableText';
-import ReviewForm from '../components/reviews/ReviewForm';
-import ReviewSection from '../components/reviews/ReviewSection';
-import ReviewHistogram from '../components/reviews/ReviewHistogram';
+import Divider from '@/atoms/Divider';
+import BookImage from '@/atoms/BookImage';
+import LoadingBox from '@/atoms/LoadingBox';
+import BookHeader from '@/components/BookHeader';
+import ActionsBase from '@/components/ActionsBase';
+import ReviewForm from '@/components/reviews/ReviewForm';
+import ExpandableText from '@/components/ExpandableText';
+import ReviewSection from '@/components/reviews/ReviewSection';
+import ReviewHistogram from '@/components/reviews/ReviewHistogram';
 
-function ActionsMenu({ handleReview }) {
+function ActionsMenu({ handleReview, bookId }) {
   const { user, handleSignin } = useAuth();
+  const [ lists, setLists ] = useState([]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    async function fetchUserLists() {
+      const response = await searchByUser(user.id);
+      setLists(response);
+    }
+
+    fetchUserLists();
+  }, [user]);
+
+  async function addTBR(bookId) {
+      if (!lists || !bookId) return;
+
+      const tbr = lists.find((list) => list.listName == '___DEFAULT___');
+      await addBook(tbr.id, bookId);
+  }
 
   const actions = user
     ? [
         {
           label: 'Quero ler',
           icon: <PlaylistAdd />,
-          onClick: () => console.log('Adicionar à lista de leitura'),
+          onClick: () => addTBR(bookId),
         },
         {
           label: 'Avaliar ou registrar novamente...',
@@ -53,7 +73,7 @@ function BookPage() {
   const { user } = useAuth();
   const { bookId } = useParams();
   const { notify } = useNotification();
-  const safeBack = useSafeNavigate();
+  const safeBack = handleSafeNavigation();
 
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
@@ -145,7 +165,7 @@ function BookPage() {
         >
           {!isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: 270 }} /> }
 
-          <ActionsMenu handleReview={() => setFormOpen(true)} />
+          <ActionsMenu handleReview={() => setFormOpen(true)} bookId={book.id} />
 
           <Box>
             <Typography variant="h5" gutterBottom>

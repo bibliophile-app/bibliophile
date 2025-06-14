@@ -1,7 +1,7 @@
 import { Box, Typography, Stack, Paper } from '@mui/material';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
-import StyledRating from '../../atoms/Rating';
+import Rating from '@/atoms/Rating';
 
 const ReviewHistogram = ({ reviewsData }) => {
   function normalizeRating(rate) {
@@ -93,7 +93,7 @@ const ReviewHistogram = ({ reviewsData }) => {
             width: '20%'
           }}>
             <Typography variant="h5" fontSize="1rem" >{average}</Typography>
-            <StyledRating
+            <Rating
               name="average-rating"
               value={parseFloat(average)}
               precision={0.1}

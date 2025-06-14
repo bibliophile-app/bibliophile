@@ -1,30 +1,12 @@
 import { alpha } from '@mui/material/styles';
 import { Stack, Button } from '@mui/material';
 
-import Divider from '../atoms/Divider';
-import { useNotification } from '../utils/NotificationContext';
+import Divider from '@/atoms/Divider';
+import { handleShare } from '@/utils/handlers';
+import { useNotification } from '@/utils/NotificationContext';
 
 function ActionsBase({ actions = [] }) {
   const { notify } = useNotification();
-
-  async function handleShare() {
-    const currentUrl = window.location.href;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: 'Veja isso!', url: currentUrl });
-      } catch (err) {
-        notify({ message: 'Falha ao compartilhar.', severity: 'error' });
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(currentUrl);
-        notify({ message: 'Link copiado para a área de transferência!', severity: 'success' });
-      } catch (err) {
-        notify({ message: 'Erro ao copiar o link.', severity: 'error' });
-      }
-    }
-  };
 
   return (
     <Stack
@@ -51,7 +33,7 @@ function ActionsBase({ actions = [] }) {
         </div>
       ))}
 
-      <Button fullWidth variant="text" color="inherit" onClick={handleShare}>
+      <Button fullWidth variant="text" color="inherit" onClick={() => handleShare(notify)}>
         Compartilhar
       </Button>
     </Stack>

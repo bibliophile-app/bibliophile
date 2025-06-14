@@ -1,10 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react"
-import Register from "../components/Register"
-import Login from "../components/Login"
+import Register from "@/components/Register"
+import Login from "@/components/Login"
 
 const AuthContext = createContext()
-
-const useAuth = () => useContext(AuthContext);
 
 function AuthProvider ({ children }) {
   const [user, setUser] = useState(null)
@@ -118,5 +116,7 @@ function AuthProvider ({ children }) {
     </AuthContext.Provider>
   )
 }
+
+const useAuth = () => useContext(AuthContext);
 
 export {useAuth, AuthProvider};

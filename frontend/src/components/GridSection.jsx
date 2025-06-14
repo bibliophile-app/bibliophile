@@ -1,7 +1,9 @@
 import { Box, Typography } from '@mui/material';
-import PosterCard from './PosterCard';
 
-function GridSection({ title, description, items }) {
+import PosterCard from './PosterCard';
+import ReviewPosterCard from './reviews/ReviewPosterCard';
+
+function GridSection({ title, description, items, type="book" }) {
   return (
     <Box>
       <Box sx={{ mt: 1, mb: 4 }}>
@@ -35,9 +37,11 @@ function GridSection({ title, description, items }) {
             },
           }}
         >
-          {items.map((item) => (
-            <PosterCard key={item.id} bookId={item} width={131} height={196} />
-          ))}
+          {items.map((item, index) => (type == "book" ? (
+              <PosterCard key={index} bookId={item} width={131} height={196} />
+            ) : (
+              <ReviewPosterCard key={index} review={item} width={131} height={196} />
+          )))}
         </Box>
       }
     </Box>

@@ -2,7 +2,7 @@ import { Modal, Box } from '@mui/material';
 
 function CenteredModal({ open, onClose, children }) {
   return (
-    <Modal open={open} onClose={onClose} disableAutoFocus>
+    <Modal open={open} onClose={onClose}>
 		<Box
 			sx={{
 			  position: 'absolute',
