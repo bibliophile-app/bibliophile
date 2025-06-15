@@ -41,12 +41,10 @@ fun Route.quoteRoutes() {
                 val request = call.receive<QuoteRequest>()
                 val session = call.sessions.get<UserSession>()
 
-
-
                 val quote = QuoteRepository.add(session?.userId!!, request)
                 call.respond(
                     HttpStatusCode.Created, 
-                    mapOf("message" to "Quote created successfully", "id" to quote.id)
+                    mapOf("message" to "Quote created successfully - Quote ID: ${quote.id}")
                 )
             }
 

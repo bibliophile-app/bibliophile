@@ -53,7 +53,8 @@ class QuoteRoutesTest {
             quoteRoutes()
         }
     }
-    private suspend fun HttpClient.addQuote(
+
+    suspend fun HttpClient.addQuote(
         sessionCookie: String,
         content: String
     ): HttpResponse = this.post("/quotes") {
@@ -66,7 +67,7 @@ class QuoteRoutesTest {
         """.trimIndent())
     }
 
-    private suspend fun HttpClient.editQuote(
+    suspend fun HttpClient.editQuote(
         sessionCookie: String,
         quoteId: Int,
         content: String
@@ -79,7 +80,7 @@ class QuoteRoutesTest {
             }
         """.trimIndent())
     }
-
+    
     @Test
     fun `test create quote`() = testApplication {
         application { setupTestModule() }
@@ -178,6 +179,36 @@ class QuoteRoutesTest {
     }
 
     @Test
+    fun `test get quotes by userId`() = testApplication {
+        application { setupTestModule() }
+
+        val registerUserResponse = client.registerUser("user1@email.com", "user", "password")
+        val userId = registerUserResponse.bodyAsText().extractUserId()
+        val loginUser1Response = client.loginUser("user", "password")
+        val sessionCookie = loginUser1Response.setCookie().find { it.name == "USER_SESSION" }
+        requireNotNull(sessionCookie) { "Login did not return a session cookie" }
+        val sessionCookieString = "${sessionCookie.name}=${sessionCookie.value}"
+
+        client.addQuote(
+            sessionCookieString,
+            content = "First test quote"
+        )
+        client.addQuote(
+            sessionCookieString,
+            content = "Second test quote"
+        )
+
+        val response = client.get("/quotes/user/${userId}") {
+            header(HttpHeaders.Cookie, sessionCookie)
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val quotes = response.bodyAsText()
+        assertTrue(quotes.contains("First test quote"))
+        assertTrue(quotes.contains("Second test quote"))
+    }
+
+    @Test
     fun `test get quote by id`() = testApplication {
         application { setupTestModule() }
 
@@ -259,5 +290,4 @@ class QuoteRoutesTest {
         val match = regex.find(this)
         return match?.groupValues?.get(1)?.toInt() ?: error("Quote ID not found in response")
     }
-
 }

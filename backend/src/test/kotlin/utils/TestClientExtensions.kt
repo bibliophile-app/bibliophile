@@ -4,7 +4,7 @@ import io.ktor.http.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import com.bibliophile.models.UserSession
+import com.bibliophile.models.*
 
 /**
  * Função de extensão para registrar um usuário através do endpoint `/register`.
@@ -62,4 +62,10 @@ fun createSessionCookie(session: UserSession): String {
     )
     val encoded = java.net.URLEncoder.encode(serializer, "UTF-8")
     return "USER_SESSION=$encoded"
+}
+
+fun String.extractUserId(): Int {
+    val regex = """User ID:\s*(\d+)""".toRegex()
+    val match = regex.find(this)
+    return match?.groupValues?.get(1)?.toInt() ?: error("User ID not found in response")
 }
