@@ -66,7 +66,7 @@ fun Route.authRoutes() {
         if (user == null) {
             call.respond(HttpStatusCode.NotFound)
         } else {
-            call.respond(mapOf("username" to user.username))
+            call.respond(UserResponse(user.id, user.username))
         }
     }
 }
@@ -82,3 +82,6 @@ private fun expiredSessionCookie(): Cookie {
         expires = GMTDate.START       
     )
 }
+
+@kotlinx.serialization.Serializable
+data class UserResponse(val id: Int, val username: String)

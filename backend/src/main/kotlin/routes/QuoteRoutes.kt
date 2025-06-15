@@ -46,10 +46,8 @@ fun Route.quoteRoutes() {
                 val quote = call.receive<QuoteRequest>()
                 val session = call.sessions.get<UserSession>()
 
-
-
                 runCatching {
-                    quoteRepository.addQuote(session?.userId!!, quote)
+                    QuoteRepository.addQuote(session?.userId!!, quote)
                 }.onSuccess { createdQuote ->
                     call.respond(HttpStatusCode.Created, mapOf("message" to "Quote created successfully - Quote ID: ${createdQuote.id}"))
                 }.onFailure {

@@ -53,33 +53,7 @@ class QuoteRoutesTest {
             quoteRoutes()
         }
     }
-    private suspend fun HttpClient.addQuote(
-        sessionCookie: String,
-        content: String
-    ): HttpResponse = this.post("/quotes") {
-        header(HttpHeaders.ContentType, ContentType.Application.Json)
-        header(HttpHeaders.Cookie, sessionCookie)
-        setBody("""
-            {
-                "content": "$content"
-            }
-        """.trimIndent())
-    }
-
-    private suspend fun HttpClient.editQuote(
-        sessionCookie: String,
-        quoteId: Int,
-        content: String
-    ): HttpResponse = this.put("/quotes/$quoteId") {
-        header(HttpHeaders.ContentType, ContentType.Application.Json)
-        header(HttpHeaders.Cookie, sessionCookie)
-        setBody("""
-            {
-                "content": "$content"
-            }
-        """.trimIndent())
-    }
-
+    
     @Test
     fun `test create quote`() = testApplication {
         application { setupTestModule() }
