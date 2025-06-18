@@ -85,7 +85,7 @@ function BookImage({
                 display: 'block',
                 width: '100%',
                 height: '100%',
-                objectFit: 'contain',
+                objectFit: 'cover',
                 transition: 'opacity 0.3s ease-in-out',
               }}
             />

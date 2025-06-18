@@ -39,7 +39,7 @@ function NavBar() {
 		{ name: 'Perfil', path: `${user?.username}/profile` },
 		{ name: 'Resenhas', path: `${user?.username}/reviews` },
 		{ name: 'Diário', path: `${user?.username}/diary` },
-		{ name: 'Quero Ler', path: `${user?.username}/tbr` },
+		{ name: 'Quero Ler', path: `/tbr` },
 		{ name: 'Listas', path: `${user?.username}/lists` },
 	];
 

@@ -82,7 +82,7 @@ function SearchAutocomplete({
         },
         popupIndicator: {
           sx: {
-            color: 'inherit',
+            display: 'none'
           },
         },
       }}

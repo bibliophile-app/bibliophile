@@ -22,6 +22,7 @@ import ReviewSection from '@/components/reviews/ReviewSection';
 import ReviewHistogram from '@/components/reviews/ReviewHistogram';
 
 function ActionsMenu({ handleReview, bookId }) {
+  const { notify } = useNotification();
   const { user, isAuth, handleSignin } = useAuth();
   const [ lists, setLists ] = useState([]);
 
@@ -40,7 +41,16 @@ function ActionsMenu({ handleReview, bookId }) {
       if (!lists || !bookId) return;
 
       const tbr = lists.find((list) => list.listName == '___DEFAULT___');
-      await addBook(tbr.id, bookId);
+      try {
+        await addBook(tbr.id, bookId);
+        notify({ message: 'Livro adicionado à "Quero ler"', severity: 'success' })
+      } catch (e) {
+        if ((e?.response?.status === 409) || (typeof e?.message === 'string' && e.message.includes('409'))) {
+          notify({ message: 'O livro já está na lista', severity: 'info'});
+        } else {
+          notify({ message: 'Erro ao adicionar livro à lista', severity: 'error'});
+        }
+      }
   }
 
   const actions = isAuth()

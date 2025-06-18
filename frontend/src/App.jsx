@@ -6,16 +6,17 @@ import { NotificationProvider } from './utils/NotificationContext';
 
 import Home from './pages/Home';
 import Profile from './pages/Profile';
+import TBRPage from './pages/TBR';
 import ListPage from './pages/List';
 import BookPage from './pages/Book';
 import DiaryPage from './pages/Diary';
+import ListsPage from './pages/Lists';
 import ReviewsPage from './pages/Reviews';
 import SearchPage from './pages/SearchPage';
 import ListEditor from './pages/ListEditor';
 import NavBar from './components/navigation/NavBar';
 import QuoteManager from './components/QuoteManager';
 import FollowerManager from './components/FollowerManager';
-import BooklistManager from './components/lists/BooklistManager';
 
 const PageWrapper = styled(Box, {
 	shouldForwardProp: (prop) => prop !== 'disabledGutters'
@@ -45,14 +46,16 @@ function App() {
 					<NotificationProvider>
 					<Routes>
 						<Route path="/" element={<Home />} />
+						<Route path="/tbr" element={<TBRPage />} />
 						<Route path=":username/diary" element={<DiaryPage />} />
 						<Route path=":username/profile" element={<Profile />} />
 						<Route path=":username/reviews" element={<ReviewsPage />} />
-						<Route path="/book/:bookId" element={<BookPage />} /> 
+						<Route path=":username/lists" element={<ListsPage />} />
 						<Route path=":id/list" element={<ListPage />} />
 						<Route path="/list/new" element={<ListEditor />} />
 						<Route path="/:id/list/edit" element={<ListEditor />} />
 						<Route path="/search/:query" element={<SearchPage />} /> 
+						<Route path="/book/:bookId" element={<BookPage />} /> 
 						<Route path="/test/quotes" element={<QuoteManager />} />
 						<Route path="/test/followers" element={<FollowerManager/>}/>
 					</Routes>

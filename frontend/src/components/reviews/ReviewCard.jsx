@@ -13,6 +13,9 @@ import BookImage from '@/atoms/BookImage';
 import UserAvatar from '@/atoms/UserAvatar';
 import ReviewForm from './ReviewForm';
 
+const COVER_WIDTH =  62;
+const COVER_HEIGHT = 100;
+
 function ReviewCard ({
   review,
   displayDate = false,
@@ -64,7 +67,8 @@ function ReviewCard ({
           <BookImage
             src={book.coverUrl}
             alt={`Capa de ${book.title}`}
-            sx={{ width: 60, height: 90 }}
+            width={COVER_WIDTH}
+            height={COVER_HEIGHT}
           />
         ) : (
           <UserAvatar username={username} />

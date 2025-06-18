@@ -47,14 +47,24 @@ function ListPage() {
         const fetchList = async () => {
             try {
                 const list = await searchById(id, true);
+                if (list.listName == "___DEFAULT___") {
+                    notify({
+                        message: 'Não é posível carregar essa lista de livros.',
+                        severity: 'warning'
+                    });
+                    safeBack();
+                    return;
+                }
+                     
                 setEntry(list);
-                setIsLoading(false);
             } catch (error) {
                 notify({
                     message: 'Erro ao carregar lista de livros!',
                     severity: 'error'
                 });
-                setTimeout(() => {setIsLoading(false); safeBack();}, 1500);
+                setTimeout(() => safeBack(), 1500);
+            } finally {
+                setIsLoading(false);
             }
         };
 

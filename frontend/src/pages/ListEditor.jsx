@@ -38,8 +38,9 @@ function ListEditorPage() {
   });
 
   useEffect(() => {
+    setLoading(isEdit);
     if (!isEdit || !user) return;
-
+    
     if (!isAuth()) {
       notify({ 
         message: 'Por favor, faça login para acessar a edição de listas.',

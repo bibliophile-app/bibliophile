@@ -13,6 +13,9 @@ import TextArea from '../../atoms/TextArea';
 import SearchAutocomplete from '../search/SearchAutocomplete';
 import BookImage from '../../atoms/BookImage';
 
+const COVER_WIDTH = 60
+const COVER_HEIGHT = 90
+
 function ListBuilder({ list = null, onSave, onDelete, onAddBooks, onRemoveBooks }) {
   const isEdit = !!list;
 
@@ -145,7 +148,7 @@ function ListBuilder({ list = null, onSave, onDelete, onAddBooks, onRemoveBooks 
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <BookImage src={book?.coverUrl} width={60} height={80} />
+                  <BookImage src={book?.coverUrl} width={COVER_WIDTH} height={COVER_HEIGHT} />
                   <Box sx={{ ml: 2 }}>
                     <Typography variant="h7" fontWeight="bold" color="white" gutterBottom>
                       {book?.title}
