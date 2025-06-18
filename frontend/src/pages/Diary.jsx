@@ -77,8 +77,6 @@ function DiaryPage() {
   function groupEntriesByMonth(entries) {
     return entries?.reduce((acc, entry) => {
       const date = new Date(entry.reviewedAt);
-
-
       const year = date.getFullYear();
       const monthNum = String(date.getMonth() + 1).padStart(2, '0');
       const sortKey = `${year}-${monthNum}`;
@@ -102,10 +100,6 @@ function DiaryPage() {
   const sortedMonths = Object.entries(groupedByMonth || {})
     .sort(([, a], [, b]) => new Date(b.sortKey + '-01') - new Date(a.sortKey + '-01'))
     .map(([monthLabel]) => monthLabel);
-
-  sortedMonths.forEach(monthLabel => {
-    console.log(monthLabel, groupedByMonth[monthLabel].entries);
-  });
 
   if (loading)
     return <LoadingBox />;

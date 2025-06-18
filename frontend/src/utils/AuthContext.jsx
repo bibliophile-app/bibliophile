@@ -20,7 +20,7 @@ function AuthProvider ({ children }) {
   
     if (!response.ok) {
       console.error('Falha ao obter usuário:', response.status);
-      setUser(null);
+      setUser({ id: -1 });
       return;
     }
   
@@ -29,7 +29,7 @@ function AuthProvider ({ children }) {
       setUser(profile);
     } catch (err) {
       console.error('Erro ao fazer parsing do JSON:', err);
-      setUser(null);
+      setUser({ id: -1 });
     }
   }
   
@@ -81,6 +81,10 @@ function AuthProvider ({ children }) {
     setUser(null)
   }
 
+  function isAuth() {
+    return user && user?.id >= 0;
+  }
+
   useEffect(() => {
     authUser()
       .catch(() => setUser(null))
@@ -94,7 +98,8 @@ function AuthProvider ({ children }) {
         loading, 
         register, 
         login, 
-        logout, 
+        logout,
+        isAuth,
         handleSignin: () => setLoginOpen(true), 
         handleSignup: () => setRegisterOpen(true)
       }}

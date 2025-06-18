@@ -1,15 +1,47 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 const BASE_REQUEST_URL = 'https://openlibrary.org';
 const BASE_COVER_URL = 'https://covers.openlibrary.org';
+const CACHE_KEY = 'openLibrary_cache';
+const MAX_CACHE_SIZE = 100;
+
+function loadCache() {
+  try {
+    const saved = localStorage.getItem(CACHE_KEY);
+    if (saved) {
+      const entries = JSON.parse(saved);
+      return new Map(entries.slice(-MAX_CACHE_SIZE));
+    }
+  } catch (error) {
+    console.warn('Erro carregando cache:', error);
+  }
+  return new Map();
+};
+
+function saveCache(cache) {
+  try {
+    const entries = Array.from(cache.entries());
+    const limitedEntries = entries.slice(-MAX_CACHE_SIZE);
+    localStorage.setItem(CACHE_KEY, JSON.stringify(limitedEntries));
+  } catch (error) {
+    console.warn('Erro ao salvar cache:', error);
+  }
+};
 
 function useOpenLibrary({ language = 'pt-br', onError }) {
   const [loading, setLoading] = useState(false);
-  const olidCache = useRef(new Map());
+  const [cache, setCache] = useState(loadCache);
+
+  useEffect(() => {
+    saveCache(cache);
+  }, [cache]);
 
   async function fetchBookByOLID(olid) {
-    if (olidCache.current.has(olid)) {
-      return olidCache.current.get(olid);
+    if (cache.has(olid)) {
+      const book = cache.get(olid);
+      // Estratégia LRU (Least Recently Used)
+      setCache(new Map([...cache]).set(olid, book));
+      return book;
     }
 
     setLoading(true);
@@ -53,8 +85,19 @@ function useOpenLibrary({ language = 'pt-br', onError }) {
         authors: authorNames.join(', '),
       };
 
-      olidCache.current.set(olid, book);
+      // Se o cache estiver cheio, cria um novo Map sem os itens mais antigos
+      let newCache;
+      if (cache.size >= MAX_CACHE_SIZE) {
+        const entries = Array.from(cache.entries());
+        newCache = new Map(entries.slice(-MAX_CACHE_SIZE + 1));
+      } else {
+        newCache = new Map(cache);
+      }
+      
+      // Adiciona o novo item
+      setCache(newCache.set(olid, book));
       return book;
+
     } catch (error) {
       onError?.(error);
       return null;

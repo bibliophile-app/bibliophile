@@ -2,9 +2,9 @@ import React from "react"
 import { useAuth } from "../utils/AuthContext"
 
 function Profile() {
-  const { user } = useAuth()
+  const { user, isAuth } = useAuth()
 
-  if (!user) return <p>Carregando...</p>
+  if (!isAuth()) return <p>Carregando...</p>
 
   return (
     <div>

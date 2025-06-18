@@ -65,7 +65,7 @@ function ListPage() {
         return <LoadingBox />
     else return (
     <Box sx={{ display: 'flex', flexDirection: 'column', maxWidth: '100%' }}>
-        <Box sx={{ display: 'flex', gap: 0.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5  }}>
             <Typography variant='span'>
                 lista por
             </Typography>

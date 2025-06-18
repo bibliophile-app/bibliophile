@@ -22,11 +22,11 @@ import ReviewSection from '@/components/reviews/ReviewSection';
 import ReviewHistogram from '@/components/reviews/ReviewHistogram';
 
 function ActionsMenu({ handleReview, bookId }) {
-  const { user, handleSignin } = useAuth();
+  const { user, isAuth, handleSignin } = useAuth();
   const [ lists, setLists ] = useState([]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!isAuth()) return;
 
     async function fetchUserLists() {
       const response = await searchByUser(user.id);
@@ -43,7 +43,7 @@ function ActionsMenu({ handleReview, bookId }) {
       await addBook(tbr.id, bookId);
   }
 
-  const actions = user
+  const actions = isAuth()
     ? [
         {
           label: 'Quero ler',
@@ -70,7 +70,7 @@ function ActionsMenu({ handleReview, bookId }) {
 }
 
 function BookPage() {
-  const { user } = useAuth();
+  const { isAuth } = useAuth();
   const { bookId } = useParams();
   const { notify } = useNotification();
   const safeBack = handleSafeNavigation();
@@ -134,23 +134,23 @@ function BookPage() {
           <ExpandableText text={book.description} />
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {user && (
+            {isAuth() && (
               <ReviewSection
                 title="Minhas avaliações"
-                reviews={reviews.user.filter(e => !!e.content?.trim())}
+                reviews={reviews.user?.filter(e => !!e.content?.trim())}
               />
             )}
 
-            {user && reviews.friends?.length > 0 && (
+            {isAuth() && reviews.friends?.length > 0 && (
               <ReviewSection
                 title="Avaliações de amigos"
-                reviews={reviews.friends.filter(e => !!e.content?.trim())}
+                reviews={reviews.friends?.filter(e => !!e.content?.trim())}
               />
             )}
 
             <ReviewSection
               title="Avaliações"
-              reviews={reviews.others.filter(e => !!e.content?.trim())}
+              reviews={reviews.others?.filter(e => !!e.content?.trim())}
             />
           </Box>
         </Stack>

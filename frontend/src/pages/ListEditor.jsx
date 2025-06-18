@@ -20,7 +20,7 @@ function ListEditorPage() {
   const safeBack = handleSafeNavigation();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, isAuth } = useAuth();
   const { notify, confirm } = useNotification();
 
   const isEdit = !!id;
@@ -33,40 +33,46 @@ function ListEditorPage() {
 
   const { fetchResults } = useOpenLibrary({
     onError: (err) => {
-    console.error("Erro ao buscar livro:", err);
+      console.error("Erro ao buscar livro:", err);
     }
   });
 
   useEffect(() => {
     if (!isEdit || !user) return;
 
+    if (!isAuth()) {
+      notify({ 
+        message: 'Por favor, faça login para acessar a edição de listas.',
+        severity: 'info',
+      });
+      safeBack();
+      return;
+    }
+
     async function fetchList() {
       try {
         const fetchedList = await searchById(id, true);
-        if (fetchedList.username != user?.username) {
-          notify({  message: 'Você não pode editar essa lista!', severity: 'error' })
-          safeBack(); setLoading(false);
+
+        if (fetchedList.username !== user?.username || fetchedList.listName === "___DEFAULT___") {
+          notify({ message: 'Você não pode editar essa lista!', severity: 'error' });
+          safeBack();
           return;
         }
 
         const books = await Promise.all(
-          fetchedList.books.map(async (bookId) => {
-            return await fetchResults(null, bookId);
-          })
+          fetchedList.books.map(async (bookId) => await fetchResults(null, bookId))
         );
 
         fetchedList.books = books;
         setList(fetchedList);
       } catch (error) {
-        notify({
-          message: 'Erro ao carregar lista!',
-          severity: 'error'
-        });
-        setTimeout(() => { safeBack(); setLoading(false); }, 1500);
+        notify({ message: 'Erro ao carregar lista!', severity: 'error' });
+        safeBack();
+        return;
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     fetchList();
   }, [id, user]);
@@ -99,15 +105,13 @@ function ListEditorPage() {
       });
 
       navigate(`/${listId}/list`);
-      return;
-
     } catch (error) {
       notify({
         message: `Erro ao salvar lista: ${error}`,
         severity: 'error'
       });
     }
-  };
+  }
 
   function handleDelete() {
     confirm({
@@ -119,14 +123,11 @@ function ListEditorPage() {
           await deleteList(id);
           navigate('/');
         } catch (error) {
-          notify({
-            message: 'Erro ao deletar lista',
-            severity: 'error'
-          })
+          notify({ message: 'Erro ao deletar lista', severity: 'error' });
         }
       }
-    })
-  };
+    });
+  }
 
   if (loading) {
     return (

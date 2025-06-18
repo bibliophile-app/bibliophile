@@ -32,7 +32,7 @@ const ToolbarContent = styled(Box)(({ theme }) => ({
 }));  
 
 function NavBar() {
-	const { user } = useAuth();
+	const { user, isAuth } = useAuth();
 	
 	const publicOptions = [];
 	const privateOptions = [
@@ -40,7 +40,7 @@ function NavBar() {
 		{ name: 'Resenhas', path: `${user?.username}/reviews` },
 		{ name: 'Diário', path: `${user?.username}/diary` },
 		{ name: 'Quero Ler', path: `${user?.username}/tbr` },
-		{ name: 'Listas', path: '/lists' },
+		{ name: 'Listas', path: `${user?.username}/lists` },
 	];
 
 	return (
@@ -58,12 +58,12 @@ function NavBar() {
 	
 					{/* Desktop Navigation */}
 					<Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
-						<DesktopToolbar user={user} options={user ? privateOptions : publicOptions} />
+						<DesktopToolbar user={user} options={isAuth() ? privateOptions : publicOptions} />
 					</Box>
 			
 					{/* Mobile Navigation */}
 					<Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 1 }}>
-						<MobileToolbar user={user} options={user ? privateOptions : publicOptions} />
+						<MobileToolbar user={user} options={isAuth() ? privateOptions : publicOptions} />
 					</Box>
 				</ToolbarContent>
 			</StyledToolbar>
