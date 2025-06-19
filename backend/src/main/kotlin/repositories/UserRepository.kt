@@ -60,7 +60,7 @@ object UserRepository {
         if (userDAO != null) {
             userDAO.apply {
                 username = request.username
-                passwordHash = request.password
+                passwordHash = hashPassword(request.password)  
             }
             true
         } else false

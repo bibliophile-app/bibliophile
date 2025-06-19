@@ -7,6 +7,7 @@ import Divider from '@/atoms/Divider'
 import LoadingBox from '@/atoms/LoadingBox';
 import { useAuth } from '@/utils/AuthContext';
 import { searchByUser } from '@/utils/lists';
+import { BooklistConstants } from '@/utils/constants';
 import { handleSafeNavigation } from '@/utils/handlers';
 import { useNotification } from '@/utils/NotificationContext';
 import ListSection from '../components/ListSection';
@@ -108,7 +109,7 @@ function ListsPage() {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {entries && entries.length > 0 ? (
                 entries
-                  .filter(e => e.listName != "___DEFAULT___")
+                  .filter(e => e.listName != BooklistConstants.DEFAULT_LIST_NAME)
                   .sort((a, b) => b?.books.length - a?.books.length)
                   .map((entry, index) => (
                     <ListSection key={index}

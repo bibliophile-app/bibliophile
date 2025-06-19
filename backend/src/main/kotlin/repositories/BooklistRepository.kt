@@ -14,6 +14,8 @@ import com.bibliophile.db.tables.BooklistBooksTable
 import com.bibliophile.db.tables.UsersTable
 import com.bibliophile.db.suspendTransaction
 
+import com.bibliophile.BooklistConstants.DEFAULT_LIST_NAME
+
 object BooklistRepository {
     /** Retorna todas as booklists */
     suspend fun all(): List<Booklist> = suspendTransaction {
@@ -108,7 +110,7 @@ object BooklistRepository {
         val booklistDAO = BooklistDAO.findById(id)
         if (booklistDAO != null && 
             booklistDAO.userId.value == userId && 
-            booklistDAO.listName != "___DEFAULT___") {
+            booklistDAO.listName != DEFAULT_LIST_NAME) {
             booklistDAO.apply {
                 listName = request.listName
                 listDescription = request.listDescription
@@ -122,7 +124,7 @@ object BooklistRepository {
         val booklistDAO = BooklistDAO.findById(id)
         if (booklistDAO != null && 
             booklistDAO.userId.value == userId && 
-            booklistDAO.listName != "___DEFAULT___") {
+            booklistDAO.listName != DEFAULT_LIST_NAME) {
             booklistDAO.delete()
             true
         } else false
@@ -156,7 +158,7 @@ object BooklistRepository {
     suspend fun findDefault(userId: Int): BooklistWithBooks? = suspendTransaction {
         val booklistDAO = BooklistDAO.find {
             (BooklistsTable.userId eq userId) and
-            (BooklistsTable.listName eq "___DEFAULT___")
+            (BooklistsTable.listName eq DEFAULT_LIST_NAME)
         }.firstOrNull() ?: return@suspendTransaction null
 
         val books = BooklistBookDAO.find { BooklistBooksTable.booklistId eq booklistDAO.id }
@@ -179,13 +181,13 @@ object BooklistRepository {
     suspend fun addDefault(userId: Int) = suspendTransaction {
         val alreadyExists = BooklistDAO.find {
             (BooklistsTable.userId eq userId) and
-            (BooklistsTable.listName eq "___DEFAULT___")
+            (BooklistsTable.listName eq DEFAULT_LIST_NAME)
         }.empty().not()
 
         if (!alreadyExists) {
             BooklistDAO.new {
                 this.userId = EntityID(userId, UsersTable)
-                this.listName = "___DEFAULT___"
+                this.listName = DEFAULT_LIST_NAME
                 this.listDescription = ""
             }
         }

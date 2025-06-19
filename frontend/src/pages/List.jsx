@@ -5,10 +5,11 @@ import { useParams } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import ShareIcon from '@mui/icons-material/Share';
 
-import { searchById } from '../utils/lists';
-import { useAuth } from '../utils/AuthContext';
-import { handleShare, handleSafeNavigation } from '../utils/handlers';
-import { useNotification } from '../utils/NotificationContext';
+import { searchById } from '@/utils/lists';
+import { useAuth } from '@/utils/AuthContext';
+import { BooklistConstants } from '@/utils/constants';
+import { handleShare, handleSafeNavigation } from '@/utils/handlers';
+import { useNotification } from '@/utils/NotificationContext';
 
 import Divider from '../atoms/Divider';
 import LoadingBox from '../atoms/LoadingBox';
@@ -47,7 +48,7 @@ function ListPage() {
         const fetchList = async () => {
             try {
                 const list = await searchById(id, true);
-                if (list.listName == "___DEFAULT___") {
+                if (list.listName == BooklistConstants.DEFAULT_LIST_NAME) {
                     notify({
                         message: 'Não é posível carregar essa lista de livros.',
                         severity: 'warning'

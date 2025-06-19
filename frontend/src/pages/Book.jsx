@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material/styles';
 import useOpenLibrary from '@/utils/useOpenLibrary';
 import { useAuth } from '@/utils/AuthContext';
 import { searchByBook } from '@/utils/reviews';
+import { BooklistConstants } from '@/utils/constants';
 import { searchByUser, addBook } from '@/utils/lists';
 import { handleSafeNavigation } from '@/utils/handlers';
 import { useNotification } from '@/utils/NotificationContext';
@@ -38,7 +39,7 @@ function ActionsMenu({ handleReview, book }) {
   async function addTBR(bookId) {
       if (!lists || !bookId) return;
 
-      const tbr = lists.find((list) => list.listName == '___DEFAULT___');
+      const tbr = lists.find((list) => list.listName == BooklistConstants.DEFAULT_LIST_NAME);
       try {
         await addBook(tbr.id, bookId);
         notify({ message: 'Livro adicionado à "Quero ler"', severity: 'success' })
@@ -96,7 +97,7 @@ function ActionsMenu({ handleReview, book }) {
           <AddToListForm 
             book={book}
             open={listFormOpen}
-            lists={lists?.filter(l => l.listName !== '___DEFAULT___')}
+            lists={lists?.filter(l => l.listName !== BooklistConstants.DEFAULT_LIST_NAME)}
             onClose={() => setListFormOpen(false)}
             onSubmit={(ids, bookId) => addToLists(ids, bookId)}
           />

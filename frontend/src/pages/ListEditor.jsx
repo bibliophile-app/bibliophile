@@ -7,6 +7,7 @@ import useOpenLibrary from '@/utils/useOpenLibrary';
 import { useAuth } from '@/utils/AuthContext';
 import { handleSafeNavigation } from '@/utils/handlers';
 import { useNotification } from '@/utils/NotificationContext';
+import { BooklistConstants } from '@/utils/constants';
 import {
   searchById,
   createList,
@@ -54,7 +55,7 @@ function ListEditorPage() {
       try {
         const fetchedList = await searchById(id, true);
 
-        if (fetchedList.username !== user?.username || fetchedList.listName === "___DEFAULT___") {
+        if (fetchedList.username !== user?.username || fetchedList.listName === BooklistConstants.DEFAULT_LIST_NAME) {
           notify({ message: 'Você não pode editar essa lista!', severity: 'error' });
           safeBack();
           return;

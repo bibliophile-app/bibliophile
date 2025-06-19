@@ -15,6 +15,7 @@ import io.ktor.server.testing.*
 
 import com.bibliophile.models.*
 import com.bibliophile.utils.*
+import com.bibliophile.BooklistConstants.DEFAULT_LIST_NAME
 
 class BooklistRoutesTest {
 
@@ -387,7 +388,7 @@ class BooklistRoutesTest {
 
         assertEquals(HttpStatusCode.OK, response.status)
         val responseBody = response.bodyAsText()
-        assertTrue(responseBody.contains("___DEFAULT___"))
+        assertTrue(responseBody.contains(DEFAULT_LIST_NAME))
     }
 
     @Test

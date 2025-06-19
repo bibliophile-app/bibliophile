@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import com.bibliophile.models.BooklistRequest
 import com.bibliophile.models.UserRequest
 import com.bibliophile.utils.TestDatabaseFactory
+import com.bibliophile.BooklistConstants.DEFAULT_LIST_NAME
 
 class BooklistRepositoryTest {
 
@@ -248,7 +249,7 @@ class BooklistRepositoryTest {
         
         assertFalse(success)
         val unchanged = BooklistRepository.findById(defaultList.id)
-        assertEquals("___DEFAULT___", unchanged?.listName)
+        assertEquals(DEFAULT_LIST_NAME, unchanged?.listName)
     }
 
     @Test
