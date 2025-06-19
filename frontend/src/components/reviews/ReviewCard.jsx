@@ -3,15 +3,18 @@ import { Box, Typography, Stack } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 
-import { useAuth } from '../../utils/AuthContext';
-import { searchById } from './utils';
-import useOpenLibrary from '../../utils/useOpenLibrary';
+import { useAuth } from '@/utils/AuthContext';
+import { searchById } from '@/utils/reviews';
+import useOpenLibrary from '@/utils/useOpenLibrary';
 
-import Rating from '../../atoms/Rating';
-import Favorite from '../../atoms/Favorite';
+import Rating from '@/atoms/Rating';
+import Favorite from '@/atoms/Favorite';
+import BookImage from '@/atoms/BookImage';
+import UserAvatar from '@/atoms/UserAvatar';
 import ReviewForm from './ReviewForm';
-import UserAvatar from '../../atoms/UserAvatar';
-import BookImage from '../../atoms/BookImage';
+
+const COVER_WIDTH =  66;
+const COVER_HEIGHT = 105;
 
 function ReviewCard ({
   review,
@@ -28,25 +31,27 @@ function ReviewCard ({
   const owner = user?.username === currentReview.username;
 
   const { fetchResults } = useOpenLibrary({
-    onResults: setBook,
-    onError: null,
+    onError: null
   });
 
   useEffect(() => {
-    if (currentReview?.bookId) {
-      fetchResults(null, currentReview.bookId);
+    async function fetchBook() {
+      const book = await fetchResults(null, currentReview.bookId);
+      setBook(book); 
     }
+    
+    if (currentReview?.bookId) fetchBook();
   }, [currentReview]);
 
-  const handleOpen = () => {
+  function handleOpen() {
     if (owner) setReviewFormOpen(true);
   };
 
-  const handleClose = () => {
+  function handleClose() {
     setReviewFormOpen(false);
   };
 
-  const handleReviewUpdated = async () => {
+  async function handleReviewUpdated() {
     const updated = await searchById(currentReview.id);
     setCurrentReview(updated);
   };
@@ -62,7 +67,8 @@ function ReviewCard ({
           <BookImage
             src={book.coverUrl}
             alt={`Capa de ${book.title}`}
-            sx={{ width: 60, height: 90 }}
+            width={COVER_WIDTH}
+            height={COVER_HEIGHT}
           />
         ) : (
           <UserAvatar username={username} />

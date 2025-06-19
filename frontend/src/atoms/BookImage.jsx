@@ -14,7 +14,13 @@ const BookCover = styled(Avatar, {
 
 const loadedImages = new Set();
 
-function BookImage({ src, alt = 'Book cover', sx = {} }) {
+function BookImage({
+  src,
+  alt = 'Book cover',
+  width = 120,
+  height = 180,
+  sx = {},
+}) {
   const [loaded, setLoaded] = useState(() => loadedImages.has(src));
   const [error, setError] = useState(false);
 
@@ -36,56 +42,74 @@ function BookImage({ src, alt = 'Book cover', sx = {} }) {
   const showFallback = error || !src;
 
   return (
-    <BookCover
-      hasImage={!showFallback}
-      sx={{ ...sx }}
-      variant="rounded"
+    <Box
+      sx={{
+        width,
+        height,
+        position: 'relative',
+        ...sx,
+      }}
     >
-      {!showFallback ? (
-        <>
-          {!loaded && (
-            <Skeleton
-              variant="rectangular"
-              width="100%"
-              height="100%"
-              sx={{ position: 'absolute', top: 0, left: 0 }}
+      <BookCover
+        hasImage={!showFallback}
+        variant="rounded"
+        sx={{
+          width: '100%',
+          height: '100%',
+        }}
+      >
+        {!showFallback ? (
+          <>
+            {!loaded && (
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                height="100%"
+                animation="wave"
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  bgcolor: 'rgba(150, 150, 150, 0.1)',
+                  zIndex: 1,
+                }}
+              />
+            )}
+            <img
+              src={src}
+              alt={alt}
+              loading="lazy"
+              onLoad={handleLoad}
+              onError={() => setError(true)}
+              style={{
+                display: 'block',
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                transition: 'opacity 0.3s ease-in-out',
+              }}
             />
-          )}
-          <img
-            src={src}
-            alt={alt}
-            loading="lazy"
-            onLoad={handleLoad}
-            onError={() => setError(true)}
-            style={{
-              display: 'block',
+          </>
+        ) : (
+          <Box
+            sx={{
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
-              opacity: loaded ? 1 : 0,
-              transition: 'opacity 0.3s ease-in-out',
+              fontSize: 16,
+              color: 'text.disabled',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontStyle: 'italic',
+              userSelect: 'none',
+              pointerEvents: 'none',
             }}
-          />
-        </>
-      ) : (
-        <Box
-          sx={{
-            width: '100%',
-            height: '100%',
-            fontSize: 16,
-            color: 'text.disabled',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontStyle: 'italic',
-            userSelect: 'none',
-            pointerEvents: 'none',
-          }}
-        >
-          N/A
-        </Box>
-      )}
-    </BookCover>
+          >
+            N/A
+          </Box>
+        )}
+      </BookCover>
+    </Box>
   );
 }
 

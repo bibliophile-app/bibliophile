@@ -12,45 +12,44 @@ import com.bibliophile.db.tables.UsersTable
 import com.bibliophile.db.suspendTransaction
 
 object FollowerRepository {
-
-    // retorna todas as relações de follow 
-    suspend fun getAllFollows(): List<Follow> = suspendTransaction {
+    /** Retorna todas as relações de follow */
+    suspend fun all(): List<Follow> = suspendTransaction {
         FollowerDAO.all().map(::daoToModel)
     }
 
-    // retorna a lista de usuários que seguem um determinado usuário
-    suspend fun getFollowersOfUser(userId: Int): List<Follow> = suspendTransaction {
+    /** Busca seguidores de um usuário */
+    suspend fun findByFolloweeId(userId: Int): List<Follow> = suspendTransaction {
         FollowerDAO.find { FollowersTable.followeeId eq userId }
-                   .map(::daoToModel)
+            .map(::daoToModel)
     }
 
-    // obtém a lista de usuários que um determinado usuário está seguindo
-    suspend fun getFollowingUsers(userId: Int): List<Follow> = suspendTransaction {
+    /** Busca quem um usuário segue */
+    suspend fun findByFollowerId(userId: Int): List<Follow> = suspendTransaction {
         FollowerDAO.find { FollowersTable.followerId eq userId }
-                   .map(::daoToModel)
+            .map(::daoToModel)
     }
 
-    // cria uma nova relação de follow entre dois usuários
-    suspend fun addFollow(userId: Int, follow: FollowRequest): Follow = suspendTransaction {
+    /** Adiciona um novo follow */
+    suspend fun add(userId: Int, request: FollowRequest): Follow = suspendTransaction {
         FollowerDAO.new {
             followerId = EntityID(userId, UsersTable)
-            followeeId  = EntityID(follow.followeeId, UsersTable)
+            followeeId = EntityID(request.followeeId, UsersTable)
         }.let(::daoToModel)
     }
 
-    // verifica se um usuário já está seguindo outro
-    suspend fun isFollowing(followerId: Int, followeeId: Int): Boolean = suspendTransaction {
+    /** Verifica se existe relação de follow */
+    suspend fun exists(followerId: Int, followeeId: Int): Boolean = suspendTransaction {
         FollowerDAO.find {
             (FollowersTable.followerId eq followerId) and
-            (FollowersTable.followeeId  eq followeeId)
+            (FollowersTable.followeeId eq followeeId)
         }.any()
     }
 
-    // exclui uma relação de follow
-    suspend fun deleteFollow(userId: Int, follow: FollowRequest): Boolean = suspendTransaction {
+    /** Remove um follow */
+    suspend fun delete(userId: Int, request: FollowRequest): Boolean = suspendTransaction {
         val toDelete = FollowerDAO.find {
             (FollowersTable.followerId eq userId) and
-            (FollowersTable.followeeId eq follow.followeeId)
+            (FollowersTable.followeeId eq request.followeeId)
         }
         toDelete.map { it.delete(); it }.isNotEmpty()
     }

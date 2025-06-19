@@ -1,20 +1,33 @@
 import { Box, Typography, Stack, Paper } from '@mui/material';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
-import StyledRating from '../../atoms/Rating';
+import Rating from '@/atoms/Rating';
 
-const ReviewHistogram = ({ reviews }) => {
-  const normalizeRating = (rate) => rate / 2;
-  const formatCount = (num) => {
+const ReviewHistogram = ({ reviewsData }) => {
+  function normalizeRating(rate) {
+    return rate / 2;
+  }
+  
+  function formatCount(num) {
     if (num >= 1000) {
       return (num / 1000).toFixed(num >= 10000 ? 0 : 1) + 'K';
     }
     return num;
   };
 
-  const groupRatings = (reviews) => {
-    if (!reviews || reviews.length === 0) return [];
-    // Create bins for ratings from 0.0 to 5.0 in increments of 0.5
+  function getReviews(reviewsData) {
+    if (!reviewsData) return [];
+    const reviews = [
+      ...(reviewsData.user || []),
+      ...(reviewsData.friends || []),
+      ...(reviewsData.others || [])
+    ];
+    return reviews;
+  };
+
+  function groupRatings(reviews) {
+    if (reviews.length === 0) return [];
+    // Cria bins para ratings de 0.0 a 5.0 com incrementos de 0.5
     const bins = Array.from({ length: 11 }, (_, i) => (i * 0.5).toFixed(1));
     const counts = Object.fromEntries(bins.map(bin => [bin, 0]));
 
@@ -28,6 +41,7 @@ const ReviewHistogram = ({ reviews }) => {
     return bins.map(bin => ({ rating: parseFloat(bin), count: counts[bin] }));
   };
 
+  const reviews = getReviews(reviewsData);
   const data = groupRatings(reviews);
 
   const average = reviews && reviews.length
@@ -79,7 +93,7 @@ const ReviewHistogram = ({ reviews }) => {
             width: '20%'
           }}>
             <Typography variant="h5" fontSize="1rem" >{average}</Typography>
-            <StyledRating
+            <Rating
               name="average-rating"
               value={parseFloat(average)}
               precision={0.1}
@@ -90,7 +104,7 @@ const ReviewHistogram = ({ reviews }) => {
         </Stack>
       ) : (
         <Typography variant="h5" sx={{ fontSize: '0.8rem' }}>
-          Not enough ratings!
+          Ainda há poucas avaliações!
         </Typography>
       )}
     </Paper>

@@ -4,6 +4,9 @@ import { styled } from '@mui/material/styles';
 
 import BookImage from '../../atoms/BookImage';
 
+const COVER_WIDTH =  64;
+const COVER_HEIGHT = 100;
+
 const StyledItem = styled(Paper)(({ theme }) => ({
     display: 'flex',
     marginBottom: "10px",
@@ -30,11 +33,12 @@ function ResultBooks({ books, paginatedBooks }) {
         </Typography>           
     ) : ( 
         paginatedBooks.map((book, _) => (
-            <StyledItem key={book.olid} elevation={1} onClick={() => onSelect(book.olid)}>
+            <StyledItem key={book.id} elevation={1} onClick={() => onSelect(book.id)}>
                 <BookImage
                   src={book.coverUrl}
                   alt={book.title}
-                  sx={{width: 64, height: 96}}
+                  width={COVER_WIDTH}
+                  height={COVER_HEIGHT}
                 />
 
                 <Box sx={{ ml: 2 }}>

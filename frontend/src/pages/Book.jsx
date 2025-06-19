@@ -1,155 +1,221 @@
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { Box, Stack, Typography, useMediaQuery } from '@mui/material';
+import { PlaylistAdd } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import { useAuth } from '../utils/AuthContext';
-import useOpenLibrary from '../utils/useOpenLibrary';
-import { searchByBook } from '../components/reviews/utils';
+import useOpenLibrary from '@/utils/useOpenLibrary';
+import { useAuth } from '@/utils/AuthContext';
+import { searchByBook } from '@/utils/reviews';
+import { BooklistConstants } from '@/utils/constants';
+import { searchByUser, addBook } from '@/utils/lists';
+import { handleSafeNavigation } from '@/utils/handlers';
+import { useNotification } from '@/utils/NotificationContext';
 
-import Divider from '../atoms/Divider';
-import BookImage from '../atoms/BookImage';
-import LoadingBox from '../atoms/LoadingBox';
-import ActionsMenu from '../components/ActionsMenu';
-import DescriptionText from '../components/DescriptionText';
-import ReviewForm from '../components/reviews/ReviewForm';
-import ReviewSection from '../components/reviews/ReviewSection';
-import ReviewHistogram from '../components/reviews/ReviewHistogram';
+import Divider from '@/atoms/Divider';
+import BookImage from '@/atoms/BookImage';
+import LoadingBox from '@/atoms/LoadingBox';
+import BookHeader from '@/components/BookHeader';
+import ActionsBase from '@/components/ActionsBase';
+import ReviewForm from '@/components/reviews/ReviewForm';
+import ExpandableText from '@/components/ExpandableText';
+import ReviewSection from '@/components/reviews/ReviewSection';
+import ReviewHistogram from '@/components/reviews/ReviewHistogram';
+import AddToListForm from '../components/lists/ListForm';
+
+function ActionsMenu({ handleReview, book }) {
+  const { notify } = useNotification();
+  const { user, isAuth, handleSignin } = useAuth();
+  
+  const [ lists, setLists ] = useState([]);
+  const [ listFormOpen, setListFormOpen ] = useState(false);
+  const [ reviewFormOpen, setReviewFormOpen ] = useState(false);
+
+  async function fetchUserLists() {
+      const response = await searchByUser(user.id);
+      setLists(response);
+  }
+
+  async function addTBR(bookId) {
+      if (!lists || !bookId) return;
+
+      const tbr = lists.find((list) => list.listName == BooklistConstants.DEFAULT_LIST_NAME);
+      try {
+        await addBook(tbr.id, bookId);
+        notify({ message: 'Livro adicionado à "Quero ler"', severity: 'success' })
+      } catch (e) {
+        if ((e?.response?.status === 409) || (typeof e?.message === 'string' && e.message.includes('409'))) {
+          notify({ message: 'O livro já está na lista', severity: 'info'});
+        } else {
+          notify({ message: 'Erro ao adicionar livro à lista', severity: 'error'});
+        }
+      }
+  }
+
+  async function addToLists(listIds, bookId) {
+    try {
+      for (const listId of listIds) {
+        await addBook(listId, bookId);   
+      }
+    } catch {
+      notify({ message: 'Erro ao adicionar livro à lista', severity: 'error'});
+    }
+    await fetchUserLists();
+  }
+
+  useEffect(() => {
+    if (!isAuth()) return;
+    fetchUserLists();
+  }, [user]);
+
+  const actions = isAuth()
+    ? [
+        {
+          label: 'Quero ler',
+          icon: <PlaylistAdd />,
+          onClick: () => addTBR(book.id),
+        },
+        {
+          label: 'Avaliar ou registrar novamente...',
+          onClick: () => setReviewFormOpen(true),
+        },
+        {
+          label: 'Adicionar às listas...',
+          onClick: () => setListFormOpen(true),
+        },
+      ]
+    : [
+        {
+          label: 'Faça login para registrar, avaliar ou comentar',
+          onClick: handleSignin,
+        },
+      ];
+
+  return ( 
+      <React.Fragment>
+          <ActionsBase actions={actions} />
+          <AddToListForm 
+            book={book}
+            open={listFormOpen}
+            lists={lists?.filter(l => l.listName !== BooklistConstants.DEFAULT_LIST_NAME)}
+            onClose={() => setListFormOpen(false)}
+            onSubmit={(ids, bookId) => addToLists(ids, bookId)}
+          />
+          
+          <ReviewForm
+            book={book}
+            open={reviewFormOpen}
+            onClose={() => setReviewFormOpen(false)}
+            onSubmit={() => { handleReview(); setReviewFormOpen(false); }}
+          />
+      </React.Fragment>
+  );
+}
 
 function BookPage() {
-  const { user } = useAuth();
-  const { olid } = useParams();
-  
-  const [book, setBook] = useState(null);
-  const [error, setError] = useState(null);
-  const [reviews, setReviews] = useState([]);
-  const [reviewFormOpen, setReviewFormOpen] = useState(false);
+  const { isAuth } = useAuth();
+  const { bookId } = useParams();
+  const { notify } = useNotification();
+  const safeBack = handleSafeNavigation();
 
   const theme = useTheme();
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
 
+  const [book, setBook] = useState(null);
+  const [reviews, setReviews] = useState({});
+
   const { fetchResults, loading } = useOpenLibrary({
-    onResults: setBook,
-    onError: setError,
+    onError: () => {
+        notify({ message: 'Erro ao carregar os dados do livro!', severity: 'error' })
+        setTimeout(() => safeBack(), 1500);
+    },
   });
 
-  const fetchReviews = async () => {
-    if (!olid) return;
-    const results = await searchByBook(olid);
-    setReviews(results || []);
+  async function fetchReviews() {
+    if (!bookId) return;
+    try {
+      const results = await searchByBook(bookId);
+      setReviews(results || {});
+    } catch (err) {
+      notify({ message: 'Erro ao buscar avaliações!', severity: 'alert' });
+    }
   };
 
   useEffect(() => {
-    if (!olid) return;
-    fetchResults(null, olid);
-    fetchReviews();
-  }, [olid]);
+    if (!bookId) return;
 
-  const handleReviewSubmit = () => {
+    async function fetchBook() {
+      const book = await fetchResults(null, bookId);
+      setBook(book);
+    }
+
+    fetchBook();
     fetchReviews();
-    setReviewFormOpen(false);
+  }, [bookId]);
+
+  function handleReviewSubmit() {
+    fetchReviews();
   };
 
-  if (loading) return <LoadingBox />;
-
-  if (error || !book) {
-    return (
-      <Typography mt={4}>
-        Livro não encontrado!
-      </Typography>
-    );
-  }
-
-  const filteredReviews = {
-    user: reviews.filter(r => r.username === user?.username && r.content),
-    others: reviews.filter(r => r.username !== user?.username && r.content),
-  };
-
-  const BookCover = ({ width = 180, height = '100%' }) => (
-    <BookImage
-      src={book.coverUrl}
-      alt={`Capa de ${book.title}`}
-      sx={{ width, height }}
-    />
-  );
-
+  if (loading || !book) return <LoadingBox />;
+  
   return (
-    <>
-      <Box sx={{ minHeight: '100vh', justifyContent: 'center', pb: 5, px: { xs: 3, lg: 0 } }}>
-        <Stack spacing={4} direction="row">
-          
-          {isMdUp && <BookCover />}
+    <Stack spacing={4} direction="row">
+      {isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: '100%' }} /> }
 
-          <Stack spacing={2} sx={{ flex: 1 }}>
-            <Stack spacing={1}>
-              <Box sx={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap', gap: 1 }}>
-                <Typography variant="h4" fontWeight="bold">
-                  {book.title}
-                </Typography>
-                {book.first_publish_year && (
-                  <Typography
-                    variant="h5"
-                    component="span"
-                    sx={{ fontWeight: 400, fontSize: '1.2rem', opacity: 0.8 }}
-                  >
-                    ({book.first_publish_year})
-                  </Typography>
-                )}
-              </Box>
-              {book.author_name?.length > 0 && (
-                <Typography sx={{ fontSize: '0.8rem', opacity: 0.8 }}>
-                  Escrito por {book.author_name.join(', ')}
-                </Typography>
-              )}
-            </Stack>
+      <Stack spacing={2} sx={{ flex: 1 }}>
+        <BookHeader
+          title={book.title}
+          year={book.publish_year}
+          authors={book.authors}
+        />
 
-            <Divider />
-            <DescriptionText description={book.description} />
+        <Divider />
+        <ExpandableText text={book.description} />
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {user && (
-                <ReviewSection
-                  title="Suas avaliações"
-                  reviews={filteredReviews.user}
-                />
-              )}
-              <ReviewSection
-                title="Avaliações recentes"
-                reviews={filteredReviews.others}
-              />
-            </Box>
-          </Stack>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {isAuth() && (
+            <ReviewSection
+              title="Minhas avaliações"
+              reviews={reviews.user?.filter(e => !!e.content?.trim())}
+            />
+          )}
 
-          <Box
-            sx={{
-              gap: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              width: { xs: 'auto', sm: 180, md: 240 },
-            }}
-          >
-            {!isMdUp && <BookCover width={180} height={270} />}
+          {isAuth() && reviews.friends?.length > 0 && (
+            <ReviewSection
+              title="Avaliações de amigos"
+              reviews={reviews.friends?.filter(e => !!e.content?.trim())}
+            />
+          )}
 
-            <ActionsMenu handleReview={() => setReviewFormOpen(true)} />
+          <ReviewSection
+            title="Avaliações"
+            reviews={reviews.others?.filter(e => !!e.content?.trim())}
+          />
+        </Box>
+      </Stack>
 
-            <Box>
-              <Typography variant="h5" gutterBottom>
-                Avaliações
-              </Typography>
-              <Divider sx={{ width: '100%', mb: 2 }} />
-              <ReviewHistogram reviews={reviews} />
-            </Box>
-          </Box>
-        </Stack>
+      <Box
+        sx={{
+          gap: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          width: { xs: 'auto', sm: 175, md: 240 },
+        }}
+      >
+        {!isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 175, height: 270 }} /> }
+
+        <ActionsMenu handleReview={handleReviewSubmit} book={book} />
+
+        <Box>
+          <Typography variant="h5" gutterBottom>
+            Avaliações
+          </Typography>
+          <Divider sx={{ width: '100%', mb: 2 }} />
+          <ReviewHistogram reviewsData={reviews} />
+        </Box>
       </Box>
-
-      <ReviewForm
-        book={book}
-        open={reviewFormOpen}
-        onClose={() => setReviewFormOpen(false)}
-        onSubmit={handleReviewSubmit}
-      />
-    </>
+    </Stack>
   );
 }
 

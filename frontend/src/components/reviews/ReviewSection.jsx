@@ -3,17 +3,13 @@ import { Box, Typography, Stack, Button, Dialog, DialogTitle, DialogContent, Ico
 import CloseIcon from '@mui/icons-material/Close';
 
 import ReviewCard from './ReviewCard';
-import Divider from '../../atoms/Divider';
+import Divider from '@/atoms/Divider';
 
 function ReviewSection({ 
   title, 
   reviews = [] 
 }) {
   const [open, setOpen] = useState(false);
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
   const visibleReviews = reviews.slice(0, 3);
 
   return (
@@ -24,7 +20,7 @@ function ReviewSection({
         </Typography>
         {reviews && reviews.length > 3 && (
           <Button
-            onClick={handleOpen}
+            onClick={() => setOpen(true)}
             sx={{ fontSize: '0.8rem', textTransform: 'none' }}
           >
             Ver mais
@@ -51,7 +47,7 @@ function ReviewSection({
       {/* Diálogo em tela cheia */}
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={() => setOpen(false)}
         fullScreen
         sx={{
           '& .MuiDialog-paper': {
@@ -65,7 +61,7 @@ function ReviewSection({
       >
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
           {title}
-          <IconButton onClick={handleClose} sx={{ color: '#dfe6ec' }}>
+          <IconButton onClick={() => setOpen(false)} sx={{ color: '#dfe6ec' }}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>

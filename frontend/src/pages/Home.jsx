@@ -2,11 +2,11 @@ import React from 'react'
 import { useAuth } from '../utils/AuthContext'
 
 function Home() {
-  const {user} = useAuth();
+  const { user, isAuth } = useAuth();
 
-  if (!user) {
+  if (!isAuth()) {
     return (<div style={{ minHeight: '100%' }}>
-              <h1></h1>
+              <h1> Você não está logado </h1>
             </div>
     )
   }

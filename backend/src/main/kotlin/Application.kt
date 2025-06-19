@@ -21,7 +21,7 @@ fun Application.module() {
             cookie.httpOnly = true 
             cookie.secure = true // `false` only if running locally (not HTTPS)
             cookie.extensions["SameSite"] = "None"
-            cookie.maxAgeInSeconds = 60 * 60 * 24
+            cookie.maxAgeInSeconds = 60 * 60 * 24 * 3
         }
     }
 

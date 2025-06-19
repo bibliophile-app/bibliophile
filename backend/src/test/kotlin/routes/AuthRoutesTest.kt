@@ -52,8 +52,8 @@ class AuthRoutesTest {
             password = "password123"
         )
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("Registered"))
+        assertEquals(HttpStatusCode.Created, response.status)
+        assertTrue(response.bodyAsText().contains("successful"))
     }
 
     @Test
@@ -64,27 +64,9 @@ class AuthRoutesTest {
         val response = client.registerUser("another@example.com", "existinguser", "password123")
 
         assertEquals(HttpStatusCode.Conflict, response.status)
-        assertEquals("Username already exists", response.bodyAsText())
+        assertTrue(response.bodyAsText().contains("Username already exists"))
     }
 
-    @Test
-    fun `test get user by username found`() = testApplication {
-        application { setupTestModule() }
-
-        client.registerUser("test@example.com", "testuser", "password123")
-        val response = client.get("/users/testuser")
-
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("testuser"))
-    }
-
-    @Test
-    fun `test get user by username not found`() = testApplication {
-        application { setupTestModule() }
-
-        val response = client.get("/users/unknownuser")
-        assertEquals(HttpStatusCode.NotFound, response.status)
-    }
 
     @Test
     fun `test login with valid credentials`() = testApplication {
@@ -94,7 +76,7 @@ class AuthRoutesTest {
         val response = client.loginUser("testuser", "password123")
 
         assertEquals(HttpStatusCode.OK, response.status)
-        assertTrue(response.bodyAsText().contains("Logged in"))
+        assertTrue(response.bodyAsText().contains("successful"))
     }
 
     @Test
@@ -104,7 +86,7 @@ class AuthRoutesTest {
         val response = client.loginUser("nonexistentuser", "wrongpassword")
 
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-        assertEquals("Invalid credentials", response.bodyAsText())
+        assertTrue(response.bodyAsText().contains("Invalid credentials"))
     }
 
     @Test
@@ -115,7 +97,7 @@ class AuthRoutesTest {
         val response = client.loginUser("testuser", "wrongpassword")
 
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-        assertEquals("Invalid credentials", response.bodyAsText())
+        assertTrue(response.bodyAsText().contains("Invalid credentials"))
     }
 
     @Test

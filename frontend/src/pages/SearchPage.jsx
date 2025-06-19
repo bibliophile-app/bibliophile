@@ -34,15 +34,19 @@ function SearchPage() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const { fetchResults, loading } = useOpenLibrary({
-    onResults: setResults,
     onError: setError,
   });
 
   useEffect(() => {
-    if (query) {
+    if (!query) return;
+    
+    async function getResults() {
       setPage(1);
-      fetchResults(query);
+      const results = await fetchResults(query);
+      setResults(results) 
     }
+
+    getResults();
   }, [query]);
 
   const paginatedResults = results.slice(
@@ -63,7 +67,7 @@ function SearchPage() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', justifyContent: 'center', px: { xs: 3, lg: 0 } }}>
+    <Box sx={{ minHeight: '100vh', justifyContent: 'center' }}>
       <Stack spacing={4} direction="row">
         <Stack sx={{ width: { xs: "100%", md: "70%" } }}>
           <Typography variant="body" fontSize={"0.8rem"} gutterBottom>

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useParams, Link as RouterLink } from 'react-router-dom';
-import { useNotification } from '../utils/NotificationContext';
-import { useSafeNavigate } from '../utils/useSafeNavigate';
 
-import { searchByUser } from '../components/reviews/utils';
-import ReviewCard from '../components/reviews/ReviewCard';
-import LoadingBox from '../atoms/LoadingBox';
-import Divider from '../atoms/Divider';
+import { searchByUser } from '@/utils/reviews';
+import { handleSafeNavigation } from '@/utils/handlers';
+import { useNotification } from '@/utils/NotificationContext';
+
+import Divider from '@/atoms/Divider';
+import LoadingBox from '@/atoms/LoadingBox';
+import ReviewCard from '@/components/reviews/ReviewCard';
 
 function DiaryReviewCard({ entry }) {
   const day = new Date(entry.reviewedAt + 'T00:00:00').getDate();
@@ -36,7 +37,7 @@ function DiaryReviewCard({ entry }) {
 }
 
 function DiaryPage() {
-  const safeBack = useSafeNavigate();
+  const safeBack = handleSafeNavigation();
   const { username } = useParams();
   const { notify } = useNotification();
 
@@ -56,7 +57,7 @@ function DiaryPage() {
 
     setIsLoading(true);
 
-    const fetchReviews = async () => {
+    async function fetchReviews() {
       try {
         const reviews = await searchByUser(username);
         setEntries(reviews);
@@ -76,8 +77,6 @@ function DiaryPage() {
   function groupEntriesByMonth(entries) {
     return entries?.reduce((acc, entry) => {
       const date = new Date(entry.reviewedAt);
-
-
       const year = date.getFullYear();
       const monthNum = String(date.getMonth() + 1).padStart(2, '0');
       const sortKey = `${year}-${monthNum}`;
@@ -102,14 +101,10 @@ function DiaryPage() {
     .sort(([, a], [, b]) => new Date(b.sortKey + '-01') - new Date(a.sortKey + '-01'))
     .map(([monthLabel]) => monthLabel);
 
-  sortedMonths.forEach(monthLabel => {
-    console.log(monthLabel, groupedByMonth[monthLabel].entries);
-  });
-
   if (loading)
     return <LoadingBox />;
   else return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', px: { xs: 3, lg: 0 } }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', gap: 0.5 }}>
             <Typography variant='span'>
                 diário de

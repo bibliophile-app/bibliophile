@@ -10,12 +10,12 @@ import SearchBar from '../search/SearchBar';
 
 
 function DesktopToolbar({ options, user }) {
-	const { handleSignin, handleSignup, logout } = useAuth();
+	const { isAuth, handleSignin, handleSignup, logout } = useAuth();
 	const navigate = useNavigate();
 
 	return (
 		<React.Fragment>
-			{!user && (
+			{!isAuth() && (
 				<React.Fragment>
 
 					<Button
@@ -47,7 +47,7 @@ function DesktopToolbar({ options, user }) {
 
 			<SearchBar />
 
-			{user && (
+			{isAuth() && (
 				<Button
 					color="primary"
 					size="small"

@@ -19,7 +19,7 @@ const StyledMenuItem = styled(MenuItem)(({
 
 // Component for rendering drawer content
 function MobileToolbar({ user, options }) {
-	const { handleSignin, handleSignup, logout } = useAuth();
+	const { isAuth, handleSignin, handleSignup, logout } = useAuth();
 	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
 
@@ -52,7 +52,7 @@ function MobileToolbar({ user, options }) {
 						</Box>
 					</Box>
 					
-					{!user && (
+					{!isAuth() && (
 						<React.Fragment>
 							<StyledMenuItem onClick={handleSignin}> Login </StyledMenuItem>
 							<Divider />
@@ -71,7 +71,7 @@ function MobileToolbar({ user, options }) {
 						</React.Fragment>
 					))}
 
-					{user && (
+					{isAuth() && (
 						<Button 
 							color="primary" size="small" variant="contained" fullWidth
 							sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}

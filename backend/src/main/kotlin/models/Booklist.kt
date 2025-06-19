@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Booklist(
     val id: Int,
-    val userId: Int,
+    val username: String,
     val listName: String,
     val listDescription: String?,
 )
@@ -13,7 +13,7 @@ data class Booklist(
 @Serializable
 data class BooklistWithBooks(
     val id: Int,
-    val userId: Int,
+    val username: String,
     val listName: String,
     val listDescription: String?,
     val books: List<String>

@@ -7,78 +7,91 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
-import kotlinx.serialization.Serializable
 
-import com.bibliophile.utils.*
 import com.bibliophile.models.UserSession
+import com.bibliophile.models.UserRequest
 import com.bibliophile.models.LoginRequest
-import com.bibliophile.models.RegisterRequest
 import com.bibliophile.repositories.UserRepository
+import com.bibliophile.repositories.BooklistRepository
 
 fun Route.authRoutes() {
-
     post("/register") {
-        val data = call.receive<RegisterRequest>()
-        if (UserRepository.findByUsername(data.username) != null) {
-            call.respond(HttpStatusCode.Conflict, "Username already exists")
+        val request = call.receive<UserRequest>()
+        
+        if (UserRepository.findByUsername(request.username) != null) {
+            call.respond(HttpStatusCode.Conflict, mapOf(
+                "message" to "Username already exists"
+            ))
             return@post
         }
-        val user = UserRepository.create(data.email, data.username, hashPassword(data.password))
+
+        val user = UserRepository.add(request)
+        BooklistRepository.addDefault(user.id)
+
         call.sessions.set(UserSession(user.id))
-        call.respond(HttpStatusCode.OK, mapOf("message" to "Registered"))
+        call.respond(HttpStatusCode.Created, mapOf(
+            "message" to "User registered successfully - User ID: ${user.id}"
+        ))
     }
-    
+
     post("/login") {
-        val data = call.receive<LoginRequest>()
-        val user = UserRepository.findByUsername(data.username)
-        if (user == null || !verifyPassword(data.password, user.passwordHash)) {
-            call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
+        val request = call.receive<LoginRequest>()
+        
+        val user = UserRepository.authenticate(
+            request.username,
+            request.password
+        )
+
+        if (user == null) {
+            call.respond(HttpStatusCode.Unauthorized, mapOf(
+                "message" to "Invalid credentials"
+            ))
             return@post
         }
+
         call.sessions.set(UserSession(user.id))
-        call.respond(HttpStatusCode.OK, mapOf("message" to "Logged in"))
+        call.respond(HttpStatusCode.OK, mapOf(
+            "message" to "Login successful"
+        ))
     }
-    
+
+
     get("/logout") {
         call.sessions.clear<UserSession>()
-        call.response.cookies.append(expiredSessionCookie())
-        call.respond(HttpStatusCode.OK, mapOf("message" to "Logged out"))
-    }    
+        call.response.cookies.append(createExpiredSessionCookie())
+        call.respond(HttpStatusCode.OK, mapOf(
+            "message" to "Logged out successfully"
+        ))
+    }
 
     get("/me") {
         val session = call.sessions.get<UserSession>()
         val userId = session?.userId
 
-        if (userId == null)
-            call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Not authenticated"))
-        else {
-            val profile = UserRepository.getUserProfile(userId)
-            if (profile == null) 
-                call.respond(HttpStatusCode.NotFound, mapOf("error" to "Profile not found"))
-            else
-                call.respond(profile)
+        if (userId == null) {
+            call.respond(HttpStatusCode.Unauthorized, mapOf(
+                "message" to "Not authenticated"
+            ))
+            return@get
         }
-    }
 
-    get("/users/{username}") {
-        val username = call.getParam("username") ?: return@get
-        val user = UserRepository.findByUsername(username)
-        if (user == null) {
-            call.respond(HttpStatusCode.NotFound)
+        val profile = UserRepository.findProfileById(userId)
+        if (profile != null) {
+            call.respond(HttpStatusCode.OK, profile)
         } else {
-            call.respond(mapOf("username" to user.username))
+            call.respond(HttpStatusCode.NotFound, mapOf(
+                "message" to "Profile not found"
+            ))
         }
     }
 }
 
-private fun expiredSessionCookie(): Cookie {
-    return Cookie(
-        name = "USER_SESSION",
-        value = "",
-        path = "/",                
-        secure = true,
-        httpOnly = true,
-        extensions = mapOf("SameSite" to "None"),
-        expires = GMTDate.START       
-    )
-}
+private fun createExpiredSessionCookie() = Cookie(
+    name = "USER_SESSION",
+    value = "",
+    path = "/",                
+    secure = true,
+    httpOnly = true,
+    extensions = mapOf("SameSite" to "None"),
+    expires = GMTDate.START       
+)

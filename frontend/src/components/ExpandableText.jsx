@@ -1,19 +1,19 @@
 import { useState } from 'react';
-import { Typography, Link } from '@mui/material';
+import { Typography } from '@mui/material';
 
 const MAX_LENGTH = 300;
 
-const DescriptionText = ({ description }) => {
+const ExpandableText = ({ text }) => {
   const [expanded, setExpanded] = useState(false);
 
-  const descText = typeof description === 'string'
-    ? description
-    : description?.value || '';
+  const descText = typeof text === 'string'
+    ? text
+    : text?.value || '';
 
   const isLong = descText.length > MAX_LENGTH;
   const visibleText = expanded ? descText : descText.slice(0, MAX_LENGTH);
 
-  const toggleExpanded = (e) => {
+  function toggleExpanded(e) {
     e.stopPropagation();
     setExpanded((prev) => !prev);
   };
@@ -23,12 +23,16 @@ const DescriptionText = ({ description }) => {
         {visibleText}
         {isLong && !expanded && '...'}
         {isLong && (
-        <Link onClick={toggleExpanded} sx={{ p: 1, color: 'neutral.main', opacity: 0.5 }}>
-          {expanded ? 'show less' : 'show more'}
-        </Link>
+        <Typography
+          variant="span"
+          color="neutral.main"
+          onClick={toggleExpanded} sx={{ p: 1, opacity: 0.5 }}
+        >
+          {expanded ? 'Ler Menos' : 'Ler Mais'}
+        </Typography>
       )}
     </Typography>
   );
 };
 
-export default DescriptionText;
+export default ExpandableText;

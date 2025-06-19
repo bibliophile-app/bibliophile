@@ -11,7 +11,7 @@ const theme = createTheme({
       default: '#1A242F',   // fundo geral (petróleo escuro)
       surface: '#0F151B',   // navbar, painéis
       contrast: '#556677',  // botões, inputs elevados
-      muted:   '#44515C',   // divisores, ícones passivos
+      muted:   '#334355',   // divisores, ícones passivos
     },
 
     neutral: {
@@ -19,18 +19,18 @@ const theme = createTheme({
       secondary: '#F0F4F8',         // branco azulado para contraste
     },
 
-    error:   { main: '#FF4C4C' },
-    warning: { main: '#FFB347' },
-    success: { main: '#00e054' },
-    info:    { main: '#40bcf4' },
-
+    error:   { main: '#D0202A' },  // vermelho vivo, saturado
+    warning: { main: '#E67E00' },  // laranja escuro intenso
+    success: { main: '#00B021' },  // verde escuro intenso
+    info:    { main: '#0078D4' },   // azul forte e saturado
+    
     white:  { main: '#FFFFFF' },
     black:  { main: '#000000' },
     red:    { main: '#FF4C4C' },
     yellow: { main: '#FFD700' },
     orange: { main: '#FFA726' },
     brown:  { main: '#8E7143' },
-    green:  { main: '#4CE894' },
+    green:  { main: '#00E676' },
     cyan:   { main: '#4CCCD3' },
     pink:   { main: '#E06BB0' },
     purple: {

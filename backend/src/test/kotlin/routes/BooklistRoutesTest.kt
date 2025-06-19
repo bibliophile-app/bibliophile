@@ -15,6 +15,7 @@ import io.ktor.server.testing.*
 
 import com.bibliophile.models.*
 import com.bibliophile.utils.*
+import com.bibliophile.BooklistConstants.DEFAULT_LIST_NAME
 
 class BooklistRoutesTest {
 
@@ -186,6 +187,19 @@ class BooklistRoutesTest {
     }
 
     @Test
+    fun `test get booklist by userID`() = testApplication {
+        application { setupTestModule() }
+
+        val sessionCookie = client.registerAndLoginUser("test@example.com", "testuser", "password123")
+        val createResponse = client.createBooklist(sessionCookie, "Booklist 1", "Description 1")
+        
+        val response = client.get("/booklists/user/testuser")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertTrue(response.bodyAsText().contains("Booklist 1"))
+    }
+
+    @Test
     fun `test get non-existent booklist`() = testApplication {
         application { setupTestModule() }
 
@@ -235,7 +249,7 @@ class BooklistRoutesTest {
         val sessionCookie = client.registerAndLoginUser("test@example.com", "testuser", "password123")
 
         val response = client.addBookToBooklist(sessionCookie, 999, "book123")
-        assertEquals(HttpStatusCode.Conflict, response.status)
+        assertEquals(HttpStatusCode.Forbidden, response.status)
     }
 
     @Test
@@ -361,4 +375,31 @@ class BooklistRoutesTest {
         assertEquals(HttpStatusCode.Forbidden, updateResponse.status)
         assertTrue(updateResponse.bodyAsText().contains("don't own this booklist"))
     }
+
+    @Test
+    fun `test get default booklist for user`() = testApplication {
+        application { setupTestModule() }
+
+        val sessionCookie = client.registerAndLoginUser("user@example.com", "testuser", "pass123")
+       
+        val response = client.get("booklists/user/testuser/default") {
+            header(HttpHeaders.Cookie, sessionCookie)
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        val responseBody = response.bodyAsText()
+        assertTrue(responseBody.contains(DEFAULT_LIST_NAME))
+    }
+
+    @Test
+    fun `test get default booklist for user not found`() = testApplication {
+        application { setupTestModule() }
+
+        client.registerAndLoginUser("other@example.com", "otheruser", "pass123")
+
+        val response = client.get("booklists/user/nouser/default")
+
+        assertEquals(HttpStatusCode.NotFound, response.status)
+    }
+
 }

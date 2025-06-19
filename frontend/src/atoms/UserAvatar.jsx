@@ -1,8 +1,8 @@
 import { Avatar } from '@mui/material'
 
-function UserAvatar({ username = '' }) {
+function UserAvatar({ username = '', sx }) {
   return (
-    <Avatar sx={{ bgcolor: 'background.muted' }}>
+    <Avatar sx={{ color: 'neutral.main', bgcolor: 'background.muted', ...sx }}>
         {username.charAt(0).toUpperCase()}
       </Avatar>
   )

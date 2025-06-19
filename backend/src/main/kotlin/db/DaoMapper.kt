@@ -18,13 +18,6 @@ fun daoToModel(dao: UserDAO) = User(
     passwordHash = dao.passwordHash
 )
 
-fun daoToModel(dao: BooklistDAO) = Booklist(
-    id = dao.id.value,
-    userId = dao.userId.value,
-    listName = dao.listName,
-    listDescription = dao.listDescription ?: "",
-)
-
 fun daoToModel(dao: QuoteDAO) = Quote (
     id = dao.id.value,
     userId = dao.userId.value,
