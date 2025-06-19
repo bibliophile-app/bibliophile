@@ -12,7 +12,7 @@ function Profile() {
 
       <h2>{user.username}'s booklists</h2>
       <ul>
-        {user.booklists.map(list => (
+        {user.booklists?.map(list => (
           <li key={list.id}>{list.listName}</li>
         ))}
       </ul>
@@ -26,7 +26,7 @@ function Profile() {
 
       <h2>{user.username}'s reviews</h2>
       <ul>
-        {user.reviews.map(r => (
+        {user.reviews?.map(r => (
           <li key={r.id}>
             <strong>{r.isbn}</strong> — {r.rating / 2}/5
             <p>{r.content}</p>

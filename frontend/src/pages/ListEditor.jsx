@@ -123,7 +123,7 @@ function ListEditorPage() {
       onConfirm: async () => {
         try {
           await deleteList(id);
-          navigate('/');
+          navigate(`${user}/lists`);
         } catch (error) {
           notify({ message: 'Erro ao deletar lista', severity: 'error' });
         }
