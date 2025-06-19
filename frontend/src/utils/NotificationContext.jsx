@@ -59,7 +59,7 @@ function NotificationProvider({ children }) {
         open={toastState.open}
         autoHideDuration={toastState.duration}
         onClose={handleToastClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
       >
         <Alert
           onClose={handleToastClose}

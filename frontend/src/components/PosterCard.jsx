@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, Tooltip, IconButton } from '@mui/material';
-import { Close as CloseIcon } from '@mui/icons-material';
 import { tooltipClasses } from '@mui/material/Tooltip';
 import { Link as RouterLink } from 'react-router-dom';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 import BookImage from '../atoms/BookImage';
 import useOpenLibrary from '../utils/useOpenLibrary';
@@ -53,22 +53,22 @@ function PosterCard({
         <IconButton
           onClick={() => onDelete(book)}
           sx={{
-            p: 0,
             zIndex: 1,
-            width: '12px',
-            height: '12px',
+            p: '8px',
+            width: '16px',
+            height: '16px',
             
             position: 'absolute',
-            top: '-3px',
-            left: '-3px',
-            backgroundColor: '#CFD8DCDD',
+            top: '6px',
+            right: '6px',
+            backgroundColor: 'neutral.secondary',
             '&:hover': {
-              backgroundColor: 'warning.main',
+              backgroundColor: 'error.main',
               color: 'white.main',
             },
           }}
         >
-          <CloseIcon sx={{ fontSize: '12px', color: 'inherit' }} />
+          <CloseRoundedIcon sx={{ fontSize: '16px', color: 'inherit' }} />
         </IconButton>
       )}
 

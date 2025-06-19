@@ -37,8 +37,6 @@ object UserRepository {
         return UserProfileResponse(
             id = user.id,
             username = user.username,
-            reviews = ReviewRepository.findByUserId(id),
-            booklists = BooklistRepository.findByUserId(id),
             quotes = QuoteRepository.findByUserId(id)
         )
     }

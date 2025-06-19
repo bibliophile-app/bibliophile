@@ -137,9 +137,7 @@ class UserRepositoryTest {
         val profile = UserRepository.findProfileById(user.id!!)
         assertNotNull(profile)
         assertEquals("testuser", profile.username)
-        assertTrue(profile.booklists.isEmpty())
         assertTrue(profile.quotes.isEmpty())
-        assertTrue(profile.reviews.isEmpty())
     }
 
     @Test

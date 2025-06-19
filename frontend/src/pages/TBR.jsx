@@ -79,7 +79,7 @@ function TBRPage() {
             <Box sx={{ display: 'flex', flexDirection: 'column', width: '75%' }}>
                 <Box>
                     <Typography variant='body' sx={{ fontSize: '1rem', textTransform: 'lowercase' }}>
-                        você quer ler {entry.books.length} livros
+                        você quer ler {entry.books.length} livro{entry.books.length == 1 ? '' : 's'}
                     </Typography>
                 </Box> 
 

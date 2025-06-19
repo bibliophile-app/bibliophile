@@ -8,16 +8,18 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-import Divider from '../../atoms/Divider';
-import TextArea from '../../atoms/TextArea';
+import Divider from '@/atoms/Divider';
+import TextArea from '@/atoms/TextArea';
+import BookImage from '@/atoms/BookImage';
+import { handleSafeNavigation } from '@/utils/handlers';
 import SearchAutocomplete from '../search/SearchAutocomplete';
-import BookImage from '../../atoms/BookImage';
 
 const COVER_WIDTH = 60
 const COVER_HEIGHT = 90
 
 function ListBuilder({ list = null, onSave, onDelete, onAddBooks, onRemoveBooks }) {
   const isEdit = !!list;
+  const safeBack = handleSafeNavigation();
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -76,7 +78,7 @@ function ListBuilder({ list = null, onSave, onDelete, onAddBooks, onRemoveBooks 
           {isEdit ? 'Editar Lista' : 'Nova Lista'}
         </Typography>
 
-        <Button variant="contained" color="background.main" sx={{ ml: 'auto' }}>
+        <Button variant="contained" onClick={() => safeBack()} sx={{ ml: 'auto' }}>
           CANCELAR
         </Button>
       </Box>

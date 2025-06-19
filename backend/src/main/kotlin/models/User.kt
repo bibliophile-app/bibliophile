@@ -31,7 +31,5 @@ data class LoginRequest(
 data class UserProfileResponse(
     val id: Int,
     val username: String,
-    val booklists: List<Booklist>,
     val quotes: List<Quote>,
-    val reviews: List<Review>
 )

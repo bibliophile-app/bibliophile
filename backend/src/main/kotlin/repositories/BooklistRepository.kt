@@ -44,16 +44,22 @@ object BooklistRepository {
             }
     }
 
-    /** Busca booklists por usuário */
-    suspend fun findByUserId(userId: Int): List<Booklist> = suspendTransaction {
-        (BooklistsTable innerJoin UsersTable)
-            .select { BooklistsTable.userId eq userId }
-            .map { row ->
-                Booklist(
-                    id = row[BooklistsTable.id].value,
-                    username = row[UsersTable.username],
-                    listName = row[BooklistsTable.listName],
-                    listDescription = row[BooklistsTable.listDescription] ?: "",
+    /** Busca booklists por usuário, incluindo os livros */
+    suspend fun findByUserId(userId: Int): List<BooklistWithBooks> = suspendTransaction {
+        val username = UsersTable
+            .select { UsersTable.id eq userId }
+            .singleOrNull()?.get(UsersTable.username) ?: return@suspendTransaction emptyList()
+
+        BooklistDAO.find { BooklistsTable.userId eq userId }
+            .map { booklistDAO ->
+                val books = BooklistBookDAO.find { BooklistBooksTable.booklistId eq booklistDAO.id }
+                    .map { it.bookId }
+                BooklistWithBooks(
+                    id = booklistDAO.id.value,
+                    username = username,
+                    listName = booklistDAO.listName,
+                    listDescription = booklistDAO.listDescription ?: "",
+                    books = books
                 )
             }
     }

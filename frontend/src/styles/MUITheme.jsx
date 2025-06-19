@@ -11,7 +11,7 @@ const theme = createTheme({
       default: '#1A242F',   // fundo geral (petróleo escuro)
       surface: '#0F151B',   // navbar, painéis
       contrast: '#556677',  // botões, inputs elevados
-      muted:   '#44515C',   // divisores, ícones passivos
+      muted:   '#334355',   // divisores, ícones passivos
     },
 
     neutral: {
@@ -30,7 +30,7 @@ const theme = createTheme({
     yellow: { main: '#FFD700' },
     orange: { main: '#FFA726' },
     brown:  { main: '#8E7143' },
-    green:  { main: '#4CE894' },
+    green:  { main: '#00E676' },
     cyan:   { main: '#4CCCD3' },
     pink:   { main: '#E06BB0' },
     purple: {

@@ -59,6 +59,7 @@ function TextArea({
   maxRows = 12,
   InputProps,
   InputLabelProps,
+  slotProps,
   ...props
 }) {
   const handleChange = (e) => {
@@ -84,6 +85,7 @@ function TextArea({
         onChange={handleChange}
         customHeight={customHeight}
         {...InputProps}
+        {...slotProps}
         {...props}
       />
 

@@ -3,8 +3,8 @@ import { Box, Typography } from '@mui/material';
 import PosterCard from './PosterCard';
 import ReviewPosterCard from './reviews/ReviewPosterCard';
 
-const CARD_WIDTH = 128;
-const CARD_HEIGHT = 196;
+const CARD_WIDTH = 140;
+const CARD_HEIGHT = 210;
 
 function GridSection({ title, description, items, onSelect, type="book" }) {
   return (

@@ -13,8 +13,8 @@ import BookImage from '@/atoms/BookImage';
 import UserAvatar from '@/atoms/UserAvatar';
 import ReviewForm from './ReviewForm';
 
-const COVER_WIDTH =  62;
-const COVER_HEIGHT = 100;
+const COVER_WIDTH =  66;
+const COVER_HEIGHT = 105;
 
 function ReviewCard ({
   review,

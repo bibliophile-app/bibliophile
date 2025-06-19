@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Typography, Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 
@@ -6,9 +6,9 @@ import Divider from '@/atoms/Divider';
 import PosterCard from './PosterCard';
 import ReviewPosterCard from './reviews/ReviewPosterCard';
 
-const CARD_WIDTH = 131;
+const CARD_WIDTH = 128;
 const CARD_HEIGHT = 196;
-const CARD_GAP = 10;
+const CARD_GAP = 4;
 
 function ListSection({ pathTo, title, items, type = "book" }) {
   const navigate = useNavigate();
@@ -23,7 +23,6 @@ function ListSection({ pathTo, title, items, type = "book" }) {
       const containerWidth = container.offsetWidth;
       const totalCardWidth = CARD_WIDTH + CARD_GAP;
       const count = Math.floor((containerWidth + CARD_GAP) / totalCardWidth);
-      console.log(count)
       setMaxVisible(count);
     });
 
@@ -32,6 +31,7 @@ function ListSection({ pathTo, title, items, type = "book" }) {
   }, []);
 
   const visibleItems = items?.slice(0, maxVisible) ?? [];
+  const missing = Math.max(0, maxVisible - visibleItems.length);
 
   return (
     <Box>
@@ -52,20 +52,28 @@ function ListSection({ pathTo, title, items, type = "book" }) {
         </Button>
       </Box>
 
-      <Divider sx={{ opacity: 0.5, mb: 2  }} />
+      <Divider sx={{ opacity: 0.5, mb: 1 }} />
 
-      {/* Itens (visíveis dinamicamente) */}
-      {visibleItems && (
-        <Box ref={containerRef} sx={{ display: 'flex', gap: `${CARD_GAP}px` }}>
-          {visibleItems.map((item, index) =>
-            type === 'book' ? (
-              <PosterCard key={index} bookId={item} width={CARD_WIDTH} height={CARD_HEIGHT}/>
-            ) : (
-              <ReviewPosterCard key={index} review={item} width={CARD_WIDTH} height={CARD_HEIGHT} />
-            )
-          )}
-        </Box>
-      )}
+      {/* Itens visíveis + preenchimento com Skeletons */}
+      <Box ref={containerRef} sx={{ display: 'flex', gap: `${CARD_GAP}px`, px: 1 }}>
+        {visibleItems.map((item, index) =>
+          type === 'book' ? (
+            <PosterCard key={index} bookId={item} width={CARD_WIDTH} height={CARD_HEIGHT} />
+          ) : (
+            <ReviewPosterCard key={index} review={item} width={CARD_WIDTH} height={CARD_HEIGHT} />
+          )
+        )}
+        {Array.from({ length: missing }).map((_, i) => (
+          <Skeleton
+            animation={false}
+            key={`skeleton-${i}`}
+            variant="rectangular"
+            width={CARD_WIDTH}
+            height={CARD_HEIGHT}
+            sx={{ borderRadius: 1, bgcolor: 'rgba(0,0,0,0.2)' }}
+          />
+        ))}
+      </Box>
     </Box>
   );
 }

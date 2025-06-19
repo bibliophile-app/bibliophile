@@ -1,14 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Box, Typography, Button } from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 import Divider from '@/atoms/Divider'
 import LoadingBox from '@/atoms/LoadingBox';
+import { useAuth } from '@/utils/AuthContext';
 import { searchByUser } from '@/utils/lists';
 import { handleSafeNavigation } from '@/utils/handlers';
 import { useNotification } from '@/utils/NotificationContext';
 import ListSection from '../components/ListSection';
+
+function StartListButton() {
+    const navigate = useNavigate();
+    const { isAuth, handleSignin } = useAuth();
+
+    function handleClick() {
+        if (isAuth()) navigate('/list/new');
+        else handleSignin();
+    }
+
+    return (
+        <Button
+          onClick={handleClick}
+          variant="contained"
+          sx={{
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            color: '#b0bec5',
+            textTransform: 'none',
+            borderRadius: '8px',
+            fontWeight: 500,
+            px: 2,
+            py: .5,
+            fontSize: '0.95rem'
+          }}
+        >
+            Crie sua própria lista
+        </Button>
+  );
+}
 
 function ListsPage() {
     const safeBack = handleSafeNavigation();
@@ -48,9 +78,16 @@ function ListsPage() {
 
     if (loading)
         return <LoadingBox />
-    else return (
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ display: 'flex', gap: 0.5 }}>
+     return (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 1, mb: 4 }}>
+            <Typography variant='h5' sx={{ alignSelf: 'center' }}>
+                Descubra, organize e compartilhe seus livros favoritos criando listas personalizadas.
+            </Typography>
+            <StartListButton />
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
             <Typography variant='span'>
                 listas por
             </Typography>
@@ -64,31 +101,32 @@ function ListsPage() {
             >
                 {username}
             </Typography>
-        </Box>
-        
-        <Divider sx={{ my: 1 }}/>
+          </Box>
+          
+          <Divider sx={{ mt: 1, mb: 2 }}/>
 
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {entries && entries.length > 0 ? (
                 entries
-                    .filter(e => e.listName != "___DEFAULT___")
-                    .map((entry, index) => (
-                        <ListSection key={index}
-                            id={entry.id}
-                            pathTo={`/${entry.id}/list`}
-                            title={entry.listName}
-                            items={entry?.items}
-                            sx={{ mb: 2 }}
-                        />
+                  .filter(e => e.listName != "___DEFAULT___")
+                  .sort((a, b) => b?.books.length - a?.books.length)
+                  .map((entry, index) => (
+                    <ListSection key={index}
+                        id={entry.id}
+                        pathTo={`/${entry?.id}/list`}
+                        title={entry?.listName}
+                        items={entry?.books}
+                        sx={{ mb: 2 }}
+                    />
                 ))
             ) : ( 
                 <Typography variant="p" sx={{ mb: 2 }}>
-                    Parece que ainda não há listas por {username}...
+                  Parece que ainda não há listas por {username}...
                 </Typography>
             )}
+          </Box>
         </Box>
-      </Box>
-    );
+        );
 }
 
 export default ListsPage;

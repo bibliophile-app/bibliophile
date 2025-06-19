@@ -133,7 +133,7 @@ function ReviewForm({
     <Modal 
       open={open} 
       onClose={handleAttemptClose} 
-      sx={{ width: { xs: '100%', md: '50%' } }}
+      sx={{ width: { xs: '100%', sm: '500px' } }}
     >  
       {loading ? <LoadingBox /> : (
         <React.Fragment>
@@ -199,9 +199,9 @@ function ReviewForm({
             </Box>
           </Box>
 
-          <Divider />
-
-          <Box sx={{ px: 2, py: 1, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+          <Box 
+            sx={{ px: 2, py: 1, display: 'flex', justifyContent: 'flex-end', gap: 2, bgcolor: 'background.muted' }}
+          >
             {mode === 'edit' && (
               <Button color="error" variant="contained" sx={{ color: '#fefefe' }} onClick={handleAttemptDelete}>
                 REMOVER

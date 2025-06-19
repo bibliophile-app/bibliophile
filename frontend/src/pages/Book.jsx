@@ -20,22 +20,20 @@ import ReviewForm from '@/components/reviews/ReviewForm';
 import ExpandableText from '@/components/ExpandableText';
 import ReviewSection from '@/components/reviews/ReviewSection';
 import ReviewHistogram from '@/components/reviews/ReviewHistogram';
+import AddToListForm from '../components/lists/ListForm';
 
-function ActionsMenu({ handleReview, bookId }) {
+function ActionsMenu({ handleReview, book }) {
   const { notify } = useNotification();
   const { user, isAuth, handleSignin } = useAuth();
+  
   const [ lists, setLists ] = useState([]);
+  const [ listFormOpen, setListFormOpen ] = useState(false);
+  const [ reviewFormOpen, setReviewFormOpen ] = useState(false);
 
-  useEffect(() => {
-    if (!isAuth()) return;
-
-    async function fetchUserLists() {
+  async function fetchUserLists() {
       const response = await searchByUser(user.id);
       setLists(response);
-    }
-
-    fetchUserLists();
-  }, [user]);
+  }
 
   async function addTBR(bookId) {
       if (!lists || !bookId) return;
@@ -53,20 +51,36 @@ function ActionsMenu({ handleReview, bookId }) {
       }
   }
 
+  async function addToLists(listIds, bookId) {
+    try {
+      for (const listId of listIds) {
+        await addBook(listId, bookId);   
+      }
+    } catch {
+      notify({ message: 'Erro ao adicionar livro à lista', severity: 'error'});
+    }
+    await fetchUserLists();
+  }
+
+  useEffect(() => {
+    if (!isAuth()) return;
+    fetchUserLists();
+  }, [user]);
+
   const actions = isAuth()
     ? [
         {
           label: 'Quero ler',
           icon: <PlaylistAdd />,
-          onClick: () => addTBR(bookId),
+          onClick: () => addTBR(book.id),
         },
         {
           label: 'Avaliar ou registrar novamente...',
-          onClick: handleReview,
+          onClick: () => setReviewFormOpen(true),
         },
         {
           label: 'Adicionar às listas...',
-          onClick: () => console.log('Abrir listas'),
+          onClick: () => setListFormOpen(true),
         },
       ]
     : [
@@ -76,7 +90,25 @@ function ActionsMenu({ handleReview, bookId }) {
         },
       ];
 
-  return <ActionsBase actions={actions} />;
+  return ( 
+      <React.Fragment>
+          <ActionsBase actions={actions} />
+          <AddToListForm 
+            book={book}
+            open={listFormOpen}
+            lists={lists?.filter(l => l.listName !== '___DEFAULT___')}
+            onClose={() => setListFormOpen(false)}
+            onSubmit={(ids, bookId) => addToLists(ids, bookId)}
+          />
+          
+          <ReviewForm
+            book={book}
+            open={reviewFormOpen}
+            onClose={() => setReviewFormOpen(false)}
+            onSubmit={() => { handleReview(); setReviewFormOpen(false); }}
+          />
+      </React.Fragment>
+  );
 }
 
 function BookPage() {
@@ -90,7 +122,6 @@ function BookPage() {
 
   const [book, setBook] = useState(null);
   const [reviews, setReviews] = useState({});
-  const [formOpen, setFormOpen] = useState(false);
 
   const { fetchResults, loading } = useOpenLibrary({
     onError: () => {
@@ -123,77 +154,67 @@ function BookPage() {
 
   function handleReviewSubmit() {
     fetchReviews();
-    setFormOpen(false);
   };
 
   if (loading || !book) return <LoadingBox />;
   
   return (
-    <React.Fragment>
-      <Stack spacing={4} direction="row">
-        {isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: '100%' }} /> }
+    <Stack spacing={4} direction="row">
+      {isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: '100%' }} /> }
 
-        <Stack spacing={2} sx={{ flex: 1 }}>
-          <BookHeader
-            title={book.title}
-            year={book.publish_year}
-            authors={book.authors}
-          />
+      <Stack spacing={2} sx={{ flex: 1 }}>
+        <BookHeader
+          title={book.title}
+          year={book.publish_year}
+          authors={book.authors}
+        />
 
-          <Divider />
-          <ExpandableText text={book.description} />
+        <Divider />
+        <ExpandableText text={book.description} />
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {isAuth() && (
-              <ReviewSection
-                title="Minhas avaliações"
-                reviews={reviews.user?.filter(e => !!e.content?.trim())}
-              />
-            )}
-
-            {isAuth() && reviews.friends?.length > 0 && (
-              <ReviewSection
-                title="Avaliações de amigos"
-                reviews={reviews.friends?.filter(e => !!e.content?.trim())}
-              />
-            )}
-
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {isAuth() && (
             <ReviewSection
-              title="Avaliações"
-              reviews={reviews.others?.filter(e => !!e.content?.trim())}
+              title="Minhas avaliações"
+              reviews={reviews.user?.filter(e => !!e.content?.trim())}
             />
-          </Box>
-        </Stack>
+          )}
 
-        <Box
-          sx={{
-            gap: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            width: { xs: 'auto', sm: 180, md: 240 },
-          }}
-        >
-          {!isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 180, height: 270 }} /> }
+          {isAuth() && reviews.friends?.length > 0 && (
+            <ReviewSection
+              title="Avaliações de amigos"
+              reviews={reviews.friends?.filter(e => !!e.content?.trim())}
+            />
+          )}
 
-          <ActionsMenu handleReview={() => setFormOpen(true)} bookId={book.id} />
-
-          <Box>
-            <Typography variant="h5" gutterBottom>
-              Avaliações
-            </Typography>
-            <Divider sx={{ width: '100%', mb: 2 }} />
-            <ReviewHistogram reviewsData={reviews} />
-          </Box>
+          <ReviewSection
+            title="Avaliações"
+            reviews={reviews.others?.filter(e => !!e.content?.trim())}
+          />
         </Box>
       </Stack>
 
-      <ReviewForm
-        book={book}
-        open={formOpen}
-        onClose={() => setFormOpen(false)}
-        onSubmit={handleReviewSubmit}
-      />
-    </React.Fragment>
+      <Box
+        sx={{
+          gap: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          width: { xs: 'auto', sm: 175, md: 240 },
+        }}
+      >
+        {!isMdUp && <BookImage src={book.coverUrl} alt={`Capa de ${book.title}`} sx={{ width: 175, height: 270 }} /> }
+
+        <ActionsMenu handleReview={handleReviewSubmit} book={book} />
+
+        <Box>
+          <Typography variant="h5" gutterBottom>
+            Avaliações
+          </Typography>
+          <Divider sx={{ width: '100%', mb: 2 }} />
+          <ReviewHistogram reviewsData={reviews} />
+        </Box>
+      </Box>
+    </Stack>
   );
 }
 
