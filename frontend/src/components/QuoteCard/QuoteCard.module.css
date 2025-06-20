@@ -1,0 +1,41 @@
+.quoteCard {
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  width: 100%; /* Ajuste a largura conforme necessário */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  color: #eee;
+}
+
+.bookCover {
+  width: 80px; /* Largura da capa */
+  height: 120px; /* Altura da capa */
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.quoteContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.quoteText {
+  font-size: 1em;
+  font-style: italic;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.quoteSource {
+  font-size: 0.85em;
+  color: #aaa;
+}
+
+.bookTitle {
+  font-weight: bold;
+}
