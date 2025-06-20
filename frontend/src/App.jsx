@@ -12,6 +12,7 @@ import BookPage from './pages/Book';
 import DiaryPage from './pages/Diary';
 import ListsPage from './pages/Lists';
 import ReviewsPage from './pages/Reviews';
+import QuotesPage from './pages/Quotes';
 import SearchPage from './pages/SearchPage';
 import ListEditor from './pages/ListEditor';
 import NavBar from './components/navigation/NavBar';
@@ -51,6 +52,7 @@ function App() {
 						<Route path=":username/profile" element={<Profile />} />
 						<Route path=":username/reviews" element={<ReviewsPage />} />
 						<Route path=":username/lists" element={<ListsPage />} />
+						<Route path=":username/quotes" element={<QuotesPage />} />
 						<Route path=":id/list" element={<ListPage />} />
 						<Route path="/list/new" element={<ListEditor />} />
 						<Route path="/:id/list/edit" element={<ListEditor />} />

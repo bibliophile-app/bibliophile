@@ -6,6 +6,7 @@ import RecentReviewsSection from '../components/RecentReviewsSection/RecentRevie
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
 import { searchByUser as searchReviewsByUser } from '../utils/reviews';
+import { searchByUser as searchListsByUser } from '../utils/lists';
 import { Box } from '@mui/material';
 
 const fetchQuotesByUser = async (username) => {
@@ -21,6 +22,7 @@ const UserProfilePage = () => {
   const [user, setUser] = useState(null);
   const [quotes, setQuotes] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,15 +32,26 @@ const UserProfilePage = () => {
       try {
         // Decide usuário
         const currentUser = username === loggedUser?.username ? loggedUser : { username, name: username, metrics: { booksRated: 0, lists: 0, following: 0, followers: 0 } };
-        // Busca reviews e quotes reais
-        const [userReviews, userQuotes] = await Promise.all([
+        // Busca reviews, quotes e listas reais
+        const [userReviews, userQuotes, userLists] = await Promise.all([
           searchReviewsByUser(username),
-          fetchQuotesByUser(username)
+          fetchQuotesByUser(username),
+          searchListsByUser(username)
         ]);
+        // Calcula livros únicos
+        const uniqueBooks = new Set(userReviews.map(r => r.bookId)).size;
+        // Followers/following: se vierem do backend, use, senão mantenha 0
+        const metrics = {
+          booksRated: uniqueBooks,
+          lists: userLists.length,
+          following: currentUser.metrics?.following ?? 0,
+          followers: currentUser.metrics?.followers ?? 0,
+        };
         if (isMounted) {
-          setUser(currentUser);
+          setUser({ ...currentUser, metrics });
           setReviews(userReviews);
           setQuotes(userQuotes);
+          setLists(userLists);
           setLoading(false);
         }
       } catch (e) {
@@ -51,14 +64,14 @@ const UserProfilePage = () => {
 
   if (loading || !user) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', maxWidth: 900, width: '100%', margin: '0 auto', minHeight: '100vh', px: { xs: 2, sm: 3, md: 0 } }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', width: '100%', minHeight: '100vh', px: 0 }}>
         Carregando perfil...
       </Box>
     );
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', maxWidth: 900, width: '100%', margin: '0 auto', minHeight: '100vh', px: { xs: 2, sm: 3, md: 0 } }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <UserProfileHeader user={user} />
       <NavigationTabs user={user} />
       <QuotesSection quotes={quotes} user={user} />
