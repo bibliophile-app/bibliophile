@@ -58,7 +58,7 @@ function DesktopToolbar({ options, user }) {
 					}}
 					sx={{ textTransform: 'none', fontWeight: 500 }}
 				>
-					Logout
+					Sair
 				</Button>
 			)}
 			

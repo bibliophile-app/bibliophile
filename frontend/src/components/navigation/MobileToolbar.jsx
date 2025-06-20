@@ -83,7 +83,7 @@ function MobileToolbar({ user, options }) {
 								});
 							}}
 						>
-							Logout
+							Sair
 						</Button>
 					)}
 

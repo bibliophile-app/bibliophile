@@ -27,10 +27,15 @@ function AddToListForm({ open, onClose, onSubmit, book, lists=[] }) {
     });
   };
 
+  function handleClose() {
+    setSearch('');
+    onClose();
+  }
+
   function handleSubmit() {
     onSubmit(Array.from(selectedListIds), book.id);
     setSelectedListIds(new Set());
-    onClose();
+    handleClose();
   }
 
   const filtered = lists.filter(l => l.listName.toLowerCase().includes(search.toLowerCase()));
@@ -38,7 +43,7 @@ function AddToListForm({ open, onClose, onSubmit, book, lists=[] }) {
   return (
     <Modal 
       open={open} 
-      onClose={onClose}
+      onClose={handleClose}
     >
       <Box>
         {/* Cabeçalho */}
@@ -145,7 +150,7 @@ function AddToListForm({ open, onClose, onSubmit, book, lists=[] }) {
             sx={{ color: '#fefefe' }}
             onClick={handleSubmit}
           >
-            ADD
+            ADICIONAR
           </Button>
         </Box>
       </Box>

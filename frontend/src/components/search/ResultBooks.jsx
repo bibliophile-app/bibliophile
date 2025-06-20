@@ -42,11 +42,11 @@ function ResultBooks({ books, paginatedBooks }) {
                 />
 
                 <Box sx={{ ml: 2 }}>
-                    <Typography variant="h7" fontWeight="bold" color='white' gutterBottom>
+                    <Typography variant="h5" fontWeight="bold" color='white' gutterBottom>
                         {book.title}
                     </Typography>
-                    <Typography variant="body2">
-                        {book.author}
+                    <Typography variant="p" color="neutral.main" >
+                        {book.authors}
                     </Typography>
                 </Box>
             </StyledItem>
