@@ -6,7 +6,7 @@ import RecentReviewsSection from '../components/RecentReviewsSection/RecentRevie
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
 import { searchByUser as searchReviewsByUser } from '../utils/reviews';
-import styles from './UserProfilePage.module.css';
+import { Box } from '@mui/material';
 
 const fetchQuotesByUser = async (username) => {
   // Busca quotes do usuário pelo endpoint já existente
@@ -50,16 +50,20 @@ const UserProfilePage = () => {
   }, [username, loggedUser]);
 
   if (loading || !user) {
-    return <div className={styles.profilePageContainer}>Carregando perfil...</div>;
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', maxWidth: 900, width: '100%', margin: '0 auto', minHeight: '100vh', px: { xs: 2, sm: 3, md: 0 } }}>
+        Carregando perfil...
+      </Box>
+    );
   }
 
   return (
-    <div className={styles.profilePageContainer}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', maxWidth: 900, width: '100%', margin: '0 auto', minHeight: '100vh', px: { xs: 2, sm: 3, md: 0 } }}>
       <UserProfileHeader user={user} />
-      <NavigationTabs />
-      <QuotesSection quotes={quotes} />
-      <RecentReviewsSection reviews={reviews} />
-    </div>
+      <NavigationTabs user={user} />
+      <QuotesSection quotes={quotes} user={user} />
+      <RecentReviewsSection reviews={reviews} user={user} />
+    </Box>
   );
 };
 
