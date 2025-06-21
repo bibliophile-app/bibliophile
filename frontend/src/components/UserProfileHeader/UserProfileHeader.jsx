@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import { Avatar, Box, Typography, Button } from '@mui/material';
 import { useAuth } from '../../utils/AuthContext';
 import { Link } from 'react-router-dom';
+import BottomUserProfileContainer from '../BottomUserProfileContainer';
 
 const UserAvatar = styled(Avatar)(({ theme }) => ({
   display: 'flex',
@@ -67,7 +68,7 @@ const ActionButton = styled(Button)(({ theme }) => ({
 
 const UserProfileHeader = ({ user }) => {
   const { user: loggedUser } = useAuth();
-  const { name, username, metrics = {} } = user;
+  const { name, username, metrics = {}, id } = user;
   const safeMetrics = {
     booksRated: metrics.booksRated ?? 0,
     lists: metrics.lists ?? 0,
@@ -90,11 +91,7 @@ const UserProfileHeader = ({ user }) => {
             <Typography variant="h5" sx={{ fontWeight: 700, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '2rem', m: 0, lineHeight: '60px', display: 'flex', alignItems: 'center', height: 60 }}>
               {displayName}
             </Typography>
-            {isOwnProfile ? (
-              <ActionButton variant="contained" sx={{ height: 28, minHeight: 24, fontSize: '0.85rem', px: 1.5, py: 0.5, alignSelf: 'center', background: '#567', color: '#c8d4e0', borderRadius: '3px', '&:hover': { background: '#456' } }}>EDITE O PERFIL</ActionButton>
-            ) : (
-              <ActionButton variant="contained" sx={{ height: 28, minHeight: 24, fontSize: '0.85rem', px: 1.5, py: 0.5, alignSelf: 'center', background: '#567', color: '#c8d4e0', borderRadius: '3px', '&:hover': { background: '#456' } }}>FOLLOW</ActionButton>
-            )}
+            <BottomUserProfileContainer profileUser={user} />
           </Box>
         </Box>
         {/* Métricas sempre à direita */}
