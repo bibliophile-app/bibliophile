@@ -50,12 +50,20 @@ const QuotesSection = ({ quotes, user }) => {
         </Button>
       </Box>
       <Divider sx={{ borderColor: '#334355', mb: 2 }} />
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 2, justifyItems: 'start' }}>
-        {shownQuotes.map(quote => (
-          <QuoteCard key={quote.id} quote={quote} />
-        ))}
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', rowGap: 1, columnGap: 2, justifyItems: 'start' }}>
+        {shownQuotes.length > 0 ? (
+          shownQuotes.map(quote => (
+            <QuoteCard key={quote.id} quote={quote} />
+          ))
+        ) : (
+          <Box sx={{ gridColumn: '1/-1', width: '100%' }}>
+            <Typography variant="body2" sx={{ color: '#aaa', px: 1, py: 2 }}>
+              Nenhuma citação encontrada.
+            </Typography>
+          </Box>
+        )}
         {/* Preenche espaços vazios para manter alinhamento à esquerda */}
-        {Array.from({ length: emptySlots }).map((_, i) => (
+        {shownQuotes.length > 0 && Array.from({ length: emptySlots }).map((_, i) => (
           <Box key={i} sx={{ visibility: 'hidden', minWidth: 340, maxWidth: 420 }} />
         ))}
       </Box>

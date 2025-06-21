@@ -67,6 +67,7 @@ const NavigationTabs = ({ user }) => {
     { label: 'Perfil', path: `/${routeUsername}/profile` },
     { label: 'Resenhas', path: `/${routeUsername}/reviews` },
     { label: 'Diário', path: `/${routeUsername}/diary` },
+    { label: 'Citações', path: `/${routeUsername}/quotes` },
     { label: 'Listas', path: `/${routeUsername}/lists` },
   ];
 

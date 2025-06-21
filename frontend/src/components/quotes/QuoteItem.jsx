@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import FormatQuoteOutlinedIcon from '@mui/icons-material/FormatQuoteOutlined';
+import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import Divider from '@/atoms/Divider';
 
 /**
@@ -23,7 +23,7 @@ function QuoteItem({ quote, onClick }) {
         }}
         onClick={onClick}
       >
-        <FormatQuoteOutlinedIcon sx={{ color: 'primary.main', fontSize: 28 }} />
+        <FormatQuoteIcon sx={{ color: '#CFD8DC', fontSize: 30, opacity: 0.4 }} />
         <Typography
           variant="body2"
           sx={{
@@ -40,7 +40,7 @@ function QuoteItem({ quote, onClick }) {
           {quote.content}
         </Typography>
       </Box>
-      <Divider />
+      <Divider sx={{ opacity: 0.5, my: 1 }} />
     </>
   );
 }

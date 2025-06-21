@@ -10,8 +10,8 @@ import { searchByUser as searchListsByUser } from '../utils/lists';
 import { Box } from '@mui/material';
 
 const fetchQuotesByUser = async (username) => {
-  // Busca quotes do usuário pelo endpoint já existente
-  const response = await fetch(`/quotes`, { credentials: 'include' });
+  // Busca quotes do usuário correto pelo endpoint /quotes/user/{username}
+  const response = await fetch(`/quotes/user/${username}`, { credentials: 'include' });
   if (!response.ok) return [];
   return await response.json();
 };

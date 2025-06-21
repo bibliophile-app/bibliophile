@@ -14,7 +14,7 @@ const UserAvatar = styled(Avatar)(({ theme }) => ({
   fontSize: 24,
   alignItems: 'center',
   justifyContent: 'center',
-  color: '#181818', // cor mais escura para o ícone/letra
+  color: theme.palette.neutral.main, // cor mais escura para o ícone/letra
 }));
 
 const MetricLink = styled(Link)(({ theme }) => ({
@@ -80,40 +80,44 @@ const UserProfileHeader = ({ user }) => {
 
   return (
     <Box sx={{ width: '100%', maxWidth: 900, alignSelf: 'center', px: { xs: 2, sm: 3, md: 0 }, mb: 2 }}>
-      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'center', gap: 3 }}>
-        <UserAvatar sx={{ color: '#181818', bgcolor: 'primary.main', flexShrink: 0 }}>
-          {displayName && displayName.length > 0 ? displayName[0].toUpperCase() : '?'}
-        </UserAvatar>
-        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2, height: 60 }}> {/* altura igual ao avatar */}
-          <Typography variant="h5" sx={{ fontWeight: 700, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '2rem', m: 0, lineHeight: '60px', display: 'flex', alignItems: 'center', height: 60 }}>
-            {displayName}
-          </Typography>
-          {isOwnProfile ? (
-            <ActionButton variant="contained" sx={{ height: 28, minHeight: 24, fontSize: '0.85rem', px: 1.5, py: 0.5, alignSelf: 'center', background: '#567', color: '#c8d4e0', borderRadius: '3px', '&:hover': { background: '#456' } }}>EDITE O PERFIL</ActionButton>
-          ) : (
-            <ActionButton variant="contained" sx={{ height: 28, minHeight: 24, fontSize: '0.85rem', px: 1.5, py: 0.5, alignSelf: 'center', background: '#567', color: '#c8d4e0', borderRadius: '3px', '&:hover': { background: '#456' } }}>FOLLOW</ActionButton>
-          )}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0, ml: 21, height: 60 }}> {/* ml aumentado para espaçamento maior */}
-            <MetricLink to={`/${routeUsername}/reviews`}>
-              <MetricValue>{safeMetrics.booksRated}</MetricValue>
-              <MetricLabel>LIVROS</MetricLabel>
-            </MetricLink>
-            <MetricDivider />
-            <MetricLink to={`/${routeUsername}/lists`}>
-              <MetricValue>{safeMetrics.lists}</MetricValue>
-              <MetricLabel>LISTAS</MetricLabel>
-            </MetricLink>
-            <MetricDivider />
-            <MetricLink to={`/${routeUsername}/following`}>
-              <MetricValue>{safeMetrics.following}</MetricValue>
-              <MetricLabel>FOLLOWINGS</MetricLabel>
-            </MetricLink>
-            <MetricDivider />
-            <MetricLink to={`/${routeUsername}/followers`}>
-              <MetricValue>{safeMetrics.followers}</MetricValue>
-              <MetricLabel>FOLLOWERS</MetricLabel>
-            </MetricLink>
+      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between', gap: 3 }}>
+        {/* Avatar e nome sempre à esquerda */}
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+          <UserAvatar >
+            {displayName && displayName.length > 0 ? displayName[0].toUpperCase() : '?'}
+          </UserAvatar>
+          <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2, height: 60 }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '2rem', m: 0, lineHeight: '60px', display: 'flex', alignItems: 'center', height: 60 }}>
+              {displayName}
+            </Typography>
+            {isOwnProfile ? (
+              <ActionButton variant="contained" sx={{ height: 28, minHeight: 24, fontSize: '0.85rem', px: 1.5, py: 0.5, alignSelf: 'center', background: '#567', color: '#c8d4e0', borderRadius: '3px', '&:hover': { background: '#456' } }}>EDITE O PERFIL</ActionButton>
+            ) : (
+              <ActionButton variant="contained" sx={{ height: 28, minHeight: 24, fontSize: '0.85rem', px: 1.5, py: 0.5, alignSelf: 'center', background: '#567', color: '#c8d4e0', borderRadius: '3px', '&:hover': { background: '#456' } }}>FOLLOW</ActionButton>
+            )}
           </Box>
+        </Box>
+        {/* Métricas sempre à direita */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0, height: 60 }}>
+          <MetricLink to={`/${routeUsername}/reviews`}>
+            <MetricValue>{safeMetrics.booksRated}</MetricValue>
+            <MetricLabel>LIVROS</MetricLabel>
+          </MetricLink>
+          <MetricDivider />
+          <MetricLink to={`/${routeUsername}/lists`}>
+            <MetricValue>{safeMetrics.lists}</MetricValue>
+            <MetricLabel>LISTAS</MetricLabel>
+          </MetricLink>
+          <MetricDivider />
+          <MetricLink to={`/${routeUsername}/following`}>
+            <MetricValue>{safeMetrics.following}</MetricValue>
+            <MetricLabel>FOLLOWINGS</MetricLabel>
+          </MetricLink>
+          <MetricDivider />
+          <MetricLink to={`/${routeUsername}/followers`}>
+            <MetricValue>{safeMetrics.followers}</MetricValue>
+            <MetricLabel>FOLLOWERS</MetricLabel>
+          </MetricLink>
         </Box>
       </Box>
       {/* <Divider sx={{ borderColor: '#888', opacity: 0.5, mt: 2, mb: 2 }} /> */}
