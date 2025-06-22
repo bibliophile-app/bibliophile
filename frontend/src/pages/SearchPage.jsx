@@ -7,6 +7,10 @@ import LoadingBox from '../atoms/LoadingBox';
 import useOpenLibrary from '../utils/useOpenLibrary';
 import Categories from '../components/search/Categories';
 import ResultBooks from '../components/search/ResultBooks';
+import ResultUsers from '../components/search/ResultUsers';
+import ResultBooklists from '../components/search/ResultBooklists';
+import { fetchAllUsers } from '../utils/users';
+import { fetchLists } from '../utils/lists';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -27,6 +31,8 @@ function SearchPage() {
   const { query } = useParams();
   const [page, setPage] = useState(1);
   const [results, setResults] = useState([]);
+  const [userResults, setUserResults] = useState([]);
+  const [booklists, setBooklists] = useState([]);
   const [error, setError] = useState(null);
   const [category, setCategory] = useState('Livros');
 
@@ -39,15 +45,44 @@ function SearchPage() {
 
   useEffect(() => {
     if (!query) return;
-    
-    async function getResults() {
-      setPage(1);
-      const results = await fetchResults(query);
-      setResults(results) 
+    setPage(1);
+    console.log('Categoria selecionada:', category);
+    if (category === 'Livros') {
+      async function getResults() {
+        const results = await fetchResults(query);
+        setResults(results);
+      }
+      getResults();
+    } else if (category === 'Usuários') {
+      async function getUserResults() {
+        try {
+           console.log('entra aqui ');
+          const users = await fetchAllUsers();
+          console.log('users armazena:', users);
+          setUserResults(users);
+        } catch (e) {
+          setUserResults([]);
+        }
+      }
+      // Limpa resultados antigos antes de buscar
+      getUserResults();
+    } else if (category === 'Listas') {
+      setError(null);
+      (async () => {
+        try {
+          const allLists = await fetchLists();
+          // Filtra listas pelo nome contendo a query (case-insensitive)
+          const filtered = allLists.filter(list =>
+            list.listName && list.listName.toLowerCase().includes(query.toLowerCase())
+          );
+          setBooklists(filtered);
+        } catch (err) {
+          setError(err.message || 'Erro ao buscar listas');
+          setBooklists([]);
+        }
+      })();
     }
-
-    getResults();
-  }, [query]);
+  }, [query, category]);
 
   const paginatedResults = results.slice(
     (page - 1) * ITEMS_PER_PAGE,
@@ -74,18 +109,29 @@ function SearchPage() {
             MOSTRANDO RESULTADOS PARA “{query.toUpperCase()}”
           </Typography>
           <Divider sx={{ my: 2, bgcolor: "background.muted" }} />
-          
-          <ResultBooks books={results} paginatedBooks={paginatedResults}/>
 
-          {results.length > 0 &&
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-              <StyledPagination
-                count={Math.ceil(results.length / ITEMS_PER_PAGE)}
-                page={page}
-                onChange={(_, val) => setPage(val)}
-              />
-            </Box>
-          }
+          {category === 'Livros' && (
+            <>
+              <ResultBooks books={results} paginatedBooks={paginatedResults}/>
+              {results.length > 0 &&
+                <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                  <StyledPagination
+                    count={Math.ceil(results.length / ITEMS_PER_PAGE)}
+                    page={page}
+                    onChange={(_, val) => setPage(val)}
+                  />
+                </Box>
+              }
+            </>
+          )}
+
+          {category === 'Usuários' && (
+            <ResultUsers users={userResults} query={query} />
+          )}
+
+          {category === 'Listas' && (
+            <ResultBooklists lists={booklists} />
+          )}
         </Stack>
 
         {!isMobile && (
