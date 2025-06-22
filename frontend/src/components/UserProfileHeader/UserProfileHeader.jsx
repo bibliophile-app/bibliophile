@@ -136,12 +136,12 @@ const UserProfileHeader = ({ user }) => {
           <MetricDivider />
           <MetricLink to={`/${routeUsername}/following`}>
             <MetricValue>{safeMetrics.following}</MetricValue>
-            <MetricLabel>FOLLOWINGS</MetricLabel>
+            <MetricLabel>SEGUINDO</MetricLabel>
           </MetricLink>
           <MetricDivider />
           <MetricLink to={`/${routeUsername}/followers`}>
             <MetricValue>{safeMetrics.followers}</MetricValue>
-            <MetricLabel>FOLLOWERS</MetricLabel>
+            <MetricLabel>SEGUIDORES</MetricLabel>
           </MetricLink>
         </Box>
       </Box>
