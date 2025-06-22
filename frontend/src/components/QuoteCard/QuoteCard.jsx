@@ -2,35 +2,31 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
+
+const ICON_SPACING = 8; // px
+const ICON_LEFT = 8; // px
+
 const StyledQuoteCard = styled(Box)(({ theme }) => ({
   border: '1px solid #888',
-  borderRadius: 8,
-  background: '#334355', // background.muted do MUITheme
+  borderRadius: 5,
+  background: '#334355',
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
   padding: 15,
   width: '100%',
   boxShadow: 'none',
   color: '#dfe6ec',
-  minWidth: 340,
-  maxWidth: 420,
-  minHeight: 60,
-  //maxHeight: 150,
-  height: 145,
+  width: 490,
+  height: 120,
 }));
 
 const QuoteContent = styled(Box)(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'row', // Alinha ícone e texto em linha
-  alignItems: 'flex-start', // Ícone no topo esquerdo
+  flexDirection: 'row',
+  alignItems: 'flex-start',
   justifyContent: 'flex-start',
   width: '100%',
   height: '100%',
-  maxWidth: 400,
-  minWidth: 340,
-  minHeight: 40,
-  maxHeight: 150,
+
 }));
 
 const QuoteText = styled(Typography)(({ theme }) => ({
@@ -49,17 +45,17 @@ const QuoteText = styled(Typography)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-start',
-  paddingLeft: 8, // Espaço entre ícone e texto
+  paddingLeft: ICON_SPACING, // Espaço entre ícone e texto
 }));
 
-const QuoteCard = ({ quote }) => {
+const QuoteCard = ({ quote, align }) => {
   // Limita o texto a 255 caracteres
   const text = quote.content?.length > 255
     ? quote.content.slice(0, 252) + '...'
     : quote.content;
 
   return (
-    <StyledQuoteCard>
+    <StyledQuoteCard sx={{ ml: align === 'left' ? 0 : 'auto', mr: align === 'right' ? 0 : 'auto', pl: ICON_LEFT }}>
       <QuoteContent>
         <FormatQuoteIcon
           sx={{

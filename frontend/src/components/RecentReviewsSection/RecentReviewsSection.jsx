@@ -19,7 +19,6 @@ const RecentReviewsSection = ({ reviews, user }) => {
     <Box
       sx={{
         width: '100%',
-        maxWidth: 900,
         mb: 4,
         display: 'flex',
         flexDirection: 'column',

@@ -30,7 +30,6 @@ const QuotesSection = ({ quotes, user }) => {
     <Box
       sx={{
         width: '100%',
-        maxWidth: 900,
         mb: 4,
         display: 'flex',
         flexDirection: 'column',
@@ -50,10 +49,17 @@ const QuotesSection = ({ quotes, user }) => {
         </Button>
       </Box>
       <Divider sx={{ borderColor: '#334355', mb: 2 }} />
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', rowGap: 1, columnGap: 2, justifyItems: 'start' }}>
+      <Box sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, 1fr)',
+        gridTemplateRows: 'repeat(2, 1fr)',
+        rowGap: 2,
+        columnGap: 2,
+        justifyItems: 'stretch',
+      }}>
         {shownQuotes.length > 0 ? (
-          shownQuotes.map(quote => (
-            <QuoteCard key={quote.id} quote={quote} />
+          shownQuotes.map((quote, idx) => (
+            <QuoteCard key={quote.id} quote={quote} align={idx % 2 === 0 ? 'left' : 'right'} />
           ))
         ) : (
           <Box sx={{ gridColumn: '1/-1', width: '100%' }}>

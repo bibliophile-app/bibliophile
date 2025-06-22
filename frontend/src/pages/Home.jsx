@@ -1,21 +1,43 @@
-import React from 'react'
-import { useAuth } from '../utils/AuthContext'
+import React from 'react';
+import { useAuth } from '../utils/AuthContext';
+import { Box, Typography } from '@mui/material'; 
+import FeaturesSection from '../components/home/FeaturesSection';
+import PopularReviewsSection from '../components/PopularReviewsSection/PopularReviewsSection';
+import PopularFriendsReviewsSection from '../components/PopularReviewsSection/PopularFriendsReviewsSection';
 
 function Home() {
   const { user, isAuth } = useAuth();
 
+  // Estilo para o contêiner principal da Home
+  const homeContainerStyle = {
+    minHeight: '100vh', // Garante que ocupe a altura total da viewport
+    color: '#E0E0E0', // Cor do texto padrão
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center', // Centraliza o conteúdo horizontalmente
+    padding: '50px 0', // Espaçamento vertical
+    boxSizing: 'border-box',
+    mt: 0,
+  };
+
   if (!isAuth()) {
-    return (<div style={{ minHeight: '100%' }}>
-              <h1> Você não está logado </h1>
-            </div>
-    )
+    return (
+      <Box sx={homeContainerStyle}>
+        <FeaturesSection /> {/* Mostra os cards mesmo se não estiver logado */}
+        <PopularReviewsSection /> {/* Adiciona a seção de resenhas populares */}
+      </Box>
+    );
   }
 
   return (
-    <div style={{ minHeight: '100%' }}>
-      <h1>Bem-vindo, {user.username}</h1>
-    </div>
-  )
+    <Box sx={homeContainerStyle}>
+      <Typography variant="h2">
+        Bem vindo, {user.username}. Veja o que andamos lendo...
+      </Typography>
+      <PopularFriendsReviewsSection friends={user.friends || []} /> {/* Seção de resenhas populares dos amigos */}
+      <PopularReviewsSection /> {/* Seção de resenhas populares */}
+    </Box>
+  );
 }
 
 export default Home;

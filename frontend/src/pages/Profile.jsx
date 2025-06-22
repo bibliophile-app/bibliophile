@@ -71,7 +71,7 @@ const UserProfilePage = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
       <UserProfileHeader user={user} />
       <NavigationTabs user={user} />
       <QuotesSection quotes={quotes} user={user} />

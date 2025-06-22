@@ -12,7 +12,6 @@ const NavContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   color: '#eee',
   width: '100%',
-  maxWidth: 900,
   margin: '0 auto 30px auto',
   boxShadow: 'none',
   boxSizing: 'border-box',

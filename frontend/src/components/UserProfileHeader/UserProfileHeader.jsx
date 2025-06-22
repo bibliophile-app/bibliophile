@@ -80,7 +80,7 @@ const UserProfileHeader = ({ user }) => {
   const isOwnProfile = loggedUser && user && loggedUser.username === username;
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 900, alignSelf: 'center', px: { xs: 2, sm: 3, md: 0 }, mb: 2 }}>
+    <Box sx={{ width: '100%', alignSelf: 'center', px: { xs: 2, sm: 3, md: 0 }, mb: 2 }}>
       <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between', gap: 3 }}>
         {/* Avatar e nome sempre à esquerda */}
         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 3 }}>
