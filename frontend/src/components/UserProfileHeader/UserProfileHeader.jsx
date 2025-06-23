@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Avatar, Box, Typography, Button } from '@mui/material';
 import { useAuth } from '../../utils/AuthContext';
 import { Link } from 'react-router-dom';
 import BottomUserProfileContainer from '../BottomUserProfileContainer';
+import { getFollowersCount, getFollowingCount } from '../../utils/followers';
+
+async function fetchUserByUsername(username) {
+  const res = await fetch(`/users/${username}`);
+  if (!res.ok) throw new Error('Usuário não encontrado');
+  return await res.json();
+}
 
 const UserAvatar = styled(Avatar)(({ theme }) => ({
   display: 'flex',
@@ -68,16 +75,37 @@ const ActionButton = styled(Button)(({ theme }) => ({
 
 const UserProfileHeader = ({ user }) => {
   const { user: loggedUser } = useAuth();
-  const { name, username, metrics = {}, id } = user;
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [userId, setUserId] = useState(user.id);
+
+  useEffect(() => {
+    // Garante que temos o id do usuário mesmo quando não é o logado
+    if (!user?.id && user?.username) {
+      fetchUserByUsername(user.username)
+        .then(u => setUserId(u.id))
+        .catch(() => setUserId(undefined));
+    } else {
+      setUserId(user?.id);
+    }
+  }, [user?.id, user?.username]);
+
+  useEffect(() => {
+    if (!userId) return;
+    getFollowersCount(userId).then(setFollowersCount).catch(() => setFollowersCount(0));
+    getFollowingCount(userId).then(setFollowingCount).catch(() => setFollowingCount(0));
+  }, [userId]);
+
+  const displayName = user.name && user.name.length > 0 ? user.name : user.username;
+  const routeUsername = user.username;
+  const isOwnProfile = loggedUser && user && loggedUser.username === user.username;
+
   const safeMetrics = {
-    booksRated: metrics.booksRated ?? 0,
-    lists: metrics.lists ?? 0,
-    following: metrics.following ?? 0,
-    followers: metrics.followers ?? 0,
+    booksRated: user.metrics?.booksRated ?? 0,
+    lists: user.metrics?.lists ?? 0,
+    following: followingCount,
+    followers: followersCount,
   };
-  const displayName = name && name.length > 0 ? name : username;
-  const routeUsername = username;
-  const isOwnProfile = loggedUser && user && loggedUser.username === username;
 
   return (
     <Box sx={{ width: '100%', alignSelf: 'center', px: { xs: 2, sm: 3, md: 0 }, mb: 2 }}>

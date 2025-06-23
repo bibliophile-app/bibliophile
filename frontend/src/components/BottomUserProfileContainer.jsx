@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import BottomUserProfile from './BottomUserProfile';
 import { useAuth } from '../utils/AuthContext';
 import { useNotification } from '../utils/NotificationContext';
-
-const API_URL = '/followers';
+import { checkFollowing, followUser, unfollowUser } from '../utils/followers';
 
 const BottomUserProfileContainer = ({ profileUser }) => {
   const { user: loggedUser, handleSignin } = useAuth();
@@ -20,8 +19,9 @@ const BottomUserProfileContainer = ({ profileUser }) => {
           const res = await fetch(`/users/${profileUser.username}`);
           if (res.ok) {
             const data = await res.json();
-            console.log(data);
+            console.log('Fetched profile user ID:', data.id)
             setProfileUserId(data.id);
+            ;
           }
         } catch (err) {
           setProfileUserId(undefined);
@@ -37,16 +37,13 @@ const BottomUserProfileContainer = ({ profileUser }) => {
 
   // Checa se está seguindo
   useEffect(() => {
-
+    if (!loggedUser || !profileUserId || isOwnProfile) return;
     const followerId = parseInt(loggedUser.id);
     const followeeId = parseInt(profileUserId);
     const checkFollow = async () => {
       try {
-        const res = await fetch(`/followers/check?followerId=${followerId}&followeeId=${followeeId}`, {
-          credentials: 'include',
-        });
-        const data = await res.json();
-        setIsFollowing(!!data.isFollowing);
+        const following = await checkFollowing(followerId, followeeId);
+        setIsFollowing(!!following);
       } catch (err) {
         setIsFollowing(false);
       }
@@ -66,16 +63,9 @@ const BottomUserProfileContainer = ({ profileUser }) => {
     }
     setLoading(true);
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ followeeId: parseInt(profileUserId) })
-      });
-      const text = await res.text();
-      if (!res.ok && res.status !== 409) throw new Error(text || 'Erro ao seguir usuário');
+      await followUser(parseInt(profileUserId));
       setIsFollowing(true);
-      notify({ message: res.status === 409 ? 'Você já segue este usuário.' : 'Agora você está seguindo este usuário!', severity: res.status === 409 ? 'info' : 'success' });
+      notify({ message: 'Agora você está seguindo este usuário!', severity: 'success' });
     } catch (e) {
       notify({ message: e.message || 'Erro ao seguir usuário', severity: 'error' });
     } finally {
@@ -87,14 +77,7 @@ const BottomUserProfileContainer = ({ profileUser }) => {
   const handleUnfollow = async () => {
     setLoading(true);
     try {
-      const res = await fetch(API_URL, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ followeeId: parseInt(profileUserId) })
-      });
-      const text = await res.text();
-      if (!res.ok) throw new Error(text || 'Erro ao deixar de seguir usuário');
+      await unfollowUser(parseInt(profileUserId));
       setIsFollowing(false);
       notify({ message: 'Você deixou de seguir este usuário.', severity: 'info' });
     } catch (e) {
