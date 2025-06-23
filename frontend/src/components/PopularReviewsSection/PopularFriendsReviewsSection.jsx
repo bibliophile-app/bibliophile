@@ -27,7 +27,7 @@ const PopularFriendsReviewsSection = () => {
     <Box sx={{ width: '100%', mx: 'auto', mt: 5, mb: 4 }}>
       <ListSection
         pathTo="/reviews/popular/friends"
-        title="Atividade de amigos"
+        title="ATIVIDADES DE AMIGOS"
         items={reviews}
         type="reviews"
       />

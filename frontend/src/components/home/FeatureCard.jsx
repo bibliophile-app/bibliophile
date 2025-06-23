@@ -4,7 +4,7 @@ import { styled } from '@mui/system';
 
 // Estilos personalizados usando styled do MUI para o Card
 const StyledCard = styled(Card)(({ theme }) => ({
-  backgroundColor: '#2A3036', // Cor de fundo semelhante à imagem
+  backgroundColor: theme.palette.background.muted, // Cor de fundo semelhante à imagem
   color: '#E0E0E0', // Cor do texto
   borderRadius: 3, // Bordas arredondadas padrão do MUI
   padding: theme.spacing(2),
@@ -12,7 +12,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   flexDirection: 'column',
   alignItems: 'stretch', // Ocupa toda a largura
   justifyContent: 'flex-start', // Alinha o conteúdo ao topo
-  height: '150px', // Altura fixa para todos os cards
+  height: '115px', // Altura fixa para todos os cards
   width: '100%',
   boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.4)', // Sombra para profundidade
   transition: 'transform 0.2s ease-in-out',
@@ -48,7 +48,7 @@ const FeatureCard = ({ icon: Icon, title }) => {
         <StyledIconWrapper style={{ position: 'static', marginRight: 16 }}>
           <Icon />
         </StyledIconWrapper>
-        <Typography variant="body1" sx={{ fontSize: '1.1rem', lineHeight: 1.5 }}>
+        <Typography variant="body1" sx={{ fontSize: '0.95rem', lineHeight: 1.5 }}>
           {title}
         </Typography>
       </CardContentWrapper>

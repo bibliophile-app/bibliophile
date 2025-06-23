@@ -1,22 +1,21 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material';
 import FeatureCard from './FeatureCard';
 import { featureCardsData } from '../../data/featureData';
 
+
 const SectionWrapper = styled(Box)(({ theme }) => ({
   width: '100%',
-  maxWidth: 1400, // aumenta a largura máxima
-  margin: '40px auto',
-  boxSizing: 'border-box',
+  margin: '1px auto',
+  padding: theme.spacing(2),
 }));
 
 const SectionTitle = styled(Typography)(({ theme }) => ({
   color: '#E0E0E0',
-  fontSize: '1.2rem',
+  fontSize: '1rem',
   marginBottom: theme.spacing(1),
   textAlign: 'left',
-  textTransform: 'uppercase',
   opacity: 0.8,
 }));
 
@@ -25,10 +24,7 @@ const FeaturesGrid = styled(Box)(({ theme }) => ({
   gridTemplateColumns: 'repeat(3, 1fr)',
   gridTemplateRows: 'repeat(2, 1fr)',
   gap: theme.spacing(1), // Aproxima os cards diminuindo o gap
-  [theme.breakpoints.down('md')]: {
-    gridTemplateColumns: '1fr',
-    gridTemplateRows: 'none',
-  },
+
 }));
 
 const FeaturesSection = () => {

@@ -10,7 +10,6 @@ import io.ktor.server.application.*
 
 import com.bibliophile.models.UserSession
 import com.bibliophile.models.FollowRequest
-import com.bibliophile.models.Follow
 import com.bibliophile.repositories.FollowerRepository
 
 fun Route.followerRoutes() {
@@ -60,7 +59,7 @@ fun Route.followerRoutes() {
                     return@post
                 }
 
-                val follow = FollowerRepository.add(session.userId, request.followeeId)
+                val follow = FollowerRepository.add(session.userId, request)
                 call.respond(
                     HttpStatusCode.Created, 
                     mapOf("message" to "Follow created successfully", "id" to follow.id)
