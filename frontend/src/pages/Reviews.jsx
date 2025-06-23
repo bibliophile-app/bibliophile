@@ -9,6 +9,7 @@ import { searchByUser } from '@/utils/reviews';
 import { handleSafeNavigation } from '@/utils/handlers';
 import { useNotification } from '@/utils/NotificationContext';
 import ReviewCard from '@/components/reviews/ReviewCard';
+import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
 
 function ReviewsPage() {
     const safeBack = handleSafeNavigation();
@@ -51,6 +52,7 @@ function ReviewsPage() {
         return <LoadingBox />
     else return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <PagesNavigation username={username} />
         <Box sx={{display: 'flex', gap: 0.5}}>
             <Typography variant='span'>
                 resenhas por

@@ -9,6 +9,7 @@ import { useNotification } from '@/utils/NotificationContext';
 import Divider from '@/atoms/Divider';
 import LoadingBox from '@/atoms/LoadingBox';
 import ReviewCard from '@/components/reviews/ReviewCard';
+import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
 
 function DiaryReviewCard({ entry }) {
   const day = new Date(entry.reviewedAt + 'T00:00:00').getDate();
@@ -105,6 +106,8 @@ function DiaryPage() {
     return <LoadingBox />;
   else return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <PagesNavigation username={username} />
+
       <Box sx={{ display: 'flex', gap: 0.5 }}>
             <Typography variant='span'>
                 diário de

@@ -8,6 +8,7 @@ import QuoteItem from '@/components/quotes/QuoteItem';
 import LoadingBox from '@/atoms/LoadingBox';
 import { searchQuotesByUser } from '@/utils/quotes';
 import Divider from '@/atoms/Divider'
+import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
 
 
 // Função utilitária para buscar citações do usuário
@@ -59,6 +60,7 @@ function QuotesPage() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <PagesNavigation username={username} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="h6" sx={{ fontWeight: 400, fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1.2rem', color: 'neutral.main', lineHeight: 1, display: 'flex', alignItems: 'center', minHeight: 40 }}>
           Citações de {username}

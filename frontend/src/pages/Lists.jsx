@@ -11,6 +11,7 @@ import { BooklistConstants } from '@/utils/constants';
 import { handleSafeNavigation } from '@/utils/handlers';
 import { useNotification } from '@/utils/NotificationContext';
 import ListSection from '../components/ListSection';
+import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
 
 function StartListButton() {
     const navigate = useNavigate();
@@ -81,6 +82,8 @@ function ListsPage() {
         return <LoadingBox />
      return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <PagesNavigation username={username} />
+
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 1, mb: 4 }}>
             <Typography variant='h5' sx={{ alignSelf: 'center' }}>
                 Descubra, organize e compartilhe seus livros favoritos criando listas personalizadas.
