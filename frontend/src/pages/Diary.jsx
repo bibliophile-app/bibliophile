@@ -108,25 +108,6 @@ function DiaryPage() {
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <PagesNavigation username={username} />
 
-      <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <Typography variant='span'>
-                diário de
-            </Typography>
-
-            <Typography
-                variant="span"
-                color="neutral.main"
-                fontWeight="bold"
-                component={RouterLink}
-                to={`${username}/profile/`}
-                onClick={(e) => e.stopPropagation()}
-            >
-              {username}
-            </Typography>
-      </Box> 
-
-      <Divider sx={{ my: 1 }}/>
-
       {entries && entries.length > 0 ? (
         sortedMonths.map((month) => (
           <div key={month}>

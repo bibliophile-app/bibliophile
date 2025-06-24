@@ -9,9 +9,8 @@ import LoadingBox from '@/atoms/LoadingBox';
 import { searchQuotesByUser } from '@/utils/quotes';
 import Divider from '@/atoms/Divider'
 import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
+import UserAvatar from '@/atoms/UserAvatar';
 
-
-// Função utilitária para buscar citações do usuário
 
 function QuotesPage() {
   const { username } = useParams();
@@ -24,7 +23,6 @@ function QuotesPage() {
 
   const isOwner = user && username === user.username;
 
-  // Busca todas as citações do usuário
   const fetchQuotes = async () => {
     setLoading(true);
     try {
@@ -59,39 +57,42 @@ function QuotesPage() {
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+      {/* Topo: avatar, nome e botão */}
+        
+         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 1, mb: 4 }}>
+          
+            <Typography variant='h5' sx={{ alignSelf: 'center' }}>
+                Guarde suas citações preferidas e compartilhe no seu perfil.
+            </Typography>
+
+            <Button 
+                variant="contained"
+                onClick={() => handleOpenQuoteForm(null)}
+                  
+                sx={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  color: '#b0bec5',
+                  textTransform: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 500,
+                  px: 2,
+                  py: .5,
+                  fontSize: '0.95rem'
+                }}
+                
+              >
+                Salve sua citação favorita
+              </Button>
+            
+          </Box>
+
+          <Box sx={{height: 20 }}></Box>
+        
+
+      {/* NavigationTabs logo abaixo */}
       <PagesNavigation username={username} />
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography variant="h6" sx={{ fontWeight: 400, fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1.2rem', color: 'neutral.main', lineHeight: 1, display: 'flex', alignItems: 'center', minHeight: 40 }}>
-          Citações de {username}
-        </Typography>
-        {isOwner && (
-          <Button 
-            variant="contained"
-            onClick={() => handleOpenQuoteForm(null)}
-            sx={{
-              backgroundColor: (theme) => theme.palette.background.contrast,
-              fontWeight: 400,
-              fontSize: '1rem',
-              borderRadius: '5px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              textTransform: 'none',
-              minHeight: 40,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              '&:hover': {
-                backgroundColor: (theme) => theme.palette.background.contrast,
-                opacity: 0.9,
-              },
-            }}
-          >
-            Nova citação
-          </Button>
-        )}
-      </Box>
-      <Divider sx={{ my: 1 }} />
-      
+      {/* Quotes do usuário */}
       {loading ? (
         <LoadingBox />
       ) : (

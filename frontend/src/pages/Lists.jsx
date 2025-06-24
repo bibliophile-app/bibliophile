@@ -12,6 +12,7 @@ import { handleSafeNavigation } from '@/utils/handlers';
 import { useNotification } from '@/utils/NotificationContext';
 import ListSection from '../components/ListSection';
 import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
+import UserAvatar from '@/atoms/UserAvatar';
 
 function StartListButton() {
     const navigate = useNavigate();
@@ -82,7 +83,7 @@ function ListsPage() {
         return <LoadingBox />
      return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <PagesNavigation username={username} />
+          
 
           <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 1, mb: 4 }}>
             <Typography variant='h5' sx={{ alignSelf: 'center' }}>
@@ -91,23 +92,13 @@ function ListsPage() {
             <StartListButton />
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <Typography variant='span'>
-                listas por
-            </Typography>
-            <Typography
-                variant="span"
-                color="neutral.main"
-                fontWeight="bold"
-                component={RouterLink}
-                to={`${username}/profile/`}
-                onClick={(e) => e.stopPropagation()}
-            >
-                {username}
-            </Typography>
-          </Box>
-          
-          <Divider sx={{ mt: 1, mb: 2 }}/>
+          <Box sx={{height: 20 }}>
+
+         </Box>
+
+
+         <PagesNavigation username={username} />
+
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {entries && entries.length > 0 ? (

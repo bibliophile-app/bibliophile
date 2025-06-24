@@ -8,6 +8,7 @@ import { useAuth } from '../utils/AuthContext';
 import { searchByUser as searchReviewsByUser } from '../utils/reviews';
 import { searchByUser as searchListsByUser } from '../utils/lists';
 import { Box } from '@mui/material';
+import LoadingBox from '@/atoms/LoadingBox';
 
 const fetchQuotesByUser = async (username) => {
   // Busca quotes do usuário correto pelo endpoint /quotes/user/{username}
@@ -63,11 +64,7 @@ const UserProfilePage = () => {
   }, [username, loggedUser]);
 
   if (loading || !user) {
-    return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', width: '100%', minHeight: '100vh', px: 0 }}>
-        Carregando perfil...
-      </Box>
-    );
+    return <LoadingBox />;
   }
 
   return (

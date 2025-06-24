@@ -7,7 +7,7 @@ const NavContainer = styled(Box)(({ theme }) => ({
   background: 'none',
   border: '1px solid #334355',
   borderRadius: 3,
-  padding: '10px 20px',
+  padding: '3px 20px',
   display: 'flex',
   alignItems: 'center',
   color: '#eee',
@@ -15,7 +15,7 @@ const NavContainer = styled(Box)(({ theme }) => ({
   margin: '0 auto 30px auto',
   boxShadow: 'none',
   boxSizing: 'border-box',
-  gap: theme.spacing(2),
+  gap: theme.spacing(0),
 }));
 
 const NavList = styled('ul')(({ theme }) => ({
@@ -37,9 +37,8 @@ const NavItemBox = styled(Box)(({ theme }) => ({
 const NavItem = styled(NavLink)(({ theme }) => ({
   color: '#aaa',
   textDecoration: 'none',
-  fontWeight: 400,
   fontFamily: 'Inter, Helvetica Neue, sans-serif',
-  fontSize: '1.1rem',
+  fontSize: '1rem',
   letterSpacing: 0,
   padding: '5px 0',
   transition: 'color 0.2s',
@@ -59,7 +58,7 @@ const Underline = styled(Box)(({ theme }) => ({
   bottom: -5,
   width: '100%',
   height: 2,
-  backgroundColor: '#556677',
+  backgroundColor: '#CFD8DC',
   borderRadius: 2,
 }));
 
@@ -77,7 +76,7 @@ const PagesNavigation = ({ username }) => {
     <NavContainer>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, pr: 3 }}>
         <UserAvatar username={username} sx={{ width: 40, height: 40, fontSize: 20 }} />
-        <Typography variant="h5" sx={{ fontWeight: 600, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif' }}>
+        <Typography variant="h4" sx={{ fontWeight: 600, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif' }}>
           {username}
         </Typography>
       </Box>

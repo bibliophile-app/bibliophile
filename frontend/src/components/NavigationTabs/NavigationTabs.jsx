@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { Box, styled } from '@mui/material';
 
 const NavContainer = styled(Box)(({ theme }) => ({
-  background: 'none',
+  backgroundColor: 'none',
   border: '1px solid #334355',
   borderRadius: 3,
   padding: '10px 20px',
@@ -36,9 +36,8 @@ const NavItemBox = styled(Box)(({ theme, active }) => ({
 const NavItem = styled(NavLink)(({ theme, active }) => ({
   color: active ? '#eee' : '#aaa',
   textDecoration: 'none',
-  fontWeight: 400,
   fontFamily: 'Inter, Helvetica Neue, sans-serif',
-  fontSize: '1.1rem',
+  fontSize: '1rem',
   letterSpacing: 0,
   padding: '5px 0',
   transition: 'color 0.2s',
@@ -55,7 +54,7 @@ const Underline = styled(Box)(({ theme }) => ({
   bottom: -5,
   width: '100%',
   height: 2,
-  backgroundColor: '#556677',
+  backgroundColor: '#CFD8DC',
   borderRadius: 2,
 }));
 

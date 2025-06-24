@@ -53,23 +53,8 @@ function ReviewsPage() {
     else return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         <PagesNavigation username={username} />
-        <Box sx={{display: 'flex', gap: 0.5}}>
-            <Typography variant='span'>
-                resenhas por
-            </Typography>
-            <Typography
-                variant="span"
-                color="neutral.main"
-                fontWeight="bold"
-                component={RouterLink}
-                to={`${username}/profile/`}
-                onClick={(e) => e.stopPropagation()}
-            >
-                {username}
-            </Typography>
-        </Box>
         
-        <Divider sx={{ my: 1 }}/>
+        
 
         {entries && entries.filter(e => e.content).length > 0 ? (
             entries
