@@ -117,6 +117,34 @@ async function updateReview(id, { bookId, content, rate, favorite, reviewedAt })
   }
 }
 
+async function fetchPopularFriendsReviews() {
+  try {
+    const response = await fetch("/reviews/popular/friends", {
+      credentials: 'include'
+    });
+    if (!response.ok) {
+      throw new Error(`Erro ao buscar reviews populares dos amigos: HTTP ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    throw new Error(`Erro ao buscar reviews populares dos amigos: ${error.message}`);
+  }
+}
+
+async function fetchPopularBooksWeek() {
+  try {
+    const response = await fetch("/reviews/popular/week", {
+      credentials: 'include'
+    });
+    if (!response.ok) {
+      throw new Error(`Erro ao buscar livros populares da semana: HTTP ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    throw new Error(`Erro ao buscar livros populares da semana: ${error.message}`);
+  }
+}
+
 export {
   fetchReviews,
   searchById,
@@ -124,5 +152,7 @@ export {
   searchByUser,
   addReview,
   deleteReview,
-  updateReview
+  updateReview,
+  fetchPopularFriendsReviews,
+  fetchPopularBooksWeek
 };

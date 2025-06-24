@@ -25,7 +25,7 @@ const PopularReviewsSection = () => {
   return (
     <Box sx={{ width: '100%', maxWidth: 1400, mx: 'auto', mt: 5, mb: 4 }}>
       <ListSection
-        pathTo="/reviews/popular/week"
+        pathTo="/popular/week"
         title="LIVROS POPULARES DA SEMANA"
         items={books}
         type="book"

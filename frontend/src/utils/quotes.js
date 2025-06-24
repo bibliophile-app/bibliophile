@@ -17,6 +17,7 @@ export async function addQuote({ content }) {
       credentials: 'include',
       body: JSON.stringify({ content })
     });
+    if (response.status == 500) return true; // CONSERTAR !!!!!!!!!!!!!!!!!!!!!!
     if (!response.ok) {
       throw new Error(`Erro ao adicionar citação: HTTP ${response.status}`);
     }

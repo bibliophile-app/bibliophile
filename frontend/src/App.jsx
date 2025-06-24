@@ -15,6 +15,10 @@ import ReviewsPage from './pages/Reviews';
 import QuotesPage from './pages/Quotes';
 import SearchPage from './pages/SearchPage';
 import ListEditor from './pages/ListEditor';
+import ReviewsPopularFriends from './pages/ReviewsPopularFriends';
+import BooksPopularWeek from './pages/BooksPopularWeek';
+import FollowersPage from './pages/Followers';
+import FollowingPage from './pages/Following';
 import NavBar from './components/navigation/NavBar';
 import QuoteManager from './components/QuoteManager';
 import FollowerManager from './components/FollowerManager';
@@ -58,6 +62,10 @@ function App() {
 						<Route path="/:id/list/edit" element={<ListEditor />} />
 						<Route path="/search/:query" element={<SearchPage />} /> 
 						<Route path="/book/:bookId" element={<BookPage />} /> 
+						<Route path="/popular/friends" element={<ReviewsPopularFriends />} />
+						<Route path="/popular/week" element={<BooksPopularWeek />} />
+						<Route path=":username/followers" element={<FollowersPage />} />
+						<Route path=":username/following" element={<FollowingPage />} />
 						<Route path="/test/quotes" element={<QuoteManager />} />
 						<Route path="/test/followers" element={<FollowerManager/>}/>
 					</Routes>

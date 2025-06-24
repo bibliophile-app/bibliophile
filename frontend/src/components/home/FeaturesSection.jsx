@@ -6,9 +6,10 @@ import { featureCardsData } from '../../data/featureData';
 
 
 const SectionWrapper = styled(Box)(({ theme }) => ({
+
   width: '100%',
-  margin: '1px auto',
-  padding: theme.spacing(2),
+  margin: '10px auto',
+  boxSizing: 'border-box',
 }));
 
 const SectionTitle = styled(Typography)(({ theme }) => ({

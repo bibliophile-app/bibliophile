@@ -26,7 +26,7 @@ const RecentReviewsSection = ({ reviews, user }) => {
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, px: 1 }}>
-        <Typography variant="h6" sx={{ fontWeight: 400, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1.1rem', textTransform: 'none', letterSpacing: 0 }}>
+        <Typography variant="h6" sx={{ fontWeight: 400, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1rem', textTransform: 'none', letterSpacing: 0 }}>
           REVIEWS RECENTES
         </Typography>
         <Button

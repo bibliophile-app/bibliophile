@@ -25,6 +25,7 @@ export async function followUser(followeeId) {
     credentials: 'include',
     body: JSON.stringify({ followeeId })
   });
+  if (res.status == 500) return true;  // CONSERTAR !!!!!!!!!!!!!!!!!!!!!!
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     throw new Error(data.message || 'Erro ao seguir usuário');
@@ -71,4 +72,26 @@ export async function getFollowersCount(userId) {
   if (!res.ok) throw new Error('Erro ao buscar followers');
   const data = await res.json();
   return Array.isArray(data) ? data.length : 0;
+}
+
+/**
+ * Retorna a lista de seguidores do usuário
+ * @param {number} userId
+ * @returns {Promise<Array<{username: string}>>}
+ */
+export async function getFollowers(userId) {
+  const res = await fetch(`/followers/${userId}/followers`, { credentials: 'include' });
+  if (!res.ok) throw new Error('Erro ao buscar followers');
+  return await res.json();
+}
+
+/**
+ * Retorna a lista de usuários que o usuário segue
+ * @param {number} userId
+ * @returns {Promise<Array<{followerId: number, followeeId: number}>>}
+ */
+export async function getFollowing(userId) {
+  const res = await fetch(`/followers/${userId}/following`, { credentials: 'include' });
+  if (!res.ok) throw new Error('Erro ao buscar followings');
+  return await res.json();
 }
