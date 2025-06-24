@@ -37,8 +37,11 @@ const QuotesSection = ({ quotes, user }) => {
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, px: 1 }}>
-        <Typography variant="h6" sx={{ fontWeight: 400, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1rem', textTransform: 'none', letterSpacing: 0 }}>
-          CITAÇÕES FAVORITAS
+        <Typography
+          variant="p"
+          sx={{ color: 'neutral.secondary', textTransform: 'uppercase' }}
+        >
+          Citações Favoritas
         </Typography>
         <Button
           onClick={handleNavigate}

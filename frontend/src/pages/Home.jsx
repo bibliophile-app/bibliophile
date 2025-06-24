@@ -1,7 +1,6 @@
-import React from 'react';
 import { useAuth } from '../utils/AuthContext';
 import { Box, Typography } from '@mui/material'; 
-import { styled } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
 import FeaturesSection from '../components/home/FeaturesSection';
 import PopularReviewsSection from '../components/PopularReviewsSection/PopularReviewsSection';
@@ -33,22 +32,23 @@ function Home() {
 
   return (
     <Box sx={homeContainerStyle}>
-      <Typography variant="h4">
-        Bem vindo,{' '}
-        <Box
-          component="span"
-          sx={{
-            cursor: 'pointer',
-            display: 'inline',
-            transition: 'color 0.2s',
-            '&:hover': { color: '#556677' },
-          }}
-          onClick={() => window.location.href = `/${user.username}/profile`}
-        >
-          {user.username}
-        </Box>
-        . Veja o que andamos lendo...
-      </Typography>
+      <Box sx={{ alignContent: 'center', textAlign: 'center' }}>
+        <Typography variant='h4'>
+          Bem vindo,{' '}
+          <Typography
+            variant='h4'
+            component={RouterLink}
+            onClick={() => window.location.href = `/${user.username}/profile`}
+          >
+            {user.username}
+          </Typography>
+          {' :)'}
+        </Typography>
+
+        <Typography variant='h4'>
+          Veja o que andamos lendo...
+        </Typography>
+      </Box>
       <PopularFriendsReviewsSection />
       <PopularReviewsSection />
     </Box>

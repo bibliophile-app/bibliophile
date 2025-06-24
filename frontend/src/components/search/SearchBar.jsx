@@ -74,7 +74,7 @@ function SearchBar() {
 
   function onSearch() {
     if (query && query.trim()) {
-      navigate(`/search/${encodeURIComponent(query.trim())}`);
+      navigate(`/${encodeURIComponent(query.trim())}/search`);
       setQuery("");
     }
   };

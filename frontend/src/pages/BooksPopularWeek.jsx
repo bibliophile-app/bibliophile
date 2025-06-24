@@ -33,10 +33,13 @@ function BooksPopularWeek() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', maxWidth: '100%' }}>
-      <Typography variant="h4" sx={{ fontWeight: 400, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1rem', textTransform: 'none', letterSpacing: 0 }}>
-            LIVROS POPULARES DA SEMANA
+        <Typography
+          variant="p"
+          sx={{ color: 'neutral.secondary', textTransform: 'uppercase' }}
+        >
+          LIVROS POPULARES DA SEMANA
         </Typography>
-        <Divider sx={{ borderColor: '#334355', mb: 2 }} />
+        <Divider sx={{ borderColor: '#334355', my: 1 }} />
       <GridSection 
         title="" 
         description={"Livros mais populares baseados nas reviews desta semana."} 

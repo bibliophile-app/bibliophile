@@ -53,7 +53,10 @@ function FollowersPage() {
 
 return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h4" sx={{ fontWeight: 400, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1rem', textTransform: 'none', letterSpacing: 0 }}>
+        <Typography
+                variant="p"
+                sx={{ color: 'neutral.secondary' }}
+        >
             SEGUIDORES DE{' '}
             <span
                 style={{ color: 'inherit', cursor: 'pointer' }}

@@ -7,9 +7,7 @@ import QuoteForm from '@/components/quotes/QuoteForm';
 import QuoteItem from '@/components/quotes/QuoteItem';
 import LoadingBox from '@/atoms/LoadingBox';
 import { searchQuotesByUser } from '@/utils/quotes';
-import Divider from '@/atoms/Divider'
 import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
-import UserAvatar from '@/atoms/UserAvatar';
 
 
 function QuotesPage() {

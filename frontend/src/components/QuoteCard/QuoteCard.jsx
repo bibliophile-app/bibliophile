@@ -37,8 +37,7 @@ const QuoteText = styled(Typography)(({ theme }) => ({
   width: '100%',
   textAlign: 'left', // Alinha texto à esquerda
   overflow: 'visible',
-  maxWidth: 400,
-  minWidth: 0,
+  width: '100%',
   minHeight: 40,
   display: 'flex',
   alignItems: 'center',

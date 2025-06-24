@@ -101,7 +101,7 @@ function ReviewCard ({
                     fontWeight="bold"
                     sx={{ cursor: 'pointer' }}
                     component={RouterLink}
-                    to={`/profile/${username}`}
+                    to={`/${username}/profile`}
                     onClick={(e) => e.stopPropagation()}
                   >
                     {username}

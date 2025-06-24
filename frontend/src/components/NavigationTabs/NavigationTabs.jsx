@@ -54,7 +54,7 @@ const Underline = styled(Box)(({ theme }) => ({
   bottom: -5,
   width: '100%',
   height: 2,
-  backgroundColor: '#CFD8DC',
+  backgroundColor: theme.palette.neutral.main,
   borderRadius: 2,
 }));
 

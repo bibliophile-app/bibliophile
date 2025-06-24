@@ -33,10 +33,14 @@ function ReviewsPopularFriends() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="h4" sx={{ fontWeight: 400, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1rem', textTransform: 'none', letterSpacing: 0 }}>
+      <Typography
+        variant="p"
+        sx={{ color: 'neutral.secondary', textTransform: 'uppercase' }}
+      >
         ATIVIDADES DE AMIGOS
-        </Typography>
-        <Divider sx={{ borderColor: '#334355', mb: 2 }} />
+      </Typography>
+      <Divider sx={{ borderColor: '#334355', my: 1 }} />
+      
       {entries && entries.length > 0 ? (
         entries
           .filter(e => e.content)

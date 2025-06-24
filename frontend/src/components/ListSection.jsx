@@ -6,8 +6,8 @@ import Divider from '@/atoms/Divider';
 import PosterCard from './PosterCard';
 import ReviewPosterCard from './reviews/ReviewPosterCard';
 
-const CARD_WIDTH = 120;
-const CARD_HEIGHT = 190;
+const CARD_WIDTH = 132;
+const CARD_HEIGHT = 200;
 const CARD_GAP = 6;
 
 function ListSection({ pathTo, title, items, type = "book" }) {

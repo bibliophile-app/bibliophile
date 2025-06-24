@@ -130,7 +130,7 @@ const UserProfileHeader = ({ user }) => {
           </MetricLink>
           <MetricDivider />
           <MetricLink to={`/${routeUsername}/lists`}>
-            <MetricValue>{safeMetrics.lists}</MetricValue>
+            <MetricValue>{safeMetrics.lists-1}</MetricValue>
             <MetricLabel>LISTAS</MetricLabel>
           </MetricLink>
           <MetricDivider />
