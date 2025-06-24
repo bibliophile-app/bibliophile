@@ -14,12 +14,12 @@ async function fetchUserByUsername(username) {
 
 const UserAvatar = styled(Avatar)(({ theme }) => ({
   display: 'flex',
-  width: 60,
-  height: 60,
+  width: 43,
+  height: 43,
   borderRadius: '50%',
   backgroundColor: theme.palette.primary.main,
   flexShrink: 0,
-  fontSize: 24,
+  fontSize: 23,
   alignItems: 'center',
   justifyContent: 'center',
   color: theme.palette.neutral.main, // cor mais escura para o ícone/letra
@@ -111,12 +111,12 @@ const UserProfileHeader = ({ user }) => {
     <Box sx={{ width: '100%', alignSelf: 'center', px: { xs: 2, sm: 3, md: 0 }, mb: 2 }}>
       <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between', gap: 3 }}>
         {/* Avatar e nome sempre à esquerda */}
-        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
           <UserAvatar >
             {displayName && displayName.length > 0 ? displayName[0].toUpperCase() : '?'}
           </UserAvatar>
           <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2, height: 60 }}>
-            <Typography variant="h5" sx={{ fontWeight: 700, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '2rem', m: 0, lineHeight: '60px', display: 'flex', alignItems: 'center', height: 60 }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1.8rem', m: 0, lineHeight: '60px', display: 'flex', alignItems: 'center', height: 60 }}>
               {displayName}
             </Typography>
             <BottomUserProfileContainer profileUser={user} />

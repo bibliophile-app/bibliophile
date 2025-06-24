@@ -51,9 +51,10 @@ function QuoteForm({
       notify({ message: e.message || 'Erro ao salvar citação!', severity: 'error' });
     } finally {
       setIsLoading(false);
+      if (!errored) notify({ message: 'Citação salva!', severity: 'success' });
       handleExit();
-      if (!errored && onSubmit) onSubmit();
-      if (errored && onSubmit) onSubmit(); // força atualização mesmo se erro
+      if (onSubmit) onSubmit();
+      // força atualização mesmo se erro
     }
   }
 

@@ -49,7 +49,7 @@ function Home() {
         </Box>
         . Veja o que andamos lendo...
       </Typography>
-      <PopularFriendsReviewsSection friends={user.friends || []} />
+      <PopularFriendsReviewsSection />
       <PopularReviewsSection />
     </Box>
   );

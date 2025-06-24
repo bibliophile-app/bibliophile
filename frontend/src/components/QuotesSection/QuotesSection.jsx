@@ -37,7 +37,7 @@ const QuotesSection = ({ quotes, user }) => {
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, px: 1 }}>
-        <Typography variant="h6" sx={{ fontWeight: 400, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1.1rem', textTransform: 'none', letterSpacing: 0 }}>
+        <Typography variant="h6" sx={{ fontWeight: 400, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif', fontSize: '1rem', textTransform: 'none', letterSpacing: 0 }}>
           CITAÇÕES FAVORITAS
         </Typography>
         <Button
@@ -51,15 +51,16 @@ const QuotesSection = ({ quotes, user }) => {
       <Divider sx={{ borderColor: '#334355', mb: 2 }} />
       <Box sx={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        gridTemplateRows: 'repeat(2, 1fr)',
-        rowGap: 2,
-        columnGap: 2,
-        justifyItems: 'stretch',
+        gridTemplateColumns: 'repeat(2, max-content)',
+        gridTemplateRows: 'repeat(2, auto)',
+        rowGap: 0.9,
+        columnGap: 0.9,
+        justifyContent: 'start',
+        alignItems: 'start',
       }}>
         {shownQuotes.length > 0 ? (
           shownQuotes.map((quote, idx) => (
-            <QuoteCard key={quote.id} quote={quote} align={idx % 2 === 0 ? 'left' : 'right'} />
+            <QuoteCard key={quote.id} quote={quote} />
           ))
         ) : (
           <Box sx={{ gridColumn: '1/-1', width: '100%' }}>
@@ -69,8 +70,8 @@ const QuotesSection = ({ quotes, user }) => {
           </Box>
         )}
         {/* Preenche espaços vazios para manter alinhamento à esquerda */}
-        {shownQuotes.length > 0 && Array.from({ length: emptySlots }).map((_, i) => (
-          <Box key={i} sx={{ visibility: 'hidden', minWidth: 340, maxWidth: 420 }} />
+        {shownQuotes.length < 4 && Array.from({ length: emptySlots }).map((_, i) => (
+          <Box key={i} sx={{ visibility: 'hidden' }} />
         ))}
       </Box>
     </Box>

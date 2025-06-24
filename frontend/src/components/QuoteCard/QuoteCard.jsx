@@ -3,19 +3,17 @@ import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 
-const ICON_SPACING = 8; // px
-const ICON_LEFT = 8; // px
+const ICON_SPACING = 15; // px
 
 const StyledQuoteCard = styled(Box)(({ theme }) => ({
   border: '1px solid #888',
-  borderRadius: 5,
+  borderRadius: 3,
   background: '#334355',
   display: 'flex',
   padding: 15,
-  width: '100%',
   boxShadow: 'none',
   color: '#dfe6ec',
-  width: 490,
+  width: 541,
   height: 120,
 }));
 
@@ -55,17 +53,17 @@ const QuoteCard = ({ quote, align }) => {
     : quote.content;
 
   return (
-    <StyledQuoteCard sx={{ ml: align === 'left' ? 0 : 'auto', mr: align === 'right' ? 0 : 'auto', pl: ICON_LEFT }}>
+    <StyledQuoteCard sx={{ ml: align === 'left' ? 0 : 'auto', mr: align === 'right' ? 0 : 'auto' }}>
       <QuoteContent>
         <FormatQuoteIcon
           sx={{
             color: '#CFD8DC',
             fontSize: 35,
-            mt: 0.5,
+            mt: 0.5, //distancia da borda superior
             flexShrink: 0,
             alignSelf: 'flex-start',
             opacity: 0.4,
-          }}
+            }}
         />
         <QuoteText component="p">
           {text}

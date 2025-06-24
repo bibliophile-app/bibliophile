@@ -30,7 +30,7 @@ const BottomUserProfile = ({ isOwnProfile, isFollowing, onFollow, onUnfollow, on
     return (
       <Button
         variant="contained"
-        sx={{ height: 28, minHeight: 24, fontSize: '0.85rem', px: 1.5, py: 0.5, alignSelf: 'center', background: editFollowColor, color: textColor, borderRadius: '3px', '&:hover': { background: editFollowHover } }}
+        sx={{ height: 24, fontWeight: 'bold', fontSize: '0.75rem', px: 1.5, py: 0.5, alignSelf: 'center', background: editFollowColor, color: textColor, borderRadius: '3px', '&:hover': { background: editFollowHover } }}
         disabled={loading}
       >
         EDITE O PERFIL
