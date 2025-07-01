@@ -51,7 +51,7 @@ function ReviewsPage() {
         return <LoadingBox />
     else return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <NavProfile username={username} />
+        <NavProfile username={username} filledBox />
         
         {entries && entries.filter(e => e.content).length > 0 ? (
             entries

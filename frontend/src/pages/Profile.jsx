@@ -18,7 +18,7 @@ const fetchQuotesByUser = async (username) => {
   return await response.json();
 };
 
-const UserProfilePage = () => {
+function UserProfilePage() {
   const { username } = useParams();
   const { user: loggedUser } = useAuth();
   const [user, setUser] = useState(null);

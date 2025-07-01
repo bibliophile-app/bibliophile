@@ -106,7 +106,7 @@ function DiaryPage() {
     return <LoadingBox />;
   else return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-      <NavProfile username={username} />
+      <NavProfile username={username} filledBox />
 
       {entries && entries.length > 0 ? (
         sortedMonths.map((month) => (

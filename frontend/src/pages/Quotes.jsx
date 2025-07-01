@@ -90,7 +90,7 @@ function QuotesPage() {
         
 
       {/* NavigationTabs logo abaixo */}
-      <NavProfile username={username} />
+      <NavProfile username={username} filledBox />
       {/* Quotes do usuário */}
       {loading ? (
         <LoadingBox />

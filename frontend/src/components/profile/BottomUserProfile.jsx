@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@mui/material';
 import { useAuth } from '../../utils/AuthContext';
 import { useNotification } from '../../utils/NotificationContext';
-import Login from '../Login';
 
 /**
  * Props:
@@ -13,10 +12,9 @@ import Login from '../Login';
  * - onLogin: () => void
  * - loading: boolean
  */
-const BottomUserProfile = ({ isOwnProfile, isFollowing, onFollow, onUnfollow, onLogin, loading }) => {
-  const { user } = useAuth();
+const BottomUserProfile = ({ isOwnProfile, isFollowing, onFollow, onUnfollow, loading }) => {
+  const { isAuth, handleSignin } = useAuth();
   const [hover, setHover] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
   const { notify } = useNotification ? useNotification() : { notify: () => {} };
 
   // Cores do tema
@@ -38,22 +36,16 @@ const BottomUserProfile = ({ isOwnProfile, isFollowing, onFollow, onUnfollow, on
     );
   }
 
-  if (!user) {
+  if (!isAuth()) {
     return (
-      <>
-        <Button
-          variant="contained"
-          sx={{ height: 24, fontWeight: 'bold', fontSize: '0.75rem', px: 1.5, py: 0.5, alignSelf: 'center', background: editFollowColor, color: textColor, borderRadius: '3px', '&:hover': { background: editFollowHover } }}
-          onClick={() => {
-            setLoginOpen(true);
-            if (onLogin) onLogin();
-          }}
-          disabled={loading}
-        >
-          FOLLOW
-        </Button>
-        <Login open={loginOpen} onClose={() => setLoginOpen(false)} />
-      </>
+      <Button
+        variant="contained"
+        sx={{ height: 24, fontWeight: 'bold', fontSize: '0.75rem', px: 1.5, py: 0.5, alignSelf: 'center', background: editFollowColor, color: textColor, borderRadius: '3px', '&:hover': { background: editFollowHover } }}
+        onClick={handleSignin}
+        disabled={loading}
+      >
+        FOLLOW
+      </Button>
     );
   }
 

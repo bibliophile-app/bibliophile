@@ -94,7 +94,7 @@ function ListsPage() {
 
          </Box>
 
-         <NavProfile username={username} />
+         <NavProfile username={username} filledBox />
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {entries && entries.length > 0 ? (

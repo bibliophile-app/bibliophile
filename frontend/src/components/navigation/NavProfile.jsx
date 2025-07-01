@@ -3,17 +3,18 @@ import { Box, Typography, styled } from '@mui/material';
 import UserAvatar from '@/atoms/UserAvatar';
 import { NavLink, useLocation } from 'react-router-dom';
 
-const NavContainer = styled(Box)(({ theme }) => ({
+const NavContainer = styled(Box)(({ theme, filled }) => ({
   background: 'none',
-  border: '1px solid #334355',
+  border: '1px solid #334355DD',
   borderRadius: 3,
-  padding: '3px 20px',
+  backgroundColor: filled ? '#334355CC' : 'transparent',
+  padding: '8px 20px',
   display: 'flex',
   alignItems: 'center',
   color: '#eee',
   width: '100%',
   margin: '0 auto 30px auto',
-  boxShadow: 'none',
+  boxShadow: '0 2px 12px 0 rgba(30,40,60,0.18), 0 1.5px 4px 0 rgba(30,40,60,0.10)',
   boxSizing: 'border-box',
   gap: theme.spacing(0),
 }));
@@ -62,7 +63,7 @@ const Underline = styled(Box)(({ theme }) => ({
   borderRadius: 2,
 }));
 
-function ProfileNavigation({ username, hiddenUser=false }) {
+function ProfileNavigation({ username, filledBox=false , hiddenUser=false }) {
   const location = useLocation();
   const tabs = [
     { label: 'Perfil', path: `/${username}/profile` },
@@ -73,11 +74,11 @@ function ProfileNavigation({ username, hiddenUser=false }) {
   ];
 
   return (
-    <NavContainer>
+    <NavContainer filled={filledBox}>
       {!hiddenUser &&
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, pr: 3 }}>
-          <UserAvatar username={username} sx={{ width: 40, height: 40, fontSize: 20 }} />
-          <Typography variant="h4" sx={{ fontWeight: 600, color: 'neutral.main', fontFamily: 'Inter, Helvetica Neue, sans-serif' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pr: 1 }}>
+          <UserAvatar username={username} sx={{ width: 30, height: 30, fontSize: 15, boxShadow: '0 0 8px 4px rgba(0, 0, 0, 0.1)' }} />
+          <Typography variant="h4" sx={{ fontWeight: 600, fontSize: 15, color: '#eee' }}>
             {username}
           </Typography>
         </Box>
