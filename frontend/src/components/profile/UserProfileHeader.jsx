@@ -3,8 +3,8 @@ import { styled } from '@mui/material/styles';
 import { Avatar, Box, Typography, Button } from '@mui/material';
 import { useAuth } from '../../utils/AuthContext';
 import { Link } from 'react-router-dom';
-import BottomUserProfileContainer from '../BottomUserProfileContainer';
-import { getFollowersCount, getFollowingCount } from '../../utils/followers';
+import BottomUserProfileContainer from './BottomUserProfileContainer';
+import { getFollowersCount, getFollowingCount } from '@/utils/followers';
 
 async function fetchUserByUsername(username) {
   const res = await fetch(`/users/${username}`);

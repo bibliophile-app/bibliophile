@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import BottomUserProfile from './BottomUserProfile';
-import { useAuth } from '../utils/AuthContext';
-import { useNotification } from '../utils/NotificationContext';
-import { checkFollowing, followUser, unfollowUser } from '../utils/followers';
+import { useAuth } from '../../utils/AuthContext';
+import { useNotification } from '../../utils/NotificationContext';
+import { checkFollowing, followUser, unfollowUser } from '../../utils/followers';
 
 const BottomUserProfileContainer = ({ profileUser }) => {
   const { user: loggedUser, handleSignin } = useAuth();

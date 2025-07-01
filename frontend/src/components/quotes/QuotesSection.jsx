@@ -1,7 +1,6 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Divider } from '@mui/material';
-import QuoteCard from '../QuoteCard/QuoteCard';
+import QuoteCard from './QuoteCard';
 
 function getRandomQuotes(quotes, maxCards) {
   if (quotes.length <= maxCards) return quotes;

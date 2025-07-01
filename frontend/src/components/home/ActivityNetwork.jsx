@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import ListSection from '../ListSection';
 
-const PopularReviewsSection = () => {
+function ActivityNetwork() {
   const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getPopularBooks() {
-      setLoading(true);
       try {
         const response = await fetch('/reviews/popular/week');
         const data = await response.json();
@@ -16,7 +14,6 @@ const PopularReviewsSection = () => {
       } catch {
         setBooks([]);
       } finally {
-        setLoading(false);
       }
     }
     getPopularBooks();
@@ -34,4 +31,4 @@ const PopularReviewsSection = () => {
   );
 };
 
-export default PopularReviewsSection;
+export default ActivityNetwork;

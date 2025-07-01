@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import ListSection from '../ListSection';
 
-const PopularFriendsReviewsSection = () => {
+function ActivityFriends() {
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function getPopularFriendsReviews() {
-      setLoading(true);
       try {
         // Busca reviews populares dos amigos do usuário logado
         const response = await fetch('/reviews/popular/friends');
@@ -16,8 +14,6 @@ const PopularFriendsReviewsSection = () => {
         setReviews(data);
       } catch {
         setReviews([]);
-      } finally {
-        setLoading(false);
       }
     }
     getPopularFriendsReviews();
@@ -35,4 +31,4 @@ const PopularFriendsReviewsSection = () => {
   );
 };
 
-export default PopularFriendsReviewsSection;
+export default ActivityFriends;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
-import { useAuth } from '../utils/AuthContext';
-import { useNotification } from '../utils/NotificationContext';
-import Login from './Login';
+import { useAuth } from '../../utils/AuthContext';
+import { useNotification } from '../../utils/NotificationContext';
+import Login from '../Login';
 
 /**
  * Props:

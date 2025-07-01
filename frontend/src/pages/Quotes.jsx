@@ -1,13 +1,14 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { useNotification } from '@/utils/NotificationContext';
+
+import LoadingBox from '@/atoms/LoadingBox';
 import { useAuth } from '@/utils/AuthContext';
+import { searchQuotesByUser } from '@/utils/quotes';
+import { useNotification } from '@/utils/NotificationContext';
 import QuoteForm from '@/components/quotes/QuoteForm';
 import QuoteItem from '@/components/quotes/QuoteItem';
-import LoadingBox from '@/atoms/LoadingBox';
-import { searchQuotesByUser } from '@/utils/quotes';
-import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
+import NavProfile from '@/components/navigation/NavProfile';
 
 
 function QuotesPage() {
@@ -89,7 +90,7 @@ function QuotesPage() {
         
 
       {/* NavigationTabs logo abaixo */}
-      <PagesNavigation username={username} />
+      <NavProfile username={username} />
       {/* Quotes do usuário */}
       {loading ? (
         <LoadingBox />

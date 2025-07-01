@@ -4,7 +4,7 @@ import { Box, Typography, Button } from '@mui/material';
 import Divider from '@/atoms/Divider';
 import ReviewCard from '../reviews/ReviewCard';
 
-const RecentReviewsSection = ({ reviews, user }) => {
+function RecentReviewsSection({ reviews, user }) {
   const navigate = useNavigate();
   // Mostra até 4 reviews recentes
   const recentReviews = reviews.filter(r => r.content).slice(0, 4);

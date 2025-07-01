@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import UserProfileHeader from '../components/UserProfileHeader/UserProfileHeader';
-import NavigationTabs from '../components/NavigationTabs/NavigationTabs';
-import QuotesSection from '../components/QuotesSection/QuotesSection';
-import RecentReviewsSection from '../components/RecentReviewsSection/RecentReviewsSection';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Box } from '@mui/material';
+
+import LoadingBox from '@/atoms/LoadingBox';
 import { useAuth } from '../utils/AuthContext';
 import { searchByUser as searchReviewsByUser } from '../utils/reviews';
 import { searchByUser as searchListsByUser } from '../utils/lists';
-import { Box } from '@mui/material';
-import LoadingBox from '@/atoms/LoadingBox';
+import QuotesSection from '../components/quotes/QuotesSection';
+import NavProfile from '@/components/navigation/NavProfile';
+import UserProfileHeader from '../components/profile/UserProfileHeader';
+import RecentReviewsSection from '../components/profile/RecentReviewsSection';
 
 const fetchQuotesByUser = async (username) => {
   // Busca quotes do usuário correto pelo endpoint /quotes/user/{username}
@@ -70,7 +71,7 @@ const UserProfilePage = () => {
   return (
     <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
       <UserProfileHeader user={user} />
-      <NavigationTabs user={user} />
+      <NavProfile username={user.username} hiddenUser />
       <QuotesSection quotes={quotes} user={user} />
       <RecentReviewsSection reviews={reviews} user={user} />
     </Box>

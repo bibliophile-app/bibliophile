@@ -3,8 +3,8 @@ import { Box, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
 import FeaturesSection from '../components/home/FeaturesSection';
-import PopularReviewsSection from '../components/PopularReviewsSection/PopularReviewsSection';
-import PopularFriendsReviewsSection from '../components/PopularReviewsSection/PopularFriendsReviewsSection';
+import ActivityNetwork from '../components/home/ActivityNetwork';
+import ActivityFriends from '../components/home/ActivityFriends';
 
 function Home() {
   const { user, isAuth } = useAuth();
@@ -25,7 +25,7 @@ function Home() {
     return (
       <Box sx={homeContainerStyle}>
         <FeaturesSection /> {/* Mostra os cards mesmo se não estiver logado */}
-        <PopularReviewsSection /> {/* Adiciona a seção de resenhas populares */}
+        <ActivityNetwork /> {/* Adiciona a seção de resenhas populares */}
       </Box>
     );
   }
@@ -49,8 +49,8 @@ function Home() {
           Veja o que andamos lendo...
         </Typography>
       </Box>
-      <PopularFriendsReviewsSection />
-      <PopularReviewsSection />
+      <ActivityFriends />
+      <ActivityNetwork />
     </Box>
   );
 }

@@ -59,12 +59,12 @@ function NavBar() {
 	
 					{/* Desktop Navigation */}
 					<Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
-						<DesktopToolbar user={user} options={isAuth() ? privateOptions : publicOptions} />
+						<DesktopToolbar options={isAuth() ? privateOptions : publicOptions} />
 					</Box>
 			
 					{/* Mobile Navigation */}
 					<Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 1 }}>
-						<MobileToolbar user={user} options={isAuth() ? privateOptions : publicOptions} />
+						<MobileToolbar options={isAuth() ? privateOptions : publicOptions} />
 					</Box>
 				</ToolbarContent>
 			</StyledToolbar>

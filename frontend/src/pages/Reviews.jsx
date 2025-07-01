@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 import Divider from '@/atoms/Divider'
@@ -9,7 +8,7 @@ import { searchByUser } from '@/utils/reviews';
 import { handleSafeNavigation } from '@/utils/handlers';
 import { useNotification } from '@/utils/NotificationContext';
 import ReviewCard from '@/components/reviews/ReviewCard';
-import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
+import NavProfile from '@/components/navigation/NavProfile';
 
 function ReviewsPage() {
     const safeBack = handleSafeNavigation();
@@ -52,10 +51,8 @@ function ReviewsPage() {
         return <LoadingBox />
     else return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <PagesNavigation username={username} />
+        <NavProfile username={username} />
         
-        
-
         {entries && entries.filter(e => e.content).length > 0 ? (
             entries
                 .filter(e => e.content)

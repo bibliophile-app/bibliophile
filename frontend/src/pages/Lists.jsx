@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
-import Divider from '@/atoms/Divider'
 import LoadingBox from '@/atoms/LoadingBox';
 import { useAuth } from '@/utils/AuthContext';
 import { searchByUser } from '@/utils/lists';
@@ -11,8 +10,7 @@ import { BooklistConstants } from '@/utils/constants';
 import { handleSafeNavigation } from '@/utils/handlers';
 import { useNotification } from '@/utils/NotificationContext';
 import ListSection from '../components/ListSection';
-import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
-import UserAvatar from '@/atoms/UserAvatar';
+import NavProfile from '@/components/navigation/NavProfile';
 
 function StartListButton() {
     const navigate = useNavigate();
@@ -62,7 +60,7 @@ function ListsPage() {
             return;
         }
 
-        const fetchLists = async () => {
+        async function fetchLists() {
             try {
                 const lists = await searchByUser(username);
                 setEntries(lists);
@@ -96,9 +94,7 @@ function ListsPage() {
 
          </Box>
 
-
-         <PagesNavigation username={username} />
-
+         <NavProfile username={username} />
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {entries && entries.length > 0 ? (

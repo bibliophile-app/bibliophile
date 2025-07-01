@@ -9,7 +9,7 @@ import { useNotification } from '@/utils/NotificationContext';
 import Divider from '@/atoms/Divider';
 import LoadingBox from '@/atoms/LoadingBox';
 import ReviewCard from '@/components/reviews/ReviewCard';
-import PagesNavigation from '@/components/NavigationTabs/PagesNavigation';
+import NavProfile from '@/components/navigation/NavProfile';
 
 function DiaryReviewCard({ entry }) {
   const day = new Date(entry.reviewedAt + 'T00:00:00').getDate();
@@ -106,7 +106,7 @@ function DiaryPage() {
     return <LoadingBox />;
   else return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-      <PagesNavigation username={username} />
+      <NavProfile username={username} />
 
       {entries && entries.length > 0 ? (
         sortedMonths.map((month) => (
