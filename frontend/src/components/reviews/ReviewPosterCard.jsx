@@ -15,7 +15,7 @@ function ReviewPosterCard({ review, height, width }) {
         height={height}
         width={width}
         overlay={
-          <Stack direction="row" alignItems="center" spacing={0.5}>
+          <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mx: 1 }}>
             <UserAvatar username={username} sx={{ width: '1rem', height: '1rem', fontSize: '.6rem' }}/>
             <Typography sx={{ fontSize: '0.8rem', fontWeight: 'bold' }}>
               {username}

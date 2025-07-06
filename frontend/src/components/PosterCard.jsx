@@ -47,7 +47,7 @@ function PosterCard({
   if (!book) return null;
 
   return (
-    <Box sx={{ width, position: 'relative', overflow: 'visible' }}>
+    <Box sx={{ width, position: 'relative', overflow: 'hidden' }}>
       {/* Botão de deletar */}
       {onDelete && (
         <IconButton
@@ -74,8 +74,11 @@ function PosterCard({
 
 
       <StyledTooltip title={book.title} placement="top" arrow>
-        <Box component={RouterLink} to={`/book/${bookId}`}
+        <Box
+          component={RouterLink}
+          to={`/book/${bookId}`}
           sx={{
+            position: 'relative',
             display: 'block',
             overflow: 'hidden',
             textDecoration: 'none',
@@ -84,9 +87,9 @@ function PosterCard({
             transition: 'all 0.3s ease',
             boxShadow: 3,
             '&:hover': {
-                borderColor: '#ffffffdd',
+              borderColor: '#ffffffdd',
             },
-            }}
+          }}
         >
           <BookImage
             src={book.coverUrl}
@@ -94,20 +97,20 @@ function PosterCard({
             sx={{ width: '100%', height }}
           />
 
-          {/* Overlay (ex: avatar + username) */}
           {overlay && (
             <Box
-                sx={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    width: '100%',
-                    px: 1,
-                    py: 0.5,
-                    bgcolor: 'background.contrast',
-                }}
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                width: '100%',
+                py: 0.5,
+                bgcolor: 'background.contrast',
+                borderBottomLeftRadius: '4px',
+                borderBottomRightRadius: '4px',
+              }}
             >
-                {overlay}
+              {overlay}
             </Box>
           )}
         </Box>

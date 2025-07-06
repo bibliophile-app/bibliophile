@@ -9,6 +9,7 @@ import { useNotification } from '@/utils/NotificationContext';
 import Divider from '@/atoms/Divider';
 import LoadingBox from '@/atoms/LoadingBox';
 import ReviewCard from '@/components/reviews/ReviewCard';
+import NavProfile from '@/components/navigation/NavProfile';
 
 function DiaryReviewCard({ entry }) {
   const day = new Date(entry.reviewedAt + 'T00:00:00').getDate();
@@ -105,24 +106,7 @@ function DiaryPage() {
     return <LoadingBox />;
   else return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <Typography variant='span'>
-                diário de
-            </Typography>
-
-            <Typography
-                variant="span"
-                color="neutral.main"
-                fontWeight="bold"
-                component={RouterLink}
-                to={`${username}/profile/`}
-                onClick={(e) => e.stopPropagation()}
-            >
-              {username}
-            </Typography>
-      </Box> 
-
-      <Divider sx={{ my: 1 }}/>
+      <NavProfile username={username} filledBox />
 
       {entries && entries.length > 0 ? (
         sortedMonths.map((month) => (

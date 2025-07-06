@@ -18,7 +18,7 @@ const StyledMenuItem = styled(MenuItem)(({
 }));
 
 // Component for rendering drawer content
-function MobileToolbar({ user, options }) {
+function MobileToolbar({ options }) {
 	const { isAuth, handleSignin, handleSignup, logout } = useAuth();
 	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);

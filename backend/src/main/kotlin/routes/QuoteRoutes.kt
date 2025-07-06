@@ -30,6 +30,12 @@ fun Route.quoteRoutes() {
             }
         }
 
+        get("/user/{identifier}") {
+            val userId = call.resolveUserIdOrRespondNotFound() ?: return@get
+            val quotes = QuoteRepository.findByUserId(userId)
+            call.respond(HttpStatusCode.OK, quotes)
+        }
+
         authenticate("auth-session") {
             post {
                 val request = call.receive<QuoteRequest>()

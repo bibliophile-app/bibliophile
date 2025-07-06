@@ -9,7 +9,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import SearchBar from '../search/SearchBar';
 
 
-function DesktopToolbar({ options, user }) {
+function DesktopToolbar({ options }) {
 	const { isAuth, handleSignin, handleSignup, logout } = useAuth();
 	const navigate = useNavigate();
 
