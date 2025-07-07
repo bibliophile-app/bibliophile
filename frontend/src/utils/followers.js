@@ -25,7 +25,7 @@ export async function followUser(followeeId) {
     credentials: 'include',
     body: JSON.stringify({ followeeId })
   });
-  if (res.status == 500) return true;  // CONSERTAR !!!!!!!!!!!!!!!!!!!!!!
+
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     throw new Error(data.message || 'Erro ao seguir usuário');

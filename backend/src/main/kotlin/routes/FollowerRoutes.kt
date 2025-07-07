@@ -62,7 +62,7 @@ fun Route.followerRoutes() {
                 val follow = FollowerRepository.add(session.userId, request)
                 call.respond(
                     HttpStatusCode.Created, 
-                    mapOf("message" to "Follow created successfully", "id" to follow.id)
+                    mapOf("message" to "Follow created successfully - Follow ID: ${follow.id}")
                 )
             }
 
