@@ -56,3 +56,12 @@ Para executar os testes automatizados, siga os passos abaixo:
     ```
 
     O relatório de cobertura será gerado no seguinte caminho: `backend/build/reports/kover/html/index.html`
+
+## Ferramentas de Inteligência Artificial utilizadas
+
+Durante o desenvolvimento deste projeto, foram utilizadas ferramentas de IA para acelerar e aprimorar a produção de código, documentação e testes. As principais ferramentas utilizadas foram:
+
+- **GitHub Copilot**: Assistente de código com sugestões automáticas, geração de funções, testes e refatoração.
+- **ChatGPT (OpenAI GPT)**: Auxílio na explicação de conceitos, geração de exemplos, revisão de código e solução de dúvidas técnicas.
+
+Essas ferramentas contribuíram para maior produtividade, qualidade e aprendizado ao longo do desenvolvimento.
